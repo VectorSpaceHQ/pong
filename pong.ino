@@ -29,7 +29,10 @@ Servo ball_xservo;
 int display_width = 0;
 int display_height = 0;
 
-  
+const int P1_button_pin = 12;  
+const int P2_button_pin = 13; 
+int P1_button_state = 0;       
+int P2_button_state = 0;    
 
 void setup() {
   pinMode(PinA, IPINMODE);
@@ -50,6 +53,9 @@ void setup() {
    //P2_xservo.attach(9); 
    //ball_yservo.attach(10); 
    //ball_xservo.attach(11); 
+
+   pinMode(P1_button_pin, INPUT);
+   pinMode(P2_button_pin, INPUT);
    
   Serial.begin(115200);
   Serial.println("Starting Rotary Encoder Test");
@@ -84,8 +90,24 @@ void pinChangeISR() {
 
 
 void loop() {
-  P1_yservo.write(P1_ypos);              // tell servo to go to position in variable 'pos'
-  P2_yservo.write(P2_ypos);              // tell servo to go to position in variable 'pos'
+  P1_yservo.write(P1_ypos);  
+  P2_yservo.write(P2_ypos); 
+  P1_button_state = digitalRead(P1_button_pin);
+  P2_button_state = digitalRead(P2_button_pin);
+
+  // Check for simultaneous button press for 5 sec
+  bool buttonsPressed = true;
+  if (P1_button_state == HIGH && P2_button_state == HIGH){
+    for(int i=0; i<10; i++){
+      if (P1_button_state == LOW || P2_button_state == LOW){
+        buttonsPressed = false;
+      }
+      delay(500);
+    }
+    if (buttonsPressed == true){
+      Calibrate();
+    }
+  }
 
   if (old_P1_ypos != P1_ypos) {
     Serial.print(millis());
@@ -145,8 +167,9 @@ void Calibrate(){
   /*
    * Read the rotary encoder position and use those values to modify the display_width and display_height values.
    */
-   
-   display_width = P1_ypos;
-   display_height = P2_ypos;
+   do while (stop == false){
+       display_width = P1_ypos;
+       display_height = P2_ypos;
+   }
    
 }
