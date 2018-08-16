@@ -11,65 +11,65 @@
 
 class LaserCtrl
 {
-  public:
-    /***
-     * Constructor
-     * @param _shape - The type of the shape
-     * @param conf - The configuration for the laser
-     * @param laserPin - The pin number for the laser control
-     */
-    LaserCtrl(ShapeType _shape, LaserConf& conf);
+public:
+   /***
+    * Constructor
+    * @param _shape - The type of the shape
+    * @param conf - The configuration for the laser
+    * @param laserPin - The pin number for the laser control
+    */
+   LaserCtrl(ShapeType _shape, LaserConf& conf);
 
-    /***
-     * Control the laser and the gimble to draw the shape
-     * @param atX - The X position at which to draw the shape
-     * @param atY - The Y position at which to draw the shape
-     */
-    void Draw(uint32_t atX, uint32_t atY);
+   /***
+    * Control the laser and the gimble to draw the shape
+    * @param atX - The X position at which to draw the shape
+    * @param atY - The Y position at which to draw the shape
+    */
+   void Draw(uint32_t atX, uint32_t atY);
 
-    /***
-     * Change the shape of this laser to a rectangle
-     * @param _width - The width of the rectangle
-     * @param _height - The height of the rectangle
-     */
-    void SetRectangle(uint32_t _width, uint32_t _height);
+   /***
+    * Change the shape of this laser to a rectangle
+    * @param _width - The width of the rectangle
+    * @param _height - The height of the rectangle
+    */
+   void SetRectangle(uint32_t _width, uint32_t _height);
 
-    /***
-     * Change the shape of this laser to a circle
-     * @param _radius - The radius of the circle
-     */
-    void SetCircle(uint32_t _radius);
+   /***
+    * Change the shape of this laser to a circle
+    * @param _radius - The radius of the circle
+    */
+   void SetCircle(uint32_t _radius);
 
-    /***
-     * Turn the laser on
-     */
-    void On(void);
+   /***
+    * Turn the laser on
+    */
+   void On(void);
 
-    /***
-     * Turn the laser off
-     */
-    void Off(void);
+   /***
+    * Turn the laser off
+    */
+   void Off(void);
 
-    /***
-     * Toggle the laser
-     */
-    void Toggle(void);
+   /***
+    * Toggle the laser
+    */
+   void Toggle(void);
 
-  private:
-    ShapeType shape;
-    uint32_t  x;
-    uint32_t  y;
-    uint32_t  width;
-    uint32_t  height;
-    uint32_t  radius;
-    bool      laserOn;
-    Servo     xServo;
-    Servo     yServo;
-    uint8_t   laserPin;
+private:
+   ShapeType shape;
+   uint32_t  x;
+   uint32_t  y;
+   uint32_t  width;
+   uint32_t  height;
+   uint32_t  radius;
+   bool      laserOn;
+   Servo     xServo;
+   Servo     yServo;
+   uint8_t   laserPin;
 
-    void DrawRectangle(void);
-    void DrawCircle(void);
-    void SetLaser(void);
+   void DrawRectangle(void);
+   void DrawCircle(void);
+   void SetLaser(void);
 };
 
 #endif    // __laser_ctrl_h__

@@ -9,22 +9,22 @@
 
 class Pong
 {
-  public:
-    Pong();
-    void Start();
-    void Stop();
-    void Run();
+public:
+   Pong();
+   void Start();
+   void Stop();
+   void Run();
 
-  private:
-    LaserConf leftPlayerLaser;
-    LaserConf rightPlayerLaser;
-    LaserConf ballLaser;
+private:
+   LaserConf leftPlayerLaser;
+   LaserConf rightPlayerLaser;
+   LaserConf ballLaser;
 
-    Rectangle leftPaddleShape;
-    Rectangle rightPaddleShape;
-    Circle    ballShape;
+   Rectangle leftPaddleShape;
+   Rectangle rightPaddleShape;
+   Circle    ballShape;
 
-    View  view;
+   View  view;
 };
 
 
