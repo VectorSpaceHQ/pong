@@ -40,8 +40,9 @@ void LaserCtrl::Calibrate()
 void LaserCtrl::Draw(uint32_t atX, uint32_t atY)
 {
   // Update our X/Y coordinates mapping from engine coordinates to servo values
-  x = xmin + (atX-engine_xmin) * (xmax - xmin) / (engine_xmax - engine_xmin);
-  y = ymin + (atY-engine_ymin) * (ymax - ymin) / (engine_ymax - engine_ymin);
+  // TODO:: Need game_width and game_height passed from the engine
+  x = xmin + atX * (xmax - xmin) / game_width;
+  y = ymin + atY * (ymax - ymin) / game_height;
 
   switch(shape)
   {
