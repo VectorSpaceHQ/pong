@@ -9,17 +9,17 @@ Pong::Pong():
   leftPlayerLaser(
     3,    // Gimble X Pin
     5,    // Gimble Y Pin
-    4 ),  // Laser Pin     // TODO: Need the correct laser pin here
+    A2 ),  // Laser Pin     
     
   rightPlayerLaser(
     6,    // Gimble X Pin
     9,    // Gimble Y Pin
-    7 ),  // Laser Pin     // TODO: Need the correct laser pin here
+    A3 ),  // Laser Pin     
 
   ballLaser(
     10,   // Gimble X Pin
     11,   // Gimble Y Pin
-    12 ), // Laser Pin     // TODO: Need the correct laser pin here
+    A4 ), // Laser Pin     
 
   leftPaddleShape(
     10,   // X Coord
