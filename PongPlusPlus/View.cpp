@@ -15,5 +15,16 @@ View::View( Circle&     _ball,
   rightPaddleLaser(ShapeRectangle, _rightLaserConf),
   ballLaser(ShapeCircle, _ballLaserConf)
 {
+  leftPaddleLaser.SetRectangle(leftPaddle.width, leftPaddle.height);
+  rightPaddleLaser.SetRectangle(rightPaddle.width, rightPaddle.height);
+  ballLaser.SetCircle(ball.radius);
+}
+
+
+void View::Run(void)
+{
+  leftPaddleLaser.Draw(leftPaddle.x, leftPaddle.y);
+  rightPaddleLaser.Draw(rightPaddle.x, rightPaddle.y);
+  ballLaser.Draw(ball.x, ball.y);
 }
 

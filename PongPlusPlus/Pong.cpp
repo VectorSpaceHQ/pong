@@ -63,6 +63,8 @@ void Pong::Stop()
 
 void Pong::Run()
 {
-
+  // TODO: Run Controller
+  // TODO: Run Engine (model)
+  view.Run();
 }
 

@@ -17,6 +17,8 @@ class View
          LaserConf&   _rightLaserConf,
          LaserConf&   _ballLaserConf);
 
+    void  Run(void);
+    
   private:
     Circle&     ball;
     Rectangle&  leftPaddle;
