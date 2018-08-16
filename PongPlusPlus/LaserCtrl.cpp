@@ -84,13 +84,42 @@ void LaserCtrl::Toggle(void)
 
 void LaserCtrl::DrawRectangle(void)
 {
-  
+  // x,y marks center of rectangle
+  for(int j = y-height/2; j <= y+height/2; j++){
+    yServo.write(j);
+    delay(2);
+  }  
+  for(int i = x-width/2; i <= x+width/2; i++){
+    xServo.write(i);
+    delay(2);
+  }
+  for(int j = y+height/2; j >= y-height/2; j--){
+    yServo.write(j);
+    delay(2);
+  }  
+  for(int i = x+width/2; i >= x-width/2; i--){
+    xServo.write(i);
+    delay(2);
+  }
 }
 
 
 void LaserCtrl::DrawCircle(void)
 {
-  
+  // x,y marks center of circle
+  // a,b marks edge of circle
+  for(int a=x-r; a<x+r; a++){
+    b = y + sqrt(r^2 - (a-x)^2);
+    xServo.write(a);
+    yServo.write(b);
+    delay(1);
+  }
+  for(int a=x+r; a<x-r; a--){
+    b = y - sqrt(r^2 - (a-x)^2);
+    xServo.write(a);
+    yServo.write(b);
+    delay(1);
+  }
 }
 
 
