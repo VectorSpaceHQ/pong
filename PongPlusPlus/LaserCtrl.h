@@ -21,6 +21,12 @@ public:
    LaserCtrl(ShapeType _shape, LaserConf& conf);
 
    /***
+     * Calibrate the display in order to set an x min and max, and
+     * a y min and max.
+     */
+   void Calibrate(void);
+
+    /***
     * Control the laser and the gimble to draw the shape
     * @param atX - The X position at which to draw the shape
     * @param atY - The Y position at which to draw the shape
@@ -59,6 +65,10 @@ private:
    ShapeType shape;
    uint32_t  x;
    uint32_t  y;
+   uint32_t  xmin;
+   uint32_t  ymin;
+   uint32_t  xmax;
+   uint32_t  ymax;
    uint32_t  width;
    uint32_t  height;
    uint32_t  radius;
