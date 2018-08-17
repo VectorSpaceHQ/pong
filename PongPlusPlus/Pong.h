@@ -4,6 +4,8 @@
 
 
 #include "Configs.h"
+#include "Controller.h"
+#include "Engine.h"
 #include "Shapes.h"
 #include "View.h"
 
@@ -16,15 +18,20 @@ public:
    void Run();
 
 private:
-   LaserConf leftPlayerLaser;
-   LaserConf rightPlayerLaser;
-   LaserConf ballLaser;
+   LaserConf   leftPlayerLaser;
+   LaserConf   rightPlayerLaser;
+   LaserConf   ballLaser;
 
-   Rectangle leftPaddleShape;
-   Rectangle rightPaddleShape;
-   Circle    ballShape;
+   PaddleConf  leftPaddle;
+   PaddleConf  rightPaddle;
 
-   View  view;
+   Rectangle   leftPaddleShape;
+   Rectangle   rightPaddleShape;
+   Circle      ballShape;
+
+   Engine      engine;
+   View        view;
+   Controller  controller;
 };
 
 
