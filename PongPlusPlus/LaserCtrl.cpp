@@ -108,14 +108,15 @@ void LaserCtrl::DrawCircle(void)
 {
   // x,y marks center of circle
   // a,b marks edge of circle
-  for(int a=x-r; a<x+r; a++){
-    b = y + sqrt(r^2 - (a-x)^2);
+  int b;
+  for(int a=x-radius; a<x+radius; a++){
+    b = y + sqrt(radius^2 - (a-x)^2);
     xServo.write(a);
     yServo.write(b);
     delay(1);
   }
-  for(int a=x+r; a<x-r; a--){
-    b = y - sqrt(r^2 - (a-x)^2);
+  for(int a=x+radius; a<x-radius; a--){
+    b = y - sqrt(radius^2 - (a-x)^2);
     xServo.write(a);
     yServo.write(b);
     delay(1);

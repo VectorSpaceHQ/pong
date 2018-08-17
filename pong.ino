@@ -94,13 +94,11 @@ void setup() {
   P1_xservo.attach(5);  
   P2_yservo.attach(6); 
   P2_xservo.attach(9); 
-  ball_yservo.attach(10); 
-  ball_xservo.attach(11); 
+  ball_yservo.attach(11); 
+  ball_xservo.attach(10); 
 
   pinMode(P1_button_pin, INPUT);
   pinMode(P2_button_pin, INPUT);
-
-  
    
   Serial.begin(115200);
   Serial.println("Starting Pong");
@@ -161,7 +159,8 @@ void loop() {
       delay(250);
     }
     if (buttonsPressed == true){
-      calibrate();
+      //calibrate();
+      drawRectangle();
     }
   }
 
@@ -374,6 +373,35 @@ void resetBoard(){
 /* void UpdateScore(){ */
 /* } */
 
+void drawRectangle(){
+  int miny = 550;
+  int minx = 600;
+  int maxy=700;
+  int maxx=650;
+  for(int j=0;j<50;j++){
+    for(int i=1;i<=maxx;i++){
+      ball_xservo.writeMicroseconds(i);
+      delayMicroseconds(5);
+    }
+    delay(90);
+    for(int i=1;i<=maxy;i++){
+      ball_yservo.writeMicroseconds(i);
+      delayMicroseconds(5);
+    }
+    delay(90);
+    for(int i=maxx-1; i>=0 ; i--){
+      ball_xservo.writeMicroseconds(i);
+      delayMicroseconds(5);
+    }
+    delay(90);
+    for(int i=maxy-1;i>=0;i--){
+      ball_yservo.writeMicroseconds(i);
+      delayMicroseconds(5);
+    }
+    delay(90);
+  }
+}
+
 
 void calibrate(){
   /*
@@ -428,6 +456,14 @@ void calibrate(){
         delay(1000);
         stop = true;
         
+      }
+
+      //move ball around the bounding area for testing
+      for(int i=0; i<display_width; i++){
+        ball_xservo.write(i);
+      }
+      for(int j=0; j<display_width; j++){
+        ball_yservo.write(j);
       }
     }
 
