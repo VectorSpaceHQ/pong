@@ -9,24 +9,24 @@
 
 class View
 {
-  public:
-    View(Circle&      _ball,
-         Rectangle&   _leftPaddle,
-         Rectangle&   _rightPaddle,
-         LaserConf&   _leftLaserConf,
-         LaserConf&   _rightLaserConf,
-         LaserConf&   _ballLaserConf);
+public:
+   View(Circle&      _ball,
+        Rectangle&   _leftPaddle,
+        Rectangle&   _rightPaddle,
+        LaserConf&   _leftLaserConf,
+        LaserConf&   _rightLaserConf,
+        LaserConf&   _ballLaserConf);
 
-    void  Run(void);
-    
-  private:
-    Circle&     ball;
-    Rectangle&  leftPaddle;
-    Rectangle&  rightPaddle;
+   void  Run(void);
 
-    LaserCtrl   leftPaddleLaser;
-    LaserCtrl   rightPaddleLaser;
-    LaserCtrl   ballLaser;
+private:
+   Circle&     ball;
+   Rectangle&  leftPaddle;
+   Rectangle&  rightPaddle;
+
+   LaserCtrl   leftPaddleLaser;
+   LaserCtrl   rightPaddleLaser;
+   LaserCtrl   ballLaser;
 };
 
 

@@ -4,27 +4,34 @@
 
 
 #include "Configs.h"
+#include "Controller.h"
+#include "Engine.h"
 #include "Shapes.h"
 #include "View.h"
 
 class Pong
 {
-  public:
-    Pong();
-    void Start();
-    void Stop();
-    void Run();
+public:
+   Pong();
+   void Start();
+   void Stop();
+   void Run();
 
-  private:
-    LaserConf leftPlayerLaser;
-    LaserConf rightPlayerLaser;
-    LaserConf ballLaser;
+private:
+   LaserConf   leftPlayerLaser;
+   LaserConf   rightPlayerLaser;
+   LaserConf   ballLaser;
 
-    Rectangle leftPaddleShape;
-    Rectangle rightPaddleShape;
-    Circle    ballShape;
+   PaddleConf  leftPaddle;
+   PaddleConf  rightPaddle;
 
-    View  view;
+   Rectangle   leftPaddleShape;
+   Rectangle   rightPaddleShape;
+   Circle      ballShape;
+
+   Engine      engine;
+   View        view;
+   Controller  controller;
 };
 
 
