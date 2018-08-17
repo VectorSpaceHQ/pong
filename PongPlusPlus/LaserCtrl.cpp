@@ -5,6 +5,7 @@
 #include "Configs.h"
 #include "LaserCtrl.h"
 #include "Shapes.h"
+#include "Controller.h"
 
 // TODO: If ymax, xmin, etc, never change, than use #defines instead of variables
 #define  SERVO_MIN_X    (544)
@@ -21,6 +22,8 @@ LaserCtrl::LaserCtrl(ShapeType _shape, LaserConf& conf):
    shape(_shape),
    x(0),
    y(0),
+   hskew(0),
+   vskew(0),
    xmin(544),
    xmax(2400),
    ymin(544),
@@ -35,15 +38,6 @@ LaserCtrl::LaserCtrl(ShapeType _shape, LaserConf& conf):
    laserPin = conf.laserPin;
 
    pinMode(laserPin, OUTPUT);
-}
-
-
-void LaserCtrl::Calibrate(void)
-{
-   xmin = 544;
-   ymin = 544;
-   xmax = 2400;
-   ymax = 2400;
 }
 
 
@@ -67,6 +61,18 @@ void LaserCtrl::Draw(uint32_t atX, uint32_t atY)
       default:
          break;
    }
+}
+
+
+void LaserCtrl::SetBounds(uint32_t _xmin, uint32_t _xmax, uint32_t _ymin,
+                          uint32_t _ymax, uint32_t _hskew, uint32_t _vskew)
+{
+   xmin = _xmin;
+   xmax = _xmax;
+   ymin = _ymin;
+   ymax = _ymax;
+   hskew = _hskew;
+   vskew = _vskew;
 }
 
 
@@ -141,14 +147,14 @@ void LaserCtrl::DrawCircle(void)
    // i,j marks edge of circle
    for(int i = x - radius; i < (x + radius); i++)
    {
-      int j = y + sqrt(radius ^ 2 - (i - x) ^ 2);
+      int j = y + sqrt((radius ^ 2) - ((i - x) ^ 2));
       xServo.writeMicroseconds(i);
       yServo.writeMicroseconds(j);
       delayMicroseconds(5);
    }
    for(int i = x + radius; i < x - radius; i--)
    {
-      int j = y - sqrt(radius ^ 2 - (i - x) ^ 2);
+      int j = y - sqrt((radius ^ 2) - ((i - x) ^ 2));
       xServo.writeMicroseconds(i);
       yServo.writeMicroseconds(j);
       delayMicroseconds(5);

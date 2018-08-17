@@ -20,18 +20,18 @@ public:
     */
    LaserCtrl(ShapeType _shape, LaserConf& conf);
 
-   /***
-     * Calibrate the display in order to set an x min and max, and
-     * a y min and max.
-     */
-   void Calibrate(void);
-
     /***
     * Control the laser and the gimble to draw the shape
     * @param atX - The X position at which to draw the shape
     * @param atY - The Y position at which to draw the shape
     */
    void Draw(uint32_t atX, uint32_t atY);
+
+    /***
+    * Set the x, y, and skew boundaries for the servos
+    */
+   void SetBounds(uint32_t _xmin, uint32_t _xmax, uint32_t _ymin,
+                 uint32_t _ymax, uint32_t _hskew, uint32_t _vskew);
 
    /***
     * Change the shape of this laser to a rectangle
@@ -65,6 +65,8 @@ private:
    ShapeType shape;
    uint32_t  x;
    uint32_t  y;
+   uint32_t  hskew;
+   uint32_t  vskew;
    uint32_t  xmin;
    uint32_t  ymin;
    uint32_t  xmax;

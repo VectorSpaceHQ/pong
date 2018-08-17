@@ -18,6 +18,7 @@ public:
         LaserConf&   _ballLaserConf);
 
    void  Run(void);
+   void  Calibrate(void);
 
 private:
    Circle&     ball;
