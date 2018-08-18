@@ -8,6 +8,15 @@
 
 class Engine
 {
+   enum ButtonState
+   {
+      ButtonStateNone,     // Neither button is pressed
+      ButtonStateLeft,     // The left button is pressed
+      ButtonStateRight,    // The right button is pressed
+      ButtonStateBoth,     // Both buttons are pressed
+      ButtonStateReset     // We are waiting in a debouce period
+   };
+
 public:
    Engine(Model::DisplaySettings&   _display,
           Model::GameStatus&        _gameStatus,
@@ -22,6 +31,11 @@ private:
    PaddleStatus&           leftPaddle;
    PaddleStatus&           rightPaddle;
 
+   ButtonState             buttonState;
+   uint32_t                buttonCntr;
+
+   void RunCalibration();
+   void CheckButtonState();
 };
 
 #endif  // __engine_h__
