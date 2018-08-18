@@ -1,6 +1,8 @@
 
 #include "LaserCtrl.h"
 #include "Model.h"
+#include "ScheduledInterval.h"
+#include "Timing.h"
 #include "View.h"
 
 // TODO: After we figure out game resolution and variable display, these may need to be configurable
@@ -15,6 +17,7 @@ View::View(Model::DisplaySettings&  _display,
            LaserConf&               _leftLaserConf,
            LaserConf&               _rightLaserConf,
            LaserConf&               _ballLaserConf):
+   ScheduledInterval(VIEW_LOOP_INTERVAL),
    display(_display),
    gameStatus(_gameStatus),
    leftPaddleLaser(ShapeRectangle, _leftLaserConf),
@@ -29,7 +32,7 @@ View::View(Model::DisplaySettings&  _display,
 }
 
 
-void View::Run(void)
+void View::Update(void)
 {
    switch(gameStatus.gameState)
    {

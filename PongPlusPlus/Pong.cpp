@@ -1,9 +1,12 @@
 
+#include <Arduino.h>
+
 #include "Controller.h"
 #include "Engine.h"
 #include "HwConfig.h"
 #include "Shapes.h"
 #include "Pong.h"
+#include "Timing.h"
 #include "View.h"
 
 
@@ -45,4 +48,6 @@ void Pong::Run()
    controller.Run();    // Update paddle HW info
    engine.Run();        // Run game engine
    view.Run();          // Draw the screen
+
+   delayMicroseconds(MAIN_LOOP_TIME);
 }

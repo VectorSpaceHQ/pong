@@ -6,9 +6,10 @@
 #include "Configs.h"
 #include "LaserCtrl.h"
 #include "Model.h"
+#include "ScheduledInterval.h"
 
 
-class View
+class View: public ScheduledInterval
 {
 public:
    View(Model::DisplaySettings&  _display,
@@ -17,7 +18,7 @@ public:
         LaserConf&               _rightLaserConf,
         LaserConf&               _ballLaserConf);
 
-   void  Run(void);
+   void  Update(void);
    void  Calibrate(void);
 
 private:

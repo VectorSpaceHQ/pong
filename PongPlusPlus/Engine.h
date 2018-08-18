@@ -4,9 +4,10 @@
 
 #include "Model.h"
 #include "PaddleStatus.h"
+#include "ScheduledInterval.h"
 
 
-class Engine
+class Engine: public ScheduledInterval
 {
    enum ButtonState
    {
@@ -23,7 +24,7 @@ public:
           PaddleStatus&             _leftPaddle,
           PaddleStatus&             _rightPaddle);
 
-   void Run(void);
+   void Update(void);
 
 private:
    Model::DisplaySettings& display;

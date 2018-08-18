@@ -9,10 +9,13 @@
 #include "Controller.h"
 #include "PaddleStatus.h"
 #include "PaddleCtrl.h"
+#include "ScheduledInterval.h"
+#include "Timing.h"
 
 
 Controller::Controller(PaddleConf& leftPaddleConf,
                        PaddleConf& rightPaddleConf):
+   ScheduledInterval(CONTROLLER_LOOP_INTERVAL),
    leftPaddleStatus(),
    rightPaddleStatus(),
    leftPaddle(leftPaddleConf),
@@ -21,7 +24,7 @@ Controller::Controller(PaddleConf& leftPaddleConf,
 }
 
 
-void Controller::Run(void)
+void Controller::Update(void)
 {
    // TODO: Update paddle status based on PaddleCtrl???
 }

@@ -7,6 +7,7 @@
 
 #include "Engine.h"
 #include "Model.h"
+#include "Timing.h"
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
 
@@ -15,6 +16,7 @@ Engine::Engine(Model::DisplaySettings&    _display,
                Model::GameStatus&         _gameStatus,
                PaddleStatus&              _leftPaddle,
                PaddleStatus&              _rightPaddle):
+   ScheduledInterval(ENGINE_LOOP_INTERVAL),
    display(_display),
    gameStatus(_gameStatus),
    leftPaddle(_leftPaddle),
@@ -25,7 +27,7 @@ Engine::Engine(Model::DisplaySettings&    _display,
 }
 
 
-void Engine::Run(void)
+void Engine::Update(void)
 {
    // First, update the button status
    CheckButtonState();

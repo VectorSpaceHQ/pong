@@ -12,6 +12,7 @@
 #include "Configs.h"
 #include "PaddleCtrl.h"
 #include "PaddleStatus.h"
+#include "ScheduledInterval.h"
 
 
 enum Paddles
@@ -24,13 +25,13 @@ enum Paddles
 };
 
 
-class Controller
+class Controller: public ScheduledInterval
 {
 public:
    Controller(PaddleConf& leftPaddleConf,
               PaddleConf& rightPaddleConf);
 
-   void Run(void);
+   void Update(void);
 
    PaddleStatus   leftPaddleStatus;
    PaddleStatus   rightPaddleStatus;
