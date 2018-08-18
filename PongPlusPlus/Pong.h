@@ -6,7 +6,7 @@
 #include "Configs.h"
 #include "Controller.h"
 #include "Engine.h"
-#include "Shapes.h"
+#include "Model.h"
 #include "View.h"
 
 class Pong
@@ -18,22 +18,19 @@ public:
    void Run();
 
 private:
-   GameStatus  gameStatus;
+   Model::DisplaySettings  display;
+   Model::GameStatus       gameStatus;
 
-   LaserConf   leftPlayerLaser;
-   LaserConf   rightPlayerLaser;
-   LaserConf   ballLaser;
+   LaserConf               leftPlayerLaser;
+   LaserConf               rightPlayerLaser;
+   LaserConf               ballLaser;
 
-   PaddleConf  leftPaddle;
-   PaddleConf  rightPaddle;
+   PaddleConf              leftPaddle;
+   PaddleConf              rightPaddle;
 
-   Rectangle   leftPaddleShape;
-   Rectangle   rightPaddleShape;
-   Circle      ballShape;
-
-   Engine      engine;
-   View        view;
-   Controller  controller;
+   Engine                  engine;
+   View                    view;
+   Controller              controller;
 };
 
 

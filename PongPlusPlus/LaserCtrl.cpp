@@ -5,7 +5,6 @@
 #include "Configs.h"
 #include "LaserCtrl.h"
 #include "Shapes.h"
-#include "Controller.h"
 
 // TODO: If ymax, xmin, etc, never change, than use #defines instead of variables
 #define  SERVO_MIN_X    (544)
@@ -91,7 +90,7 @@ void LaserCtrl::SetCircle(uint32_t _radius)
 }
 
 
-void LaserCtrl::DrawScore(uint32_t atX, uint32_t atY, Score score)
+void LaserCtrl::DrawScore(uint32_t atX, uint32_t atY, uint16_t score)
 {
 }
 

@@ -49,7 +49,7 @@ public:
    /***
     * Draw the specified score at the given coordinates
     */
-   void DrawScore(uint32_t atX, uint32_t atY, Score score);
+   void DrawScore(uint32_t atX, uint32_t atY, uint16_t score);
 
    /***
     * Turn the laser on

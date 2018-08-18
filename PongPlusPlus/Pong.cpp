@@ -9,6 +9,7 @@
 #include "View.h"
 
 Pong::Pong():
+   display(),
    gameStatus(),
 
    leftPlayerLaser(
@@ -36,34 +37,12 @@ Pong::Pong():
       4,    // Down Pin
       A1 ), // Button Pin
 
-   leftPaddleShape(
-      10,   // X Coord
-      0,    // Y Coord
-      5,    // Width
-      10 ), // Height
-
-   rightPaddleShape(
-      90,   // X Coord
-      0,    // Y Coord
-      5,    // Width
-      10 ), // Height
-
-   ballShape(
-      90,   // X Coord
-      0,    // Y Coord
-      5 ),  // Radius
-
-   engine(
-      gameStatus,          // Game Status
-      ballShape,           // Ball Shape
-      leftPaddleShape,     // Left Paddle Shape
-      rightPaddleShape),   // Right Paddle Shape
+   engine(display,         // Display Settings
+          gameStatus),     // Game Status
 
    view(
+      display,             // Display Settings
       gameStatus,          // Game Status
-      ballShape,           // Ball Shape
-      leftPaddleShape,     // Left Paddle Shape
-      rightPaddleShape,    // Right Paddle Shape
       leftPlayerLaser,     // Left paddle laser configuration
       rightPlayerLaser,    // Right paddle laser configuration
       ballLaser ),         // Ball laser configuration

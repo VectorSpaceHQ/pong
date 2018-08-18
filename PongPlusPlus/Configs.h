@@ -4,35 +4,6 @@
 
 #include <stdint.h>
 
-typedef uint8_t   Score;      // TODO: Is it ok to have a max score of 255?
-
-/***
- * The GameStatus configuration structure holds configuration information about the game
- * This configuration is controlled by the engine and visible by the view
- */
-struct GameStatus
-{
-   enum GameState
-   {
-      GameStateCalibrate,
-      GameStateReady,
-      GameStatePlay,
-      GameStateGameOver
-   };
-
-public:
-   GameState   gameState;
-   Score       leftPaddleScore;
-   Score       rightPaddleScore;
-
-   GameStatus():
-      gameState(GameStateCalibrate),   // Default start in calibration mode
-      leftPaddleScore(0),
-      rightPaddleScore(0)
-   {
-   }
-};
-
 
 /***
  * The LaserConf configuration structure holds configuration information for a laser

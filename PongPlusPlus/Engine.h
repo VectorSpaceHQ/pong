@@ -2,25 +2,20 @@
 #ifndef __engine_h__
 #define __engine_h__
 
-#include "Configs.h"
-#include "Shapes.h"
-
+#include "Model.h"
 
 class Engine
 {
 public:
-   Engine(GameStatus&   _gameStatus,
-          Circle&       _ball,
-          Rectangle&    _leftPaddle,
-          Rectangle&    _rightPaddle);
+   Engine(Model::DisplaySettings&   _display,
+          Model::GameStatus&        _gameStatus);
 
    void Run(void);
 
 private:
-   GameStatus& gameStatus;
-   Circle&     ball;
-   Rectangle&  leftPaddle;
-   Rectangle&  rightPaddle;
+   Model::DisplaySettings& display;
+   Model::GameStatus&      gameStatus;
+
 };
 
 #endif  // __engine_h__

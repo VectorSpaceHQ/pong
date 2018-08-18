@@ -6,16 +6,13 @@
  */
 
 #include "Engine.h"
-#include "Shapes.h"
+#include "Model.h"
 
-Engine::Engine(GameStatus&    _gameStatus,
-               Circle&        _ball,
-               Rectangle&     _leftPaddle,
-               Rectangle&     _rightPaddle):
-   gameStatus(_gameStatus),
-   ball(_ball),
-   leftPaddle(_leftPaddle),
-   rightPaddle(_rightPaddle)
+
+Engine::Engine(Model::DisplaySettings& _display,
+               Model::GameStatus&      _gameStatus):
+   display(_display),
+   gameStatus(_gameStatus)
 {
 }
 

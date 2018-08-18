@@ -5,32 +5,27 @@
 
 #include "Configs.h"
 #include "LaserCtrl.h"
-#include "Shapes.h"
+#include "Model.h"
 
 
 class View
 {
 public:
-   View(GameStatus&  _gameStatus,
-        Circle&      _ball,
-        Rectangle&   _leftPaddle,
-        Rectangle&   _rightPaddle,
-        LaserConf&   _leftLaserConf,
-        LaserConf&   _rightLaserConf,
-        LaserConf&   _ballLaserConf);
+   View(Model::DisplaySettings&  _display,
+        Model::GameStatus&       _gameStatus,
+        LaserConf&               _leftLaserConf,
+        LaserConf&               _rightLaserConf,
+        LaserConf&               _ballLaserConf);
 
    void  Run(void);
    void  Calibrate(void);
 
 private:
-   GameStatus& gameStatus;
-   Circle&     ball;
-   Rectangle&  leftPaddle;
-   Rectangle&  rightPaddle;
-
-   LaserCtrl   leftPaddleLaser;
-   LaserCtrl   rightPaddleLaser;
-   LaserCtrl   ballLaser;
+   Model::DisplaySettings& display;
+   Model::GameStatus&      gameStatus;
+   LaserCtrl               leftPaddleLaser;
+   LaserCtrl               rightPaddleLaser;
+   LaserCtrl               ballLaser;
 
    void DisplayCalibration(void);
    void DisplayGamePlay(void);
