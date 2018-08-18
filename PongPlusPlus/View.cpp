@@ -3,12 +3,21 @@
 #include "View.h"
 #include "Arduino.h"
 
-View::View(Circle&     _ball,
+// TODO: After we figure out game resolution and variable display, these may need to be configurable
+#define  SCORE_LEFT_X   (200)
+#define  SCORE_LEFT_Y   (300)
+#define  SCORE_RIGHT_X  (600)
+#define  SCORE_RIGHT_Y  (300)
+
+
+View::View(GameStatus& _gameStatus,
+           Circle&     _ball,
            Rectangle&  _leftPaddle,
            Rectangle&  _rightPaddle,
            LaserConf&  _leftLaserConf,
            LaserConf&  _rightLaserConf,
            LaserConf&  _ballLaserConf):
+   gameStatus(_gameStatus),
    ball(_ball),
    leftPaddle(_leftPaddle),
    rightPaddle(_rightPaddle),
@@ -24,10 +33,46 @@ View::View(Circle&     _ball,
 
 void View::Run(void)
 {
+   switch(gameStatus.gameState)
+   {
+      case GameStatus::GameStateCalibrate:
+         DisplayCalibration();
+         break;
+
+      case GameStatus::GameStateReady:
+      case GameStatus::GameStatePlay:
+         DisplayGamePlay();
+         break;
+
+      case GameStatus::GameStateGameOver:
+      default:
+         DisplayScore();
+         // TODO: Maybe the Default should be the Vector Space logo?  :-)
+         break;
+   }
+}
+
+
+void View::DisplayCalibration(void)
+{
+   // TODO: What to display for calibration? Perhaps have one laser draw a rectangle for the given size?
+}
+
+
+void View::DisplayGamePlay(void)
+{
    leftPaddleLaser.Draw(leftPaddle.x, leftPaddle.y);
    rightPaddleLaser.Draw(rightPaddle.x, rightPaddle.y);
    ballLaser.Draw(ball.x, ball.y);
 }
+
+
+void View::DisplayScore(void)
+{
+   leftPaddleLaser.DrawScore(SCORE_LEFT_X, SCORE_LEFT_Y, gameStatus.leftPaddleScore);
+   rightPaddleLaser.DrawScore(SCORE_RIGHT_X, SCORE_RIGHT_Y, gameStatus.rightPaddleScore);
+}
+
 
 /* TODO: Need help accessing the leftPaddle buttonPin
 void View::Calibrate(void)

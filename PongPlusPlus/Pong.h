@@ -18,6 +18,8 @@ public:
    void Run();
 
 private:
+   GameStatus  gameStatus;
+
    LaserConf   leftPlayerLaser;
    LaserConf   rightPlayerLaser;
    LaserConf   ballLaser;

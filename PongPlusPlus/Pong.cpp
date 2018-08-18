@@ -9,6 +9,7 @@
 #include "View.h"
 
 Pong::Pong():
+   gameStatus(),
 
    leftPlayerLaser(
       3,    // Gimble X Pin
@@ -53,17 +54,19 @@ Pong::Pong():
       5 ),  // Radius
 
    engine(
-      ballShape,          // Ball Shape
-      leftPaddleShape,    // Left Paddle Shape
-      rightPaddleShape),  // Right Paddle Shape
+      gameStatus,          // Game Status
+      ballShape,           // Ball Shape
+      leftPaddleShape,     // Left Paddle Shape
+      rightPaddleShape),   // Right Paddle Shape
 
    view(
-      ballShape,          // Ball Shape
-      leftPaddleShape,    // Left Paddle Shape
-      rightPaddleShape,   // Right Paddle Shape
-      leftPlayerLaser,    // Left paddle laser configuration
-      rightPlayerLaser,   // Right paddle laser configuration
-      ballLaser ),        // Ball laser configuration
+      gameStatus,          // Game Status
+      ballShape,           // Ball Shape
+      leftPaddleShape,     // Left Paddle Shape
+      rightPaddleShape,    // Right Paddle Shape
+      leftPlayerLaser,     // Left paddle laser configuration
+      rightPlayerLaser,    // Right paddle laser configuration
+      ballLaser ),         // Ball laser configuration
 
    controller(leftPaddle,  // Left Paddle Config
               rightPaddle) // Right Paddle Config

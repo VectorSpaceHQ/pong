@@ -91,6 +91,11 @@ void LaserCtrl::SetCircle(uint32_t _radius)
 }
 
 
+void LaserCtrl::DrawScore(uint32_t atX, uint32_t atY, Score score)
+{
+}
+
+
 void LaserCtrl::On(void)
 {
    laserOn = true;

@@ -3,14 +3,16 @@
 #define __view_h__
 
 
-#include "Shapes.h"
+#include "Configs.h"
 #include "LaserCtrl.h"
+#include "Shapes.h"
 
 
 class View
 {
 public:
-   View(Circle&      _ball,
+   View(GameStatus&  _gameStatus,
+        Circle&      _ball,
         Rectangle&   _leftPaddle,
         Rectangle&   _rightPaddle,
         LaserConf&   _leftLaserConf,
@@ -21,6 +23,7 @@ public:
    void  Calibrate(void);
 
 private:
+   GameStatus& gameStatus;
    Circle&     ball;
    Rectangle&  leftPaddle;
    Rectangle&  rightPaddle;
@@ -28,6 +31,10 @@ private:
    LaserCtrl   leftPaddleLaser;
    LaserCtrl   rightPaddleLaser;
    LaserCtrl   ballLaser;
+
+   void DisplayCalibration(void);
+   void DisplayGamePlay(void);
+   void DisplayScore(void);
 };
 
 

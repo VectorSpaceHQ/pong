@@ -47,6 +47,11 @@ public:
    void SetCircle(uint32_t _radius);
 
    /***
+    * Draw the specified score at the given coordinates
+    */
+   void DrawScore(uint32_t atX, uint32_t atY, Score score);
+
+   /***
     * Turn the laser on
     */
    void On(void);
