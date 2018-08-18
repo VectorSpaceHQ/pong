@@ -32,13 +32,13 @@ public:
 struct PaddleConf
 {
 public:
-   uint8_t  upPin;
-   uint8_t  downPin;
+   uint8_t  pinA;          // Rotary pin A
+   uint8_t  pinB;          // Rotary pin B
    uint8_t  buttonPin;
 
-   PaddleConf(uint8_t _upPin, uint8_t _downPin, uint8_t _buttonPin):
-      upPin(_upPin),
-      downPin(_downPin),
+   PaddleConf(uint8_t _pinA, uint8_t _pinB, uint8_t _buttonPin):
+      pinA(_pinA),
+      pinB(_pinB),
       buttonPin(_buttonPin)
    {
    }

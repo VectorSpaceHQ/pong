@@ -18,8 +18,8 @@ public:
    PaddleCtrl(PaddleConf& config);
 
 private:
-   uint8_t  upPin;
-   uint8_t  downPin;
+   uint8_t  pinA;       // Rotary Pin A
+   uint8_t  pinB;       // Rotary Pin B
    uint8_t  buttonPin;
 
 };

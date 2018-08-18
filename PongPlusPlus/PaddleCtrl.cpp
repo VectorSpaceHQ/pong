@@ -10,8 +10,8 @@
 
 
 PaddleCtrl::PaddleCtrl(PaddleConf& config):
-   upPin(config.upPin),
-   downPin(config.upPin),
+   pinA(config.pinA),
+   pinB(config.pinA),
    buttonPin(config.buttonPin)
 {
 }
