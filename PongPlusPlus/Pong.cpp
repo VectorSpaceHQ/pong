@@ -8,22 +8,24 @@
 
 
 Pong::Pong():
-   hardware(),
-   display(),
-   gameStatus(),
+   hardware(),                            // All the hardware settings
+   display(),                             // Model display settings
+   gameStatus(),                          // Model game status
 
-   engine(display,                  // Display Settings
-          gameStatus),              // Game Status
+   controller(hardware.leftPaddle,        // Left paddle configuration
+              hardware.rightPaddle),      // Right paddle configuration
+
+   engine(display,                        // Display settings
+          gameStatus,                     // Game status
+          controller.leftPaddleStatus,    // Left paddle status
+          controller.rightPaddleStatus),  // Right paddle status
 
    view(
-      display,                      // Display Settings
-      gameStatus,                   // Game Status
-      hardware.leftPlayerLaser,     // Left paddle laser configuration
-      hardware.rightPlayerLaser,    // Right paddle laser configuration
-      hardware.ballLaser ),         // Ball laser configuration
-
-   controller(hardware.leftPaddle,  // Left paddle configuration
-              hardware.rightPaddle) // Right paddle configuration
+      display,                            // Display settings
+      gameStatus,                         // Game status
+      hardware.leftPlayerLaser,           // Left paddle laser configuration
+      hardware.rightPlayerLaser,          // Right paddle laser configuration
+      hardware.ballLaser )                // Ball laser configuration
 {
 }
 

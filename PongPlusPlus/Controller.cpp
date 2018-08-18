@@ -7,10 +7,14 @@
 
 #include "Configs.h"
 #include "Controller.h"
+#include "PaddleStatus.h"
+#include "PaddleCtrl.h"
 
 
 Controller::Controller(PaddleConf& leftPaddleConf,
                        PaddleConf& rightPaddleConf):
+   leftPaddleStatus(),
+   rightPaddleStatus(),
    leftPaddle(leftPaddleConf),
    rightPaddle(rightPaddleConf)
 {
@@ -19,6 +23,6 @@ Controller::Controller(PaddleConf& leftPaddleConf,
 
 void Controller::Run(void)
 {
-   // Hmm.... is there anything to do here?? Perhaps debounce the button?
+   // TODO: Update paddle status based on PaddleCtrl???
 }
 

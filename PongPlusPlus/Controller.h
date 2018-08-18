@@ -11,6 +11,7 @@
 
 #include "Configs.h"
 #include "PaddleCtrl.h"
+#include "PaddleStatus.h"
 
 
 enum Paddles
@@ -31,10 +32,12 @@ public:
 
    void Run(void);
 
-private:
-   PaddleCtrl  leftPaddle;
-   PaddleCtrl  rightPaddle;
+   PaddleStatus   leftPaddleStatus;
+   PaddleStatus   rightPaddleStatus;
 
+private:
+   PaddleCtrl     leftPaddle;
+   PaddleCtrl     rightPaddle;
 };
 
 

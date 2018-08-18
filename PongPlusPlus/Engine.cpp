@@ -9,10 +9,14 @@
 #include "Model.h"
 
 
-Engine::Engine(Model::DisplaySettings& _display,
-               Model::GameStatus&      _gameStatus):
+Engine::Engine(Model::DisplaySettings&    _display,
+               Model::GameStatus&         _gameStatus,
+               PaddleStatus&             _leftPaddle,
+               PaddleStatus&             _rightPaddle):
    display(_display),
-   gameStatus(_gameStatus)
+   gameStatus(_gameStatus),
+   leftPaddle(_leftPaddle),
+   rightPaddle(_rightPaddle)
 {
 }
 
