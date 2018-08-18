@@ -3,9 +3,9 @@
 #define __pong_h__
 
 
-#include "Configs.h"
 #include "Controller.h"
 #include "Engine.h"
+#include "HwConfig.h"
 #include "Model.h"
 #include "View.h"
 
@@ -18,15 +18,9 @@ public:
    void Run();
 
 private:
+   HwConfig                hardware;
    Model::DisplaySettings  display;
    Model::GameStatus       gameStatus;
-
-   LaserConf               leftPlayerLaser;
-   LaserConf               rightPlayerLaser;
-   LaserConf               ballLaser;
-
-   PaddleConf              leftPaddle;
-   PaddleConf              rightPaddle;
 
    Engine                  engine;
    View                    view;
