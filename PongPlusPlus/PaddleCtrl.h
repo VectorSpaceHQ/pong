@@ -11,17 +11,30 @@
 #include <stdint.h>
 
 #include "Configs.h"
+#include "PaddleStatus.h"
+#include "ScheduledInterval.h"
 
-class PaddleCtrl
+
+class PaddleCtrl: public ScheduledInterval
 {
 public:
-   PaddleCtrl(PaddleConf& config);
+   PaddleCtrl(PaddleConf&     config,
+              PaddleStatus&   _status);
 
 private:
-   uint8_t  pinA;       // Rotary Pin A
-   uint8_t  pinB;       // Rotary Pin B
-   uint8_t  buttonPin;
+   uint8_t              pinA;          // Rotary Pin A
+   uint8_t              pinB;          // Rotary Pin B
+   uint8_t              buttonPin;
+   PaddleStatus&        paddleStatus;
+   PaddleStatus         hwStatus;
+   bool                 previousButtonState;
+   uint32_t             updateCount;
+   uint32_t             msCount;
 
+   void Update();
+   void UpdatePaddleStatus();
+   void CheckRotaryEncoder();
+   void CheckButton();
 };
 
 

@@ -16,13 +16,44 @@ struct PaddleStatus
 {
 
 public:
-   bool        buttonPressed;
-   uint32_t    position;
+   bool        buttonPressed; // Whether the button is pressed
+   uint32_t    buttonTime;    // Time in ms since last button state change
+   int16_t     position;      // The current position within min - max bounds
 
+private:
+   int16_t     minPosition;
+   int16_t     maxPosition;
+
+public:
    PaddleStatus():
       buttonPressed(false),
-      position(0)
+      buttonTime(0),
+      position(0),            // Default to the middle
+      minPosition(-32768),    // Default to absolute min limitation of the type
+      maxPosition(32767)      // Default to absolute max limitation of the type
    {
+   }
+
+   void Increment(int16_t value)
+   {
+      uint32_t newPos = position + value;
+
+      if(newPos > maxPosition)
+      {
+         newPos = maxPosition;
+      }
+      else if(newPos <= minPosition)
+      {
+         newPos = minPosition;
+      }
+
+      position = static_cast<int16_t>(newPos);
+   }
+
+   void SetLimits(int16_t _min, int16_t _max)
+   {
+      minPosition = _min;
+      maxPosition = _max;
    }
 
 };

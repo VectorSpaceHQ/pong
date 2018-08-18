@@ -18,14 +18,17 @@ Controller::Controller(PaddleConf& leftPaddleConf,
    ScheduledInterval(CONTROLLER_LOOP_INTERVAL),
    leftPaddleStatus(),
    rightPaddleStatus(),
-   leftPaddle(leftPaddleConf),
-   rightPaddle(rightPaddleConf)
+   leftPaddle(leftPaddleConf,
+              leftPaddleStatus),
+   rightPaddle(rightPaddleConf,
+               rightPaddleStatus)
 {
 }
 
 
 void Controller::Update(void)
 {
-   // TODO: Update paddle status based on PaddleCtrl???
+   leftPaddle.Run();
+   rightPaddle.Run();
 }
 
