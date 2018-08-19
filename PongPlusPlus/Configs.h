@@ -32,13 +32,13 @@ public:
 struct PaddleConf
 {
 public:
-   uint8_t  pinA;          // Rotary pin A
-   uint8_t  pinB;          // Rotary pin B
+   uint8_t  DT;          // Rotary Encoder DT pin
+   uint8_t  CLK;          // Rotary Encoder CLK pin
    uint8_t  buttonPin;
 
-   PaddleConf(uint8_t _pinA, uint8_t _pinB, uint8_t _buttonPin):
-      pinA(_pinA),
-      pinB(_pinB),
+   PaddleConf(uint8_t _DT, uint8_t _CLK, uint8_t _buttonPin):
+      DT(_DT),
+      CLK(_CLK),
       buttonPin(_buttonPin)
    {
    }

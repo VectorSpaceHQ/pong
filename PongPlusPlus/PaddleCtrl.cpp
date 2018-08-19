@@ -20,8 +20,8 @@
 PaddleCtrl::PaddleCtrl(PaddleConf&     config,
                        PaddleStatus&   _status):
    ScheduledInterval(PADDLE_CHECK_INTERVAL),
-   pinA(config.pinA),
-   pinB(config.pinB),
+   DT(config.DT),
+   CLK(config.CLK),
    buttonPin(config.buttonPin),
    paddleStatus(_status),
    hwStatus(_status),

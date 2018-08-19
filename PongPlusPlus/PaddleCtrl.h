@@ -22,8 +22,8 @@ public:
               PaddleStatus&   _status);
 
 private:
-   uint8_t              pinA;          // Rotary Pin A
-   uint8_t              pinB;          // Rotary Pin B
+   uint8_t              DT;          // Rotary Encoder DT Pin
+   uint8_t              CLK;          // Rotary Encoder CLK Pin
    uint8_t              buttonPin;
    PaddleStatus&        paddleStatus;
    PaddleStatus         hwStatus;
