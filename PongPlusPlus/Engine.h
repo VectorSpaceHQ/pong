@@ -33,7 +33,6 @@ private:
    PaddleStatus&           rightPaddle;
 
    ButtonState             buttonState;
-   uint32_t                buttonCntr;
 
    void RunCalibration();
    void CheckButtonState();

@@ -21,8 +21,7 @@ Engine::Engine(Model::DisplaySettings&    _display,
    gameStatus(_gameStatus),
    leftPaddle(_leftPaddle),
    rightPaddle(_rightPaddle),
-   buttonState(ButtonStateReset),
-   buttonCntr(0)
+   buttonState(ButtonStateReset)
 {
 }
 
@@ -83,26 +82,20 @@ void Engine::RunCalibration()
 
 void Engine::CheckButtonState()
 {
-   // For now a simple counter debounce algorithm
-   if(++buttonCntr > MIN_BUTTON_CHECK_ITER)
+   if(leftPaddle.buttonPressed && rightPaddle.buttonPressed)
    {
-      buttonCntr = 0;
-
-      if(leftPaddle.buttonPressed && rightPaddle.buttonPressed)
-      {
-         buttonState = ButtonStateBoth;
-      }
-      else if(leftPaddle.buttonPressed)
-      {
-         buttonState = ButtonStateLeft;
-      }
-      else if(rightPaddle.buttonPressed)
-      {
-         buttonState = ButtonStateRight;
-      }
-      else
-      {
-         buttonState == ButtonStateNone;
-      }
+      buttonState = ButtonStateBoth;
+   }
+   else if(leftPaddle.buttonPressed)
+   {
+      buttonState = ButtonStateLeft;
+   }
+   else if(rightPaddle.buttonPressed)
+   {
+      buttonState = ButtonStateRight;
+   }
+   else
+   {
+      buttonState == ButtonStateNone;
    }
 }
