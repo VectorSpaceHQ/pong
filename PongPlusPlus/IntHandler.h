@@ -19,13 +19,6 @@ public:
    {
       uint8_t        pinNum;
       IntHandler*    handler;
-
-      IntHandler_t(uint8_t _pinNum, IntHandler* _handler):
-         pinNum(_pinNum),
-         handler(_handler)
-      {
-      }
-
    };
 
    /***

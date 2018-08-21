@@ -13,13 +13,16 @@
 
 #include "IntHandler.h"
 
-static LinkedList<IntHandler::IntHandler_t*>   handlerList;
+static LinkedList<IntHandler::IntHandler_t*>   handlerList = LinkedList<IntHandler::IntHandler_t*>();
 
 void IntHandler::RegisterInterrupt(uint8_t pin, IntHandler* handler)
 {
    if(handler != 0)
    {
-      handlerList.add(new IntHandler_t(pin, handler));
+      IntHandler_t* newEntry = new IntHandler_t();
+      newEntry->pinNum = pin;
+      newEntry->handler = handler;
+      handlerList.add(newEntry);
    }
 }
 
