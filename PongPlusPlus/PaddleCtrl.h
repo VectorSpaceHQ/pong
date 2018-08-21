@@ -11,15 +11,18 @@
 #include <stdint.h>
 
 #include "Configs.h"
+#include "IntHandler.h"
 #include "PaddleStatus.h"
 #include "ScheduledInterval.h"
 
 
-class PaddleCtrl: public ScheduledInterval
+class PaddleCtrl: public ScheduledInterval, IntHandler
 {
 public:
    PaddleCtrl(PaddleConf&     config,
               PaddleStatus&   _status);
+
+   void HandleInterrupt(uint8_t pin);
 
 private:
    uint8_t              DT;          // Rotary Encoder DT Pin

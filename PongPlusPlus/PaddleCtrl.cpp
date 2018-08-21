@@ -8,6 +8,7 @@
 #include <Arduino.h>
 
 #include "Configs.h"
+#include "IntHandler.h"
 #include "PaddleCtrl.h"
 #include "PaddleStatus.h"
 #include "ScheduledInterval.h"
@@ -17,7 +18,7 @@
 #define BUTTON_DEBOUNCE_TIME_MS     (50)
 
 
-PaddleCtrl::PaddleCtrl(PaddleConf&     config,
+PaddleCtrl::PaddleCtrl(PaddleConf&      config,
                        PaddleStatus&   _status):
    ScheduledInterval(PADDLE_CHECK_INTERVAL),
    DT(config.DT),
@@ -29,6 +30,14 @@ PaddleCtrl::PaddleCtrl(PaddleConf&     config,
    updateCount(0),
    msCount(0)
 {
+   RegisterInterrupt(DT, this);
+   RegisterInterrupt(CLK, this);
+}
+
+
+void HandleInterrup(uint8_t pin)
+{
+
 }
 
 
