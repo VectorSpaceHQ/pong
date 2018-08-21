@@ -28,6 +28,7 @@ private:
    uint8_t              DT;          // Rotary Encoder DT Pin
    uint8_t              CLK;          // Rotary Encoder CLK Pin
    uint8_t              buttonPin;
+   uint8_t              oldState;
    PaddleStatus&        paddleStatus;
    PaddleStatus         hwStatus;
    bool                 previousButtonState;

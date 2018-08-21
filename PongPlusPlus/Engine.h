@@ -36,6 +36,7 @@ private:
 
    void RunCalibration();
    void CheckButtonState();
+   void PrintButtonState();
 };
 
 #endif  // __engine_h__

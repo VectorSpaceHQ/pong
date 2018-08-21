@@ -17,12 +17,15 @@
 
 #define BUTTON_DEBOUNCE_TIME_MS     (50)
 
+#define  UP_MASK     (0x66)
+#define  DOWN_MASK   (0x99)
 
 PaddleCtrl::PaddleCtrl(PaddleConf&      config,
                        PaddleStatus&   _status):
    ScheduledInterval(PADDLE_CHECK_INTERVAL),
    DT(config.DT),
    CLK(config.CLK),
+   oldState(0),
    buttonPin(config.buttonPin),
    paddleStatus(_status),
    hwStatus(_status),
@@ -35,16 +38,31 @@ PaddleCtrl::PaddleCtrl(PaddleConf&      config,
 }
 
 
-void HandleInterrup(uint8_t pin)
+void PaddleCtrl::HandleInterrupt(uint8_t pin)
 {
+   uint8_t newState  = ((digitalRead(DT) << 1) | digitalRead(CLK));
+   uint8_t criterion = newState ^ oldState;
 
+   if( (criterion == 1) || (criterion == 2) )
+   {
+      if( UP_MASK & (1 << ( 2 * oldState + newState / 2) ) )
+      {
+         hwStatus.position++;
+      }
+      else
+      {
+         hwStatus.position--;       // upMask = ~downMask
+      }
+   }
+
+   oldState = newState;        // Save new state
 }
 
 
 void PaddleCtrl::Update()
 {
    // Check the rotary encoder and button every time we're called
-   CheckRotaryEncoder();
+   //CheckRotaryEncoder();
    CheckButton();
 
    // Periodically update the external paddle status base on our current state

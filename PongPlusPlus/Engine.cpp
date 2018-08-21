@@ -5,6 +5,8 @@
  *      Author: athiessen
  */
 
+#include <Arduino.h>
+
 #include "Engine.h"
 #include "Model.h"
 #include "Timing.h"
@@ -23,6 +25,7 @@ Engine::Engine(Model::DisplaySettings&    _display,
    rightPaddle(_rightPaddle),
    buttonState(ButtonStateReset)
 {
+   Serial.begin(115200);
 }
 
 
@@ -82,6 +85,8 @@ void Engine::RunCalibration()
 
 void Engine::CheckButtonState()
 {
+   PrintButtonState();
+
    if(leftPaddle.buttonPressed && rightPaddle.buttonPressed)
    {
       buttonState = ButtonStateBoth;
@@ -98,4 +103,18 @@ void Engine::CheckButtonState()
    {
       buttonState == ButtonStateNone;
    }
+}
+
+
+void Engine::PrintButtonState()
+{
+   Serial.print("Left( ");
+   Serial.print(leftPaddle.position);
+   Serial.print(", ");
+   Serial.print(leftPaddle.buttonPressed);
+   Serial.print(" );  Right( ");
+   Serial.print(rightPaddle.position);
+   Serial.print(", ");
+   Serial.print(rightPaddle.buttonPressed);
+   Serial.println(" )");
 }
