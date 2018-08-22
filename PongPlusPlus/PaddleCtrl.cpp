@@ -17,8 +17,6 @@
 
 #define BUTTON_DEBOUNCE_TIME_MS     (50)
 
-#define  UP_MASK     (0x66)
-#define  DOWN_MASK   (0x99)
 
 PaddleCtrl::PaddleCtrl(PaddleConf&      config,
                        PaddleStatus&   _status):
@@ -33,29 +31,7 @@ PaddleCtrl::PaddleCtrl(PaddleConf&      config,
    updateCount(0),
    msCount(0)
 {
-   RegisterInterrupt(DT, this);
-   RegisterInterrupt(CLK, this);
-}
-
-
-void PaddleCtrl::HandleInterrupt(uint8_t pin)
-{
-   uint8_t newState  = ((digitalRead(DT) << 1) | digitalRead(CLK));
-   uint8_t criterion = newState ^ oldState;
-
-   if( (criterion == 1) || (criterion == 2) )
-   {
-      if( UP_MASK & (1 << ( 2 * oldState + newState / 2) ) )
-      {
-         hwStatus.position++;
-      }
-      else
-      {
-         hwStatus.position--;       // upMask = ~downMask
-      }
-   }
-
-   oldState = newState;        // Save new state
+   IntHandler::GetInstance()->RegisterInterrupt(DT, CLK, hwStatus.position);
 }
 
 
@@ -80,6 +56,7 @@ void PaddleCtrl::UpdatePaddleStatus()
    // and reset value
    if(hwStatus.position != 0)
    {
+      Serial.println(hwStatus.position);
       paddleStatus.Increment(hwStatus.position);
       hwStatus.position = 0;
    }
@@ -110,7 +87,7 @@ void PaddleCtrl::CheckButton()
 
    if(hwStatus.buttonTime >= BUTTON_DEBOUNCE_TIME_MS)
    {
-      bool currentStatus = (digitalRead(buttonPin) == HIGH) ? true : false;
+      bool currentStatus = (digitalRead(buttonPin) == LOW) ? true : false;
 
       if(currentStatus == previousButtonState)
       {

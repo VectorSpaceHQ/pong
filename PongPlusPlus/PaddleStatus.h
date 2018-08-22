@@ -36,7 +36,7 @@ public:
 
    void Increment(int16_t value)
    {
-      uint32_t newPos = position + value;
+      int32_t newPos = position + value;
 
       if(newPos > maxPosition)
       {

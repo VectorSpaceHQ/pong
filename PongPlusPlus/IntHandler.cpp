@@ -8,23 +8,20 @@
 // Need to define this before including EnableInterrupt
 #define EI_ARDUINO_INTERRUPTED_PIN
 
-#include "EnableInterrupt.h"
-#include "LinkedList.h"
+#include <Arduino.h>
+#include <EnableInterrupt.h>
+#include <LinkedList.h>
 
 #include "IntHandler.h"
 
-static LinkedList<IntHandler::IntHandler_t*>   handlerList = LinkedList<IntHandler::IntHandler_t*>();
 
-void IntHandler::RegisterInterrupt(uint8_t pin, IntHandler* handler)
-{
-   if(handler != 0)
-   {
-      IntHandler_t* newEntry = new IntHandler_t();
-      newEntry->pinNum = pin;
-      newEntry->handler = handler;
-      handlerList.add(newEntry);
-   }
-}
+#define  UP_MASK     (0x66)
+#define  DOWN_MASK   (0x99)
+
+IntHandler* IntHandler::theHandler = nullptr;
+static LinkedList<IntHandler_t*>   handlerList = LinkedList<IntHandler_t*>();
+
+IntHandler::IntHandler() { }
 
 
 IntHandler::~IntHandler()
@@ -33,9 +30,31 @@ IntHandler::~IntHandler()
    //    - Iterate through list
    //    - free memory for list item
    //    - delete list entry
+   handlerList.clear();
+}
 
-   // For now, just clear the list
-   //handlerList.clear();
+
+IntHandler* IntHandler::GetInstance()
+{
+   if(!theHandler)
+   {
+      theHandler = new IntHandler();
+   }
+
+   return theHandler;
+}
+
+
+void IntHandler::RegisterInterrupt(uint8_t _dtPin, uint8_t _clkPin, int16_t& _pos)
+{
+   IntHandler_t* newEntry = new IntHandler_t(_pos);
+   newEntry->dtPin = _dtPin;
+   newEntry->clkPin = _clkPin;
+   newEntry->position = _pos;
+   newEntry->oldState = 0;
+   handlerList.add(newEntry);
+   enableInterrupt(_dtPin, Isr, CHANGE);
+   enableInterrupt(_clkPin, Isr, CHANGE);
 }
 
 
@@ -44,20 +63,36 @@ void IntHandler::Isr()
    bool  found = false;
    int   cntr  = 0;
    int   size  = handlerList.size();
+   IntHandler_t* entry;
 
    while(!found && (cntr < size))
    {
-      IntHandler_t* entry = handlerList.get(cntr);
+      entry = handlerList.get(cntr);
 
-      if(entry != 0)
+      if(entry != nullptr)
       {
-         if(entry->pinNum == arduinoInterruptedPin)
+         if((entry->dtPin == arduinoInterruptedPin) || (entry->clkPin == arduinoInterruptedPin))
          {
-            entry->handler->HandleInterrupt(arduinoInterruptedPin);
+            uint8_t newState  = ((digitalRead(entry->dtPin) << 1) | digitalRead(entry->clkPin));
+            uint8_t criterion = newState ^ entry->oldState;
+
+            if( (criterion == 1) || (criterion == 2) )
+            {
+               if( UP_MASK & (1 << ( 2 * entry->oldState + newState / 2) ) )
+               {
+                  entry->position++;
+               }
+               else
+               {
+                  entry->position--;       // upMask = ~downMask
+               }
+            }
+
+            entry->oldState = newState;        // Save new state
+
             found = true;
             break;
          }
       }
    }
 }
-
