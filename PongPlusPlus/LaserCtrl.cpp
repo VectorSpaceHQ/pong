@@ -7,10 +7,10 @@
 #include "Shapes.h"
 
 // TODO: If ymax, xmin, etc, never change, than use #defines instead of variables
-#define  SERVO_MIN_X    (544)
-#define  SERVO_MAX_X    (2400)
-#define  SERVO_MIN_Y    (544)
-#define  SERVO_MAX_Y    (2400)
+#define  SERVO_MIN_X    (1000)
+#define  SERVO_MAX_X    (2000)
+#define  SERVO_MIN_Y    (1000)
+#define  SERVO_MAX_Y    (2000)
 
 // Define these for now.
 // TODO: Find a way to pass these in
