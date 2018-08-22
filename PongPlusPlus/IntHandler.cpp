@@ -98,7 +98,8 @@ void IntHandler::Isr()
             break;
          }
 
-         ++cntr;
       }
+
+      ++cntr;
    }
 }
