@@ -37,8 +37,7 @@ PaddleCtrl::PaddleCtrl(PaddleConf&      config,
 
 void PaddleCtrl::Update()
 {
-   // Check the rotary encoder and button every time we're called
-   //CheckRotaryEncoder();
+   // Check the button every time we're called
    CheckButton();
 
    // Periodically update the external paddle status base on our current state
@@ -56,21 +55,12 @@ void PaddleCtrl::UpdatePaddleStatus()
    // and reset value
    if(hwStatus.position != 0)
    {
-      Serial.println(hwStatus.position);
       paddleStatus.Increment(hwStatus.position);
       hwStatus.position = 0;
    }
 
    paddleStatus.buttonPressed = hwStatus.buttonPressed;
    paddleStatus.buttonTime = hwStatus.buttonTime;
-}
-
-
-void PaddleCtrl::CheckRotaryEncoder()
-{
-   // TODO: This is where we need to update internalStatus.position from the Rotary Encoder value
-   //       This can be polled or interrupt driven...
-   //       except, if we do interrupts, we will need to do a little fancy C++ foot-work
 }
 
 

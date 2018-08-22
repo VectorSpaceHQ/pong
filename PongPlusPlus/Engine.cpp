@@ -112,9 +112,13 @@ void Engine::PrintButtonState()
    Serial.print(leftPaddle.position);
    Serial.print(", ");
    Serial.print(leftPaddle.buttonPressed);
+   Serial.print(", ");
+   Serial.print(leftPaddle.buttonTime);
    Serial.print(" );  Right( ");
    Serial.print(rightPaddle.position);
    Serial.print(", ");
    Serial.print(rightPaddle.buttonPressed);
+   Serial.print(", ");
+   Serial.print(rightPaddle.buttonTime);
    Serial.println(" )");
 }

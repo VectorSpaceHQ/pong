@@ -36,7 +36,7 @@ IntHandler::~IntHandler()
 
 IntHandler* IntHandler::GetInstance()
 {
-   if(!theHandler)
+   if(theHandler == nullptr)
    {
       theHandler = new IntHandler();
    }
@@ -55,6 +55,10 @@ void IntHandler::RegisterInterrupt(uint8_t _dtPin, uint8_t _clkPin, int16_t& _po
    handlerList.add(newEntry);
    enableInterrupt(_dtPin, Isr, CHANGE);
    enableInterrupt(_clkPin, Isr, CHANGE);
+
+   Serial.print(_dtPin);
+   Serial.print(", ");
+   Serial.println(_clkPin);
 }
 
 
@@ -93,6 +97,8 @@ void IntHandler::Isr()
             found = true;
             break;
          }
+
+         ++cntr;
       }
    }
 }
