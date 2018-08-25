@@ -6,9 +6,22 @@
  */
 
 
+#include <Arduino.h>
 //#include <BasicLinearAlgebra.h>
 
 #include "Shape.h"
+
+
+void Vertex::Log()
+{
+   Serial.print("Vertex: (");
+   Serial.print((int)x);
+   Serial.print(", ");
+   Serial.print((int)y);
+   Serial.print(", ");
+   Serial.print((bool)draw);
+   Serial.println(")");
+}
 
 
 Shape::Shape():
@@ -58,6 +71,14 @@ void Shape::Add(CoordType x, CoordType y)
    }
 }
 
+
+void Shape::Log()
+{
+   for(uint32_t cntr = 0; cntr < numVertices; cntr++)
+   {
+      vertices[cntr].Log();
+   }
+}
 
 void Shape::AddVertex(CoordType x, CoordType y, bool draw)
 {

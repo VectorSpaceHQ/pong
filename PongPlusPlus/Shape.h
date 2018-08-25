@@ -20,9 +20,12 @@ typedef int32_t CoordType;
 
 struct Vertex
 {
+public:
    CoordType   x;
    CoordType   y;
    bool        draw;
+
+   void Log();
 };
 
 
@@ -40,6 +43,7 @@ public:
    void AddVertex(CoordType x, CoordType y, bool draw);
    void Scale(uint32_t scale);
    void Add(CoordType x, CoordType y);
+   void Log();
 
 private:
 

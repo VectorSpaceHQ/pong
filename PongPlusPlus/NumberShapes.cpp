@@ -5,6 +5,7 @@
  *      Author: athiessen
  */
 
+#include <Arduino.h>
 
 #include "NumberShapes.h"
 
@@ -71,6 +72,11 @@ NumberShapes::NumberShapes()
 {
    numerals[0] = Shape(6, &numeralVertices[0][0]);
    numerals[1] = Shape(2, &numeralVertices[1][0]);
+
+   Serial.print("Numeral 0: ");
+   numerals[0].Log();
+   Serial.print("Numeral 1: ");
+   numerals[1].Log();
 }
 
 

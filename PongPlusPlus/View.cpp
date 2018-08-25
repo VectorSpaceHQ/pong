@@ -1,4 +1,6 @@
 
+#include <Arduino.h>
+
 #include "LaserCtrl.h"
 #include "Model.h"
 #include "ScheduledInterval.h"
@@ -21,10 +23,13 @@ View::View(Model::DisplaySettings&  _display,
    ScheduledInterval(VIEW_LOOP_INTERVAL),
    display(_display),
    gameStatus(_gameStatus),
-   leftPaddleLaser(_leftLaserConf),
-   rightPaddleLaser(_rightLaserConf),
-   ballLaser(_ballLaserConf)
+   leftPaddleLaser(_leftLaserConf, "LeftPaddle"),
+   rightPaddleLaser(_rightLaserConf, "RightPaddle"),
+   ballLaser(_ballLaserConf, "Ball")
 {
+   // Wait for our lasers to get to their initial position
+   delay(1);
+
    ballLaser.SetShape(numberShapes[0], 10);
    ballLaser.SetPosition(0, 0);
 

@@ -18,7 +18,7 @@ public:
     * @param conf - The configuration for the laser
     * @param laserPin - The pin number for the laser control
     */
-   LaserCtrl(LaserConf& conf);
+   LaserCtrl(LaserConf& conf, const char* _name);
 
    /***
     *
@@ -30,7 +30,7 @@ public:
     * @param atX - The X position at which to draw the shape
     * @param atY - The Y position at which to draw the shape
     */
-   void SetPosition(uint32_t atX, uint32_t atY);
+   void SetPosition(CoordType atX, CoordType atY);
    void ResetShape();
    void Step();
 
@@ -55,6 +55,7 @@ public:
    void Toggle(void);
 
 private:
+   const char*       name;
    uint32_t    x;
    uint32_t    y;
    uint32_t    hskew;

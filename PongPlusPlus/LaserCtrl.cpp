@@ -18,7 +18,8 @@
 #define  US_PER_STEP    (200)
 
 
-LaserCtrl::LaserCtrl(LaserConf& conf):
+LaserCtrl::LaserCtrl(LaserConf& conf, const char* _name):
+   name(_name),
    x(SERVO_MID_X),
    y(SERVO_MID_Y),
    hskew(0),
@@ -54,11 +55,16 @@ void LaserCtrl::SetShape(const Shape& _shape, uint32_t scale)
    shape.Scale(scale);     // Scale the shape
    shape.Add(x, y);        // Center the shape
 
+   Serial.print("Laser '");
+   Serial.print(name);
+   Serial.print("' New Shape: ");
+   shape.Log();
+
    ResetShape();
 }
 
 
-void LaserCtrl::SetPosition(uint32_t atX, uint32_t atY)
+void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
 {
    // Update our X/Y coordinates mapping from engine coordinates to servo values
    // TODO:: Need a percentage scale
@@ -78,8 +84,10 @@ void LaserCtrl::SetPosition(uint32_t atX, uint32_t atY)
 
 void LaserCtrl::ResetShape()
 {
-   Off();
    currentVertex = 0;
+
+   // Get our next destination
+   Move(shape.vertices[currentVertex]);
 }
 
 
@@ -90,7 +98,7 @@ void LaserCtrl::Step()
    if(waitTime <= 0)
    {
       // Have we reached our destination?
-      if( (currentPosition.x = destination.x) && (currentPosition.y = destination.y))
+      if( (currentPosition.x == destination.x) && (currentPosition.y == destination.y))
       {
          if(++currentVertex > shape.numVertices)
          {
@@ -98,19 +106,19 @@ void LaserCtrl::Step()
          }
 
          // Get our next destination
-         destination = shape.vertices[currentVertex];
+         Move(shape.vertices[currentVertex]);
       }
 
       CoordType   stepX = step.x;
       CoordType   stepY = step.y;
 
 #warning Probably need to do something with ABS here
-      if((destination.x - currentPosition.x) > step.x)
+      if((destination.x - currentPosition.x) < step.x)
       {
          stepX = (destination.x - currentPosition.x);
       }
 
-      if((destination.y - currentPosition.y) > step.y)
+      if((destination.y - currentPosition.y) < step.y)
       {
          stepY = (destination.y - currentPosition.y);
       }
@@ -125,7 +133,15 @@ void LaserCtrl::Step()
       }
 
       currentPosition.x += stepX;
-      currentPosition.y += stepX;
+      currentPosition.y += stepY;
+
+      xServo.writeMicroseconds(currentPosition.x);
+      yServo.writeMicroseconds(currentPosition.y);
+
+      Serial.print("Laser '");
+      Serial.print(name);
+      Serial.print("' Current Pos ");
+      currentPosition.Log();
    }
 }
 
@@ -231,5 +247,19 @@ void LaserCtrl::Move(Vertex& dest)
    step.y = diffY / shape.scale;
    step.draw = destination.draw;
 
+   if(step.x >= step.y)
+   {
+      waitTime = (step.x * US_PER_STEP);
+   }
+   else
+   {
+      waitTime = (step.y * US_PER_STEP);
+   }
+
    SetLaser(destination.draw);
+
+   Serial.print("Laser '");
+   Serial.print(name);
+   Serial.print("' New Destination ");
+   destination.Log();
 }
