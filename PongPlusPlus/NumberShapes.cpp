@@ -37,7 +37,16 @@ NumberShapes::NumberShapes():
 
    // Vertices for Shape '1'
    numerals[1].AddVertex(  0,  2, false);
-   numerals[1].AddVertex(  0, -2, true);
+   numerals[1].AddVertex(  0, -2, true);     //  |
+
+   // Vertices for Shape '1'
+   numerals[2].AddVertex( -2,  2, false);    // Start top left
+   numerals[2].AddVertex(  2,  2, true );    //  -
+   numerals[2].AddVertex(  2,  0, true );    //   |
+   numerals[2].AddVertex( -2,  0, true );    //  -
+   numerals[2].AddVertex( -2, -2, true );    // |
+   numerals[2].AddVertex(  2, -2, true );    //  _
+
 }
 
 

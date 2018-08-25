@@ -52,7 +52,7 @@ Shape::Shape(const Shape& other)
 }
 
 
-void Shape::Scale(uint32_t _scale)
+void Shape::Scale(CoordType _scale)
 {
    scale = _scale;
 

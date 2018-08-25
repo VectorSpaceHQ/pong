@@ -31,16 +31,8 @@ View::View(Model::DisplaySettings&  _display,
    // Wait for our lasers to get to their initial position
    delay(100);
 
-   ballLaser.SetShape(numberShapes[1], 10);
+   ballLaser.SetShape(numberShapes[2], 20);
    ballLaser.SetPosition(0, 0);
-
-   /*
-   leftPaddleLaser.SetRectangle(gameStatus.leftPaddleShape.width,
-                                gameStatus.leftPaddleShape.height);
-   rightPaddleLaser.SetRectangle(gameStatus.rightPaddleShape.width,
-                                 gameStatus.rightPaddleShape.height);
-   ballLaser.SetCircle(gameStatus.ballShape.radius);
-   */
 }
 
 

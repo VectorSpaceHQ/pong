@@ -21,7 +21,7 @@
 
 
 LaserCtrl::LaserCtrl(LaserConf& conf, const char* _name):
-   ScheduledInterval(100),
+   ScheduledInterval(50),
    name(_name),
    x(SERVO_MID_X),
    y(SERVO_MID_Y),
