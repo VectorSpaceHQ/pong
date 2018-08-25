@@ -6,7 +6,9 @@
 #include "Configs.h"
 #include "LaserCtrl.h"
 #include "Model.h"
+#include "NumberShapes.h"
 #include "ScheduledInterval.h"
+#include "Shape.h"
 
 
 class View: public ScheduledInterval
@@ -20,6 +22,7 @@ public:
 
    void  Update(void);
    void  Calibrate(void);
+   static NumberShapes           numberShapes;
 
 private:
    Model::DisplaySettings& display;
