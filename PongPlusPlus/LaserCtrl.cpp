@@ -11,15 +11,13 @@
 #define  SERVO_MAX_X    (2000)
 #define  SERVO_MIN_Y    (1000)
 #define  SERVO_MAX_Y    (2000)
+#define  SERVO_MID_X    ((SERVO_MAX_X + SERVO_MIN_X) / 2)
+#define  SERVO_MID_Y    ((SERVO_MAX_Y + SERVO_MIN_Y) / 2)
 
-// Define these for now.
-// TODO: Find a way to pass these in
-#define  GAME_WIDTH     (800)
-#define  GAME_HEIGHT    (600)
 
 LaserCtrl::LaserCtrl(LaserConf& conf):
-   x(0),
-   y(0),
+   x(SERVO_MID_X),
+   y(SERVO_MID_Y),
    hskew(0),
    vskew(0),
    laserOn(false),
@@ -38,16 +36,26 @@ void LaserCtrl::SetShape(const Shape& _shape, uint32_t scale)
 {
    // Copy the shape
    shape = _shape;
-   shape.Scale(scale);
+   shape.Scale(scale);     // Scale the shape
+   shape.Add(x, y);        // Center the shape
 }
 
 
 void LaserCtrl::SetPosition(uint32_t atX, uint32_t atY)
 {
    // Update our X/Y coordinates mapping from engine coordinates to servo values
-   // TODO:: Need game_width and game_height passed from the engine
-   x = SERVO_MIN_X + atX * (SERVO_MAX_X - SERVO_MIN_X) / GAME_WIDTH;
-   y = SERVO_MIN_Y + atY * (SERVO_MAX_Y - SERVO_MIN_Y) / GAME_HEIGHT;
+   // TODO:: Need a percentage scale
+
+   // Shift to Laser coordinates
+   CoordType newX = SERVO_MID_X + atX;
+   CoordType newY = SERVO_MID_Y + atY;
+
+   // Move our vertex coordinates the difference
+   shape.Add((newX - x), (newY - y));
+
+   // Update our new coordinates with the new ones
+   x = newX;
+   y = newY;
 }
 
 

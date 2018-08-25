@@ -49,6 +49,16 @@ void Shape::Scale(uint32_t scale)
 }
 
 
+void Shape::Add(CoordType x, CoordType y)
+{
+   for(uint32_t cntr = 0; cntr < numVertices; cntr++)
+   {
+      vertices[cntr].x += x;
+      vertices[cntr].y += y;
+   }
+}
+
+
 void Shape::AddVertex(CoordType x, CoordType y, bool draw)
 {
    if(numVertices < MAX_VERTICES)
