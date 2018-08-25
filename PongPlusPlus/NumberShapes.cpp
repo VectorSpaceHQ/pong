@@ -37,12 +37,7 @@ NumberShapes::NumberShapes():
 
    // Vertices for Shape '1'
    numerals[1].AddVertex(  0,  2, false);
-   numerals[1].AddVertex(  0, -2, false);    // Start top right corner (don't draw going there
-
-   Serial.println("Numeral 0: ");
-   numerals[0].Log();
-   Serial.println("Numeral 1: ");
-   numerals[1].Log();
+   numerals[1].AddVertex(  0, -2, true);
 }
 
 

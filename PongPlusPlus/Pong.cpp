@@ -45,9 +45,11 @@ void Pong::Stop()
 
 void Pong::Run()
 {
-   controller.Run();    // Update paddle HW info
-   engine.Run();        // Run game engine
+   //Serial.println("----------Main----------");
+   //controller.Run();    // Update paddle HW info
+   //engine.Run();        // Run game engine
    view.Run();          // Draw the screen
 
    delayMicroseconds(MAIN_LOOP_TIME);
+   //delay(MAIN_LOOP_TIME);
 }

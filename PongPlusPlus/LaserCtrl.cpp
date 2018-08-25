@@ -93,6 +93,7 @@ void LaserCtrl::ResetShape()
 
 void LaserCtrl::Step()
 {
+   //waitTime -= MAIN_LOOP_TIME * 10;
    waitTime -= MAIN_LOOP_TIME;
 
    if(waitTime <= 0)
@@ -100,7 +101,7 @@ void LaserCtrl::Step()
       // Have we reached our destination?
       if( (currentPosition.x == destination.x) && (currentPosition.y == destination.y))
       {
-         if(++currentVertex > shape.numVertices)
+         if(++currentVertex >= shape.numVertices)
          {
             currentVertex = 0;
          }
@@ -112,7 +113,6 @@ void LaserCtrl::Step()
       CoordType   stepX = step.x;
       CoordType   stepY = step.y;
 
-#warning Probably need to do something with ABS here
       if((destination.x - currentPosition.x) < step.x)
       {
          stepX = (destination.x - currentPosition.x);
@@ -125,12 +125,15 @@ void LaserCtrl::Step()
 
       if(stepX >= stepY)
       {
-         waitTime = (stepX * US_PER_STEP);
+         waitTime = abs(stepX * US_PER_STEP);
       }
       else
       {
-         waitTime = (stepY * US_PER_STEP);
+         waitTime = abs(stepY * US_PER_STEP);
       }
+
+      Serial.print("Step Wait: ");
+      Serial.println(waitTime);
 
       currentPosition.x += stepX;
       currentPosition.y += stepY;
@@ -140,7 +143,7 @@ void LaserCtrl::Step()
 
       Serial.print("Laser '");
       Serial.print(name);
-      Serial.print("' Current Pos ");
+      Serial.println("' Current Pos ");
       currentPosition.Log();
    }
 }
@@ -249,12 +252,15 @@ void LaserCtrl::Move(Vertex& dest)
 
    if(step.x >= step.y)
    {
-      waitTime = (step.x * US_PER_STEP);
+      waitTime = abs(step.x * US_PER_STEP);
    }
    else
    {
-      waitTime = (step.y * US_PER_STEP);
+      waitTime = abs(step.y * US_PER_STEP);
    }
+
+   Serial.print("Wait: ");
+   Serial.println(waitTime);
 
    SetLaser(destination.draw);
 

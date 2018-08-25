@@ -20,7 +20,7 @@ public:
    void Run();
 
 protected:
-   virtual void Update();
+   virtual void Update() = 0;
 
 private:
    uint32_t interval;

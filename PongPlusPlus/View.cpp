@@ -29,9 +29,9 @@ View::View(Model::DisplaySettings&  _display,
    ballLaser(_ballLaserConf, "Ball")
 {
    // Wait for our lasers to get to their initial position
-   delay(1);
+   delay(100);
 
-   ballLaser.SetShape(numberShapes[0], 10);
+   ballLaser.SetShape(numberShapes[1], 10);
    ballLaser.SetPosition(0, 0);
 
    /*
@@ -48,6 +48,7 @@ void View::Update(void)
 {
    ballLaser.Step();
 
+   /*
    switch(gameStatus.gameState)
    {
       case Model::GameStateCalibrate:
@@ -65,6 +66,7 @@ void View::Update(void)
          // TODO: Maybe the Default should be the Vector Space logo?  :-)
          break;
    }
+   */
 }
 
 
