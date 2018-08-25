@@ -33,14 +33,15 @@ public:
    Shape(uint32_t _numVertices, Vertex* _vertices);
    Shape(const Shape& other);
 
+   uint16_t   scale;
+   uint32_t   numVertices;
+   Vertex     vertices[MAX_VERTICES];
+
    void AddVertex(CoordType x, CoordType y, bool draw);
    void Scale(uint32_t scale);
    void Add(CoordType x, CoordType y);
 
 private:
-   Vertex     vertices[MAX_VERTICES];
-   uint32_t   numVertices;
-   uint16_t   scale;
 
    void CopyVertices(uint32_t _numVertices, const Vertex* _vertices);
 };

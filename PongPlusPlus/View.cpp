@@ -40,6 +40,8 @@ View::View(Model::DisplaySettings&  _display,
 
 void View::Update(void)
 {
+   ballLaser.Step();
+
    switch(gameStatus.gameState)
    {
       case Model::GameStateCalibrate:

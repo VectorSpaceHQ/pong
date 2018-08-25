@@ -31,6 +31,8 @@ public:
     * @param atY - The Y position at which to draw the shape
     */
    void SetPosition(uint32_t atX, uint32_t atY);
+   void ResetShape();
+   void Step();
 
    /***
     * Draw the specified score at the given coordinates
@@ -63,12 +65,23 @@ private:
    uint8_t     laserPin;
    Shape       shape;
    uint32_t    currentVertex;
+   int32_t     waitTime;
+
+   Vertex      currentPosition;
+   Vertex      destination;
+   Vertex      step;
 
    /*
    void DrawRectangle(void);
    void DrawCircle(void);
    */
    void SetLaser(void);
+   void SetLaser(bool onOff);
+
+   /***
+    * Command the laser to move to a new vertex
+    */
+   void Move(Vertex& dest);
 };
 
 #endif    // __laser_ctrl_h__

@@ -5,6 +5,7 @@
 #include "Configs.h"
 #include "LaserCtrl.h"
 #include "Shape.h"
+#include "Timing.h"
 
 // TODO: If ymax, xmin, etc, never change, than use #defines instead of variables
 #define  SERVO_MIN_X    (1000)
@@ -14,6 +15,8 @@
 #define  SERVO_MID_X    ((SERVO_MAX_X + SERVO_MIN_X) / 2)
 #define  SERVO_MID_Y    ((SERVO_MAX_Y + SERVO_MIN_Y) / 2)
 
+#define  US_PER_STEP    (200)
+
 
 LaserCtrl::LaserCtrl(LaserConf& conf):
    x(SERVO_MID_X),
@@ -22,13 +25,25 @@ LaserCtrl::LaserCtrl(LaserConf& conf):
    vskew(0),
    laserOn(false),
    shape(),
-   currentVertex(0)
+   currentVertex(0),
+   waitTime(0),
+   currentPosition(),
+   destination(),
+   step()
 {
+   // Configure the pins
    xServo.attach(conf.xPin);
    yServo.attach(conf.yPin);
    laserPin = conf.laserPin;
-
    pinMode(laserPin, OUTPUT);
+
+   // Turn off and center the laser
+   currentPosition.x = x;
+   currentPosition.y = y;
+   currentPosition.draw = laserOn;
+   SetLaser(currentPosition.draw);
+   xServo.writeMicroseconds(x);
+   yServo.writeMicroseconds(y);
 }
 
 
@@ -38,6 +53,8 @@ void LaserCtrl::SetShape(const Shape& _shape, uint32_t scale)
    shape = _shape;
    shape.Scale(scale);     // Scale the shape
    shape.Add(x, y);        // Center the shape
+
+   ResetShape();
 }
 
 
@@ -56,6 +73,60 @@ void LaserCtrl::SetPosition(uint32_t atX, uint32_t atY)
    // Update our new coordinates with the new ones
    x = newX;
    y = newY;
+}
+
+
+void LaserCtrl::ResetShape()
+{
+   Off();
+   currentVertex = 0;
+}
+
+
+void LaserCtrl::Step()
+{
+   waitTime -= MAIN_LOOP_TIME;
+
+   if(waitTime <= 0)
+   {
+      // Have we reached our destination?
+      if( (currentPosition.x = destination.x) && (currentPosition.y = destination.y))
+      {
+         if(++currentVertex > shape.numVertices)
+         {
+            currentVertex = 0;
+         }
+
+         // Get our next destination
+         destination = shape.vertices[currentVertex];
+      }
+
+      CoordType   stepX = step.x;
+      CoordType   stepY = step.y;
+
+#warning Probably need to do something with ABS here
+      if((destination.x - currentPosition.x) > step.x)
+      {
+         stepX = (destination.x - currentPosition.x);
+      }
+
+      if((destination.y - currentPosition.y) > step.y)
+      {
+         stepY = (destination.y - currentPosition.y);
+      }
+
+      if(stepX >= stepY)
+      {
+         waitTime = (stepX * US_PER_STEP);
+      }
+      else
+      {
+         waitTime = (stepY * US_PER_STEP);
+      }
+
+      currentPosition.x += stepX;
+      currentPosition.y += stepX;
+   }
 }
 
 
@@ -83,7 +154,6 @@ void LaserCtrl::Toggle(void)
    laserOn = !laserOn;
    SetLaser();
 }
-
 
 /*
 void LaserCtrl::DrawRectangle(void)
@@ -143,3 +213,23 @@ void LaserCtrl::SetLaser()
    digitalWrite(laserPin, (laserOn ? HIGH : LOW));
 }
 
+void LaserCtrl::SetLaser(bool onOff)
+{
+   laserOn = onOff;
+   SetLaser();
+}
+
+
+void LaserCtrl::Move(Vertex& dest)
+{
+   destination = dest;
+
+   CoordType diffX = (destination.x - currentPosition.x);
+   CoordType diffY = (destination.y - currentPosition.y);
+
+   step.x = diffX / shape.scale;
+   step.y = diffY / shape.scale;
+   step.draw = destination.draw;
+
+   SetLaser(destination.draw);
+}
