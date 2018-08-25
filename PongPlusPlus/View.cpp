@@ -23,6 +23,7 @@ View::View(Model::DisplaySettings&  _display,
    ScheduledInterval(VIEW_LOOP_INTERVAL),
    display(_display),
    gameStatus(_gameStatus),
+   numberShapes(),
    leftPaddleLaser(_leftLaserConf, "LeftPaddle"),
    rightPaddleLaser(_rightLaserConf, "RightPaddle"),
    ballLaser(_ballLaserConf, "Ball")

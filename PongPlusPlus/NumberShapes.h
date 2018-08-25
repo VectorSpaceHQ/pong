@@ -15,8 +15,8 @@
 class NumberShapes
 {
 private:
-   static Vertex  numeralVertices[MAX_NUMERALS][MAX_VERTICES];
-   static Shape   numerals[MAX_NUMERALS];
+   //Vertex  numeralVertices[MAX_NUMERALS][MAX_VERTICES];
+   Shape   numerals[MAX_NUMERALS];
 
 public:
    NumberShapes();

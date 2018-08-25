@@ -85,7 +85,7 @@ void Engine::RunCalibration()
 
 void Engine::CheckButtonState()
 {
-   PrintButtonState();
+   //PrintButtonState();
 
    if(leftPaddle.buttonPressed && rightPaddle.buttonPressed)
    {

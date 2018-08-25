@@ -22,11 +22,11 @@ public:
 
    void  Update(void);
    void  Calibrate(void);
-   static NumberShapes           numberShapes;
 
 private:
    Model::DisplaySettings& display;
    Model::GameStatus&      gameStatus;
+   NumberShapes            numberShapes;
    LaserCtrl               leftPaddleLaser;
    LaserCtrl               rightPaddleLaser;
    LaserCtrl               ballLaser;

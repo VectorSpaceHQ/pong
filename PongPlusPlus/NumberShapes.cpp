@@ -23,55 +23,22 @@
  *           -2 *            *
  *
  */
-Vertex NumberShapes::numeralVertices[MAX_NUMERALS][MAX_VERTICES] =
+
+NumberShapes::NumberShapes():
+   numerals()
 {
-   {
-      // Vertices for Shape '0'
-      {  2,  2, false },   // Start top right corner (don't draw going there
-      { -2,  2, true  },   // Draw to top left corner
-      { -2, -2, true  },   // Draw to bottom left corner
-      {  2, -2, true  },   // Draw to bottom right corner
-      {  2,  2, true  },   // Draw to top right corner
-      { -2, -2, true  },   // Draw to bottom left corner (the slash through the zero
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false }
-   },
-   {
-      // Vertices for Shape '1'
-      {  0,  2, false },
-      {  0, -2, true  },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false },
-      {  0,  0, false }
-   }
-};
+   // Vertices for Shape '0'
+   numerals[0].AddVertex(  2,  2, false);
+   numerals[0].AddVertex(  2,  2, false);    // Start top right corner (don't draw going there
+   numerals[0].AddVertex( -2,  2, true );    // Draw to top left corner
+   numerals[0].AddVertex( -2, -2, true );    // Draw to bottom left corner
+   numerals[0].AddVertex(  2, -2, true );    // Draw to bottom right corner
+   numerals[0].AddVertex(  2,  2, true );    // Draw to top right corner
+   numerals[0].AddVertex( -2, -2, true );    // Draw to bottom left corner (the slash through the zero
 
-Shape NumberShapes::numerals[MAX_NUMERALS];
-
-
-NumberShapes::NumberShapes()
-{
-   numerals[0] = Shape(6, &numeralVertices[0][0]);
-   numerals[1] = Shape(2, &numeralVertices[1][0]);
+   // Vertices for Shape '1'
+   numerals[1].AddVertex(  0,  2, false);
+   numerals[1].AddVertex(  0, -2, false);    // Start top right corner (don't draw going there
 
    Serial.print("Numeral 0: ");
    numerals[0].Log();
