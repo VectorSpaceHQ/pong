@@ -55,6 +55,7 @@ void LaserCtrl::SetShape(const Shape& _shape, uint32_t scale)
 {
    // Copy the shape
    shape = _shape;
+   //shape.Scale(-1);        // Invert the shape
    shape.Scale(scale);     // Scale the shape
    shape.Add(x, y);        // Center the shape
    ResetShape();

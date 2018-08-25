@@ -10,7 +10,7 @@
 
 #include "Shape.h"
 
-#define  MAX_NUMERALS   (10)
+#define  MAX_NUMERALS   (3)
 
 class NumberShapes
 {
