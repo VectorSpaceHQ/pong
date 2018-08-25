@@ -44,5 +44,4 @@ private:
 };
 
 
-
 #endif   // __shape_h__

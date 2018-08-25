@@ -21,15 +21,17 @@ View::View(Model::DisplaySettings&  _display,
    ScheduledInterval(VIEW_LOOP_INTERVAL),
    display(_display),
    gameStatus(_gameStatus),
-   leftPaddleLaser(ShapeRectangle, _leftLaserConf),
-   rightPaddleLaser(ShapeRectangle, _rightLaserConf),
-   ballLaser(ShapeCircle, _ballLaserConf)
+   leftPaddleLaser(_leftLaserConf),
+   rightPaddleLaser(_rightLaserConf),
+   ballLaser(_ballLaserConf)
 {
+   /*
    leftPaddleLaser.SetRectangle(gameStatus.leftPaddleShape.width,
                                 gameStatus.leftPaddleShape.height);
    rightPaddleLaser.SetRectangle(gameStatus.rightPaddleShape.width,
                                  gameStatus.rightPaddleShape.height);
    ballLaser.SetCircle(gameStatus.ballShape.radius);
+   */
 }
 
 

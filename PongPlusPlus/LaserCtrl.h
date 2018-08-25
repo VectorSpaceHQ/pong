@@ -18,7 +18,7 @@ public:
     * @param conf - The configuration for the laser
     * @param laserPin - The pin number for the laser control
     */
-   LaserCtrl(ShapeType _shape, LaserConf& conf);
+   LaserCtrl(LaserConf& conf);
 
     /***
     * Control the laser and the gimble to draw the shape
@@ -26,25 +26,6 @@ public:
     * @param atY - The Y position at which to draw the shape
     */
    void Draw(uint32_t atX, uint32_t atY);
-
-    /***
-    * Set the x, y, and skew boundaries for the servos
-    */
-   void SetBounds(uint32_t _xmin, uint32_t _xmax, uint32_t _ymin,
-                 uint32_t _ymax, uint32_t _hskew, uint32_t _vskew);
-
-   /***
-    * Change the shape of this laser to a rectangle
-    * @param _width - The width of the rectangle
-    * @param _height - The height of the rectangle
-    */
-   void SetRectangle(uint32_t _width, uint32_t _height);
-
-   /***
-    * Change the shape of this laser to a circle
-    * @param _radius - The radius of the circle
-    */
-   void SetCircle(uint32_t _radius);
 
    /***
     * Draw the specified score at the given coordinates
@@ -67,25 +48,20 @@ public:
    void Toggle(void);
 
 private:
-   ShapeType shape;
-   uint32_t  x;
-   uint32_t  y;
-   uint32_t  hskew;
-   uint32_t  vskew;
-   uint32_t  xmin;
-   uint32_t  ymin;
-   uint32_t  xmax;
-   uint32_t  ymax;
-   uint32_t  width;
-   uint32_t  height;
-   uint32_t  radius;
-   bool      laserOn;
-   Servo     xServo;
-   Servo     yServo;
-   uint8_t   laserPin;
+   uint32_t    x;
+   uint32_t    y;
+   uint32_t    hskew;
+   uint32_t    vskew;
+   bool        laserOn;
+   Servo       xServo;
+   Servo       yServo;
+   uint8_t     laserPin;
+   uint32_t    currentVertex;
 
+   /*
    void DrawRectangle(void);
    void DrawCircle(void);
+   */
    void SetLaser(void);
 };
 
