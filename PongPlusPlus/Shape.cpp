@@ -85,7 +85,7 @@ void Shape::AddVertex(CoordType x, CoordType y, bool draw)
    if(numVertices < MAX_VERTICES)
    {
       vertices[numVertices].x = x;
-      vertices[numVertices].x = y;
+      vertices[numVertices].y = y;
       vertices[numVertices].draw = draw;
       ++numVertices;
    }

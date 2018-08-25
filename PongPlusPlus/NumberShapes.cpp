@@ -28,7 +28,6 @@ NumberShapes::NumberShapes():
    numerals()
 {
    // Vertices for Shape '0'
-   numerals[0].AddVertex(  2,  2, false);
    numerals[0].AddVertex(  2,  2, false);    // Start top right corner (don't draw going there
    numerals[0].AddVertex( -2,  2, true );    // Draw to top left corner
    numerals[0].AddVertex( -2, -2, true );    // Draw to bottom left corner
@@ -40,9 +39,9 @@ NumberShapes::NumberShapes():
    numerals[1].AddVertex(  0,  2, false);
    numerals[1].AddVertex(  0, -2, false);    // Start top right corner (don't draw going there
 
-   Serial.print("Numeral 0: ");
+   Serial.println("Numeral 0: ");
    numerals[0].Log();
-   Serial.print("Numeral 1: ");
+   Serial.println("Numeral 1: ");
    numerals[1].Log();
 }
 
