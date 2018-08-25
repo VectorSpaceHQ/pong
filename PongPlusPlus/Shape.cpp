@@ -29,15 +29,23 @@ Shape::Shape(uint32_t _numVertices, Vertex* _vertices):
 }
 
 
-Shape& Shape::operator=(const Shape& other)
+Shape::Shape(const Shape& other)
 {
    if(this != &other)
    {
       scale = other.scale;
       CopyVertices(other.numVertices, other.vertices);
    }
+}
 
-   return *this;
+
+void Shape::Scale(uint32_t scale)
+{
+   for(uint32_t cntr = 0; cntr < numVertices; cntr++)
+   {
+      vertices[cntr].x *= scale;
+      vertices[cntr].y *= scale;
+   }
 }
 
 

@@ -64,6 +64,8 @@ Vertex NumberShapes::numeralVertices[MAX_NUMERALS][MAX_VERTICES] =
    }
 };
 
+Shape NumberShapes::numerals[MAX_NUMERALS];
+
 
 NumberShapes::NumberShapes()
 {
@@ -71,4 +73,9 @@ NumberShapes::NumberShapes()
    numerals[1] = Shape(2, &numeralVertices[1][0]);
 }
 
+
+const Shape& NumberShapes::operator[](uint8_t numeral)
+{
+   return const_cast<const Shape&>(numerals[numeral]);
+}
 

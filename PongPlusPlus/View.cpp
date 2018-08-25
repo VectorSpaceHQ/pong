@@ -25,6 +25,9 @@ View::View(Model::DisplaySettings&  _display,
    rightPaddleLaser(_rightLaserConf),
    ballLaser(_ballLaserConf)
 {
+   ballLaser.SetShape(numberShapes[0], 10);
+   ballLaser.SetPosition(0, 0);
+
    /*
    leftPaddleLaser.SetRectangle(gameStatus.leftPaddleShape.width,
                                 gameStatus.leftPaddleShape.height);
@@ -65,9 +68,9 @@ void View::DisplayCalibration(void)
 
 void View::DisplayGamePlay(void)
 {
-   leftPaddleLaser.Draw(gameStatus.leftPaddleShape.x, gameStatus.leftPaddleShape.y);
-   rightPaddleLaser.Draw(gameStatus.rightPaddleShape.x, gameStatus.rightPaddleShape.y);
-   ballLaser.Draw(gameStatus.ballShape.x, gameStatus.ballShape.y);
+   leftPaddleLaser.SetPosition(gameStatus.leftPaddleShape.x, gameStatus.leftPaddleShape.y);
+   rightPaddleLaser.SetPosition(gameStatus.rightPaddleShape.x, gameStatus.rightPaddleShape.y);
+   ballLaser.SetPosition(gameStatus.ballShape.x, gameStatus.ballShape.y);
 }
 
 

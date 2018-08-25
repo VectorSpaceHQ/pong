@@ -4,7 +4,7 @@
 
 #include "Configs.h"
 #include "LaserCtrl.h"
-#include "Shapes.h"
+#include "Shape.h"
 
 // TODO: If ymax, xmin, etc, never change, than use #defines instead of variables
 #define  SERVO_MIN_X    (1000)
@@ -23,6 +23,7 @@ LaserCtrl::LaserCtrl(LaserConf& conf):
    hskew(0),
    vskew(0),
    laserOn(false),
+   shape(),
    currentVertex(0)
 {
    xServo.attach(conf.xPin);
@@ -33,7 +34,15 @@ LaserCtrl::LaserCtrl(LaserConf& conf):
 }
 
 
-void LaserCtrl::Draw(uint32_t atX, uint32_t atY)
+void LaserCtrl::SetShape(const Shape& _shape, uint32_t scale)
+{
+   // Copy the shape
+   shape = _shape;
+   shape.Scale(scale);
+}
+
+
+void LaserCtrl::SetPosition(uint32_t atX, uint32_t atY)
 {
    // Update our X/Y coordinates mapping from engine coordinates to servo values
    // TODO:: Need game_width and game_height passed from the engine

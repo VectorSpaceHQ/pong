@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 #include "Configs.h"
-#include "Shapes.h"
+#include "Shape.h"
 
 
 class LaserCtrl
@@ -20,12 +20,17 @@ public:
     */
    LaserCtrl(LaserConf& conf);
 
+   /***
+    *
+    */
+   void SetShape(const Shape& _shape, uint32_t scale);
+
     /***
     * Control the laser and the gimble to draw the shape
     * @param atX - The X position at which to draw the shape
     * @param atY - The Y position at which to draw the shape
     */
-   void Draw(uint32_t atX, uint32_t atY);
+   void SetPosition(uint32_t atX, uint32_t atY);
 
    /***
     * Draw the specified score at the given coordinates
@@ -56,6 +61,7 @@ private:
    Servo       xServo;
    Servo       yServo;
    uint8_t     laserPin;
+   Shape       shape;
    uint32_t    currentVertex;
 
    /*

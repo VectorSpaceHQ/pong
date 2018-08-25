@@ -31,9 +31,10 @@ class Shape
 public:
    Shape();
    Shape(uint32_t _numVertices, Vertex* _vertices);
+   Shape(const Shape& other);
 
    void     AddVertex(CoordType _x, CoordType y, bool draw);
-   Shape&   operator=(const Shape& other);
+   void     Scale(uint32_t scale);
 
 private:
    Vertex     vertices[MAX_VERTICES];
