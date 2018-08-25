@@ -41,7 +41,7 @@ public:
    Vertex     vertices[MAX_VERTICES];
 
    void AddVertex(CoordType x, CoordType y, bool draw);
-   void Scale(uint32_t scale);
+   void Scale(uint32_t _scale);
    void Add(CoordType x, CoordType y);
    void Log();
 

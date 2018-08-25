@@ -1,9 +1,11 @@
 
 #include <Arduino.h>
 #include <Servo.h>
+#include <stdlib.h>
 
 #include "Configs.h"
 #include "LaserCtrl.h"
+#include "ScheduledInterval.h"
 #include "Shape.h"
 #include "Timing.h"
 
@@ -19,6 +21,7 @@
 
 
 LaserCtrl::LaserCtrl(LaserConf& conf, const char* _name):
+   ScheduledInterval(100),
    name(_name),
    x(SERVO_MID_X),
    y(SERVO_MID_Y),
@@ -54,12 +57,6 @@ void LaserCtrl::SetShape(const Shape& _shape, uint32_t scale)
    shape = _shape;
    shape.Scale(scale);     // Scale the shape
    shape.Add(x, y);        // Center the shape
-
-   Serial.print("Laser '");
-   Serial.print(name);
-   Serial.print("' New Shape: ");
-   shape.Log();
-
    ResetShape();
 }
 
@@ -91,12 +88,30 @@ void LaserCtrl::ResetShape()
 }
 
 
-void LaserCtrl::Step()
+void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
 {
-   //waitTime -= MAIN_LOOP_TIME * 10;
-   waitTime -= MAIN_LOOP_TIME;
+   // Get current time in uS
+   unsigned long  time = micros();
 
-   if(waitTime <= 0)
+   // TODO: Need to handle wrap (every 70 minutes)
+
+   if(x >= y)
+   {
+      waitTime = time + (x * US_PER_STEP);
+   }
+   else
+   {
+      waitTime = time + (y * US_PER_STEP);
+   }
+}
+
+
+void LaserCtrl::Update()
+{
+   // Get current time in uS
+   unsigned long  time = micros();
+
+   if(time >= waitTime)
    {
       // Have we reached our destination?
       if( (currentPosition.x == destination.x) && (currentPosition.y == destination.y))
@@ -112,7 +127,7 @@ void LaserCtrl::Step()
 
       CoordType   stepX = step.x;
       CoordType   stepY = step.y;
-
+/*
       if((destination.x - currentPosition.x) < step.x)
       {
          stepX = (destination.x - currentPosition.x);
@@ -122,15 +137,8 @@ void LaserCtrl::Step()
       {
          stepY = (destination.y - currentPosition.y);
       }
-
-      if(stepX >= stepY)
-      {
-         waitTime = abs(stepX * US_PER_STEP);
-      }
-      else
-      {
-         waitTime = abs(stepY * US_PER_STEP);
-      }
+*/
+      SetWaitTime(abs(stepX), abs(stepY));
 
       Serial.print("Step Wait: ");
       Serial.println(waitTime);
@@ -140,11 +148,6 @@ void LaserCtrl::Step()
 
       xServo.writeMicroseconds(currentPosition.x);
       yServo.writeMicroseconds(currentPosition.y);
-
-      Serial.print("Laser '");
-      Serial.print(name);
-      Serial.println("' Current Pos ");
-      currentPosition.Log();
    }
 }
 
@@ -174,58 +177,6 @@ void LaserCtrl::Toggle(void)
    SetLaser();
 }
 
-/*
-void LaserCtrl::DrawRectangle(void)
-{
-   // x,y marks center of rectangle
-   for(int j = y - height / 2; j <= y + height / 2; j++)
-   {
-      yServo.writeMicroseconds(j);
-      delayMicroseconds(5);
-   }
-   delay(60);
-   for(int i = x - width / 2; i <= x + width / 2; i++)
-   {
-      xServo.writeMicroseconds(i);
-      delayMicroseconds(5);
-   }
-   delay(60);
-   for(int j = y + height / 2 - 1; j >= y - height / 2; j--)
-   {
-      yServo.writeMicroseconds(j);
-      delayMicroseconds(5);
-   }
-   delay(60);
-   for(int i = x + width / 2 - 1; i >= x - width / 2; i--)
-   {
-      xServo.writeMicroseconds(i);
-      delayMicroseconds(5);
-   }
-}
-*/
-
-/*
-void LaserCtrl::DrawCircle(void)
-{
-   // x,y marks center of circle
-   // i,j marks edge of circle
-   for(int i = x - radius; i < (x + radius); i++)
-   {
-      int j = y + sqrt((radius ^ 2) - ((i - x) ^ 2));
-      xServo.writeMicroseconds(i);
-      yServo.writeMicroseconds(j);
-      delayMicroseconds(5);
-   }
-   for(int i = x + radius; i < x - radius; i--)
-   {
-      int j = y - sqrt((radius ^ 2) - ((i - x) ^ 2));
-      xServo.writeMicroseconds(i);
-      yServo.writeMicroseconds(j);
-      delayMicroseconds(5);
-   }
-}
-*/
-
 
 void LaserCtrl::SetLaser()
 {
@@ -246,26 +197,25 @@ void LaserCtrl::Move(Vertex& dest)
    CoordType diffX = (destination.x - currentPosition.x);
    CoordType diffY = (destination.y - currentPosition.y);
 
+   Serial.print("Scale: ");
+   Serial.println(shape.scale);
+
    step.x = diffX / shape.scale;
    step.y = diffY / shape.scale;
    step.draw = destination.draw;
 
-   if(step.x >= step.y)
-   {
-      waitTime = abs(step.x * US_PER_STEP);
-   }
-   else
-   {
-      waitTime = abs(step.y * US_PER_STEP);
-   }
-
-   Serial.print("Wait: ");
-   Serial.println(waitTime);
-
+   SetWaitTime(abs(step.x), abs(step.y));
    SetLaser(destination.draw);
 
-   Serial.print("Laser '");
-   Serial.print(name);
-   Serial.print("' New Destination ");
+   Serial.print("Current: ");
+   currentPosition.Log();
+   Serial.print("New Destination: ");
    destination.Log();
+   Serial.print("Step Size: ");
+   step.Log();
+
+   //Serial.print("Laser '");
+   //Serial.print(name);
+   //Serial.print("' New Destination ");
+   //destination.Log();
 }

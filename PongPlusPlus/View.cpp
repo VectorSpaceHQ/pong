@@ -46,7 +46,7 @@ View::View(Model::DisplaySettings&  _display,
 
 void View::Update(void)
 {
-   ballLaser.Step();
+   ballLaser.Run();
 
    /*
    switch(gameStatus.gameState)

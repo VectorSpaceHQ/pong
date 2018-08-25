@@ -14,7 +14,7 @@
 
 void Vertex::Log()
 {
-   Serial.print("Vertex: (");
+   Serial.print("Vertex(");
    Serial.print((int)x);
    Serial.print(", ");
    Serial.print((int)y);
@@ -52,8 +52,10 @@ Shape::Shape(const Shape& other)
 }
 
 
-void Shape::Scale(uint32_t scale)
+void Shape::Scale(uint32_t _scale)
 {
+   scale = _scale;
+
    for(uint32_t cntr = 0; cntr < numVertices; cntr++)
    {
       vertices[cntr].x *= scale;

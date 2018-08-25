@@ -6,10 +6,11 @@
 #include <stdint.h>
 
 #include "Configs.h"
+#include "ScheduledInterval.h"
 #include "Shape.h"
 
 
-class LaserCtrl
+class LaserCtrl: public ScheduledInterval
 {
 public:
    /***
@@ -32,7 +33,11 @@ public:
     */
    void SetPosition(CoordType atX, CoordType atY);
    void ResetShape();
-   void Step();
+
+   /***
+    * Sets the wait time to
+    */
+   void SetWaitTime(int32_t x, int32_t y);
 
    /***
     * Draw the specified score at the given coordinates
@@ -53,6 +58,7 @@ public:
     * Toggle the laser
     */
    void Toggle(void);
+   void Update();
 
 private:
    const char*       name;
@@ -66,7 +72,7 @@ private:
    uint8_t     laserPin;
    Shape       shape;
    uint32_t    currentVertex;
-   int32_t     waitTime;
+   unsigned long    waitTime;
 
    Vertex      currentPosition;
    Vertex      destination;
