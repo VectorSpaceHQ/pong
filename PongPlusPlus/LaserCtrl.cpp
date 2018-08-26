@@ -21,7 +21,7 @@
 
 
 LaserCtrl::LaserCtrl(LaserConf& conf, Shape& _shape, const char* _name):
-   ScheduledInterval(50),
+   ScheduledInterval(1),
    name(_name),
    x(SERVO_MID_X),
    y(SERVO_MID_Y),
@@ -83,18 +83,15 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
 
 void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
 {
-   // Get current time in uS
-   unsigned long  time = micros();
-
    // TODO: Need to handle wrap (every 70 minutes)
 
    if(x >= y)
    {
-      waitTime = time + (x * US_PER_STEP);
+      waitTime = micros() + (x * US_PER_STEP);
    }
    else
    {
-      waitTime = time + (y * US_PER_STEP);
+      waitTime = micros() + (y * US_PER_STEP);
    }
 }
 
@@ -132,9 +129,6 @@ void LaserCtrl::Update()
       }
 
       SetWaitTime(abs(stepX), abs(stepY));
-
-      Serial.print("Step Wait: ");
-      Serial.println(waitTime);
 
       currentPosition.x += stepX;
       currentPosition.y += stepY;
@@ -190,25 +184,10 @@ void LaserCtrl::Move(Vertex& dest)
    CoordType diffX = (destination.x - currentPosition.x);
    CoordType diffY = (destination.y - currentPosition.y);
 
-   Serial.print("Scale: ");
-   Serial.println(shape.scale);
-
    step.x = diffX / shape.scale;
    step.y = diffY / shape.scale;
    step.draw = destination.draw;
 
    SetWaitTime(abs(step.x), abs(step.y));
    SetLaser(destination.draw);
-
-   Serial.print("Current: ");
-   currentPosition.Log();
-   Serial.print("New Destination: ");
-   destination.Log();
-   Serial.print("Step Size: ");
-   step.Log();
-
-   //Serial.print("Laser '");
-   //Serial.print(name);
-   //Serial.print("' New Destination ");
-   //destination.Log();
 }
