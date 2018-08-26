@@ -44,7 +44,6 @@ void Pong::Stop()
 
 void Pong::Run()
 {
-   //Serial.println("----------Main----------");
    //controller.Run();    // Update paddle HW info
    //engine.Run();        // Run game engine
    view.Run();          // Draw the screen

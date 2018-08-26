@@ -120,17 +120,17 @@ void LaserCtrl::Update()
 
       CoordType   stepX = step.x;
       CoordType   stepY = step.y;
-/*
-      if((destination.x - currentPosition.x) < step.x)
+
+      if(abs(destination.x - currentPosition.x) < abs(step.x))
       {
          stepX = (destination.x - currentPosition.x);
       }
 
-      if((destination.y - currentPosition.y) < step.y)
+      if(abs(destination.y - currentPosition.y) < abs(step.y))
       {
          stepY = (destination.y - currentPosition.y);
       }
-*/
+
       SetWaitTime(abs(stepX), abs(stepY));
 
       Serial.print("Step Wait: ");
