@@ -31,16 +31,6 @@ public:
    void SetPosition(CoordType atX, CoordType atY);
 
    /***
-    * Sets the wait time to
-    */
-   void SetWaitTime(int32_t x, int32_t y);
-
-   /***
-    * Draw the specified score at the given coordinates
-    */
-   void DrawScore(uint32_t atX, uint32_t atY, uint16_t score);
-
-   /***
     * Turn the laser on
     */
    void On(void);
@@ -54,6 +44,10 @@ public:
     * Toggle the laser
     */
    void Toggle(void);
+
+   /***
+    * This method is called periodically, based on the TimedInterval schedule time
+    */
    void Update();
 
 private:
@@ -68,16 +62,11 @@ private:
    uint8_t     laserPin;
    Shape&      shape;
    uint32_t    currentVertex;
-   unsigned long    waitTime;
 
    Vertex      currentPosition;
    Vertex      destination;
    Vertex      step;
 
-   /*
-   void DrawRectangle(void);
-   void DrawCircle(void);
-   */
    void SetLaser(void);
    void SetLaser(bool onOff);
 
@@ -85,6 +74,11 @@ private:
     * Command the laser to move to a new vertex
     */
    void Move(Vertex& dest);
+
+   /***
+    * Sets the wait time according to the largest step
+    */
+   void SetWaitTime(int32_t x, int32_t y);
 };
 
 #endif    // __laser_ctrl_h__

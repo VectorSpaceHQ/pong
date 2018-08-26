@@ -30,7 +30,6 @@ LaserCtrl::LaserCtrl(LaserConf& conf, Shape& _shape, const char* _name):
    laserOn(false),
    shape(_shape),
    currentVertex(0),
-   waitTime(0),
    currentPosition(),
    destination(),
    step()
@@ -130,11 +129,6 @@ void LaserCtrl::Update()
 
    xServo.writeMicroseconds(currentPosition.x);
    yServo.writeMicroseconds(currentPosition.y);
-}
-
-
-void LaserCtrl::DrawScore(uint32_t atX, uint32_t atY, uint16_t score)
-{
 }
 
 
