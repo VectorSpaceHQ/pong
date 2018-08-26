@@ -21,7 +21,7 @@
 
 
 LaserCtrl::LaserCtrl(LaserConf& conf, Shape& _shape, const char* _name):
-   ScheduledInterval(1),
+   TimedInterval(400),     // This will change based on laser movement
    name(_name),
    x(SERVO_MID_X),
    y(SERVO_MID_Y),
@@ -87,55 +87,49 @@ void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
 
    if(x >= y)
    {
-      waitTime = micros() + (x * US_PER_STEP);
+      interval = (x * US_PER_STEP);
    }
    else
    {
-      waitTime = micros() + (y * US_PER_STEP);
+      interval = (y * US_PER_STEP);
    }
 }
 
 
 void LaserCtrl::Update()
 {
-   // Get current time in uS
-   unsigned long  time = micros();
-
-   if(time >= waitTime)
+   // Have we reached our destination?
+   if( (currentPosition.x == destination.x) && (currentPosition.y == destination.y))
    {
-      // Have we reached our destination?
-      if( (currentPosition.x == destination.x) && (currentPosition.y == destination.y))
+      if(++currentVertex >= shape.numVertices)
       {
-         if(++currentVertex >= shape.numVertices)
-         {
-            currentVertex = 0;
-         }
-
-         // Get our next destination
-         Move(shape.vertices[currentVertex]);
+         currentVertex = 0;
       }
 
-      CoordType   stepX = step.x;
-      CoordType   stepY = step.y;
-
-      if(abs(destination.x - currentPosition.x) < abs(step.x))
-      {
-         stepX = (destination.x - currentPosition.x);
-      }
-
-      if(abs(destination.y - currentPosition.y) < abs(step.y))
-      {
-         stepY = (destination.y - currentPosition.y);
-      }
-
-      SetWaitTime(abs(stepX), abs(stepY));
-
-      currentPosition.x += stepX;
-      currentPosition.y += stepY;
-
-      xServo.writeMicroseconds(currentPosition.x);
-      yServo.writeMicroseconds(currentPosition.y);
+      // Get our next destination
+      Move(shape.vertices[currentVertex]);
    }
+
+   CoordType   stepX = step.x;
+   CoordType   stepY = step.y;
+
+   if(abs(destination.x - currentPosition.x) < abs(step.x))
+   {
+      stepX = (destination.x - currentPosition.x);
+   }
+
+   if(abs(destination.y - currentPosition.y) < abs(step.y))
+   {
+      stepY = (destination.y - currentPosition.y);
+   }
+
+   SetWaitTime(abs(stepX), abs(stepY));
+
+   currentPosition.x += stepX;
+   currentPosition.y += stepY;
+
+   xServo.writeMicroseconds(currentPosition.x);
+   yServo.writeMicroseconds(currentPosition.y);
 }
 
 

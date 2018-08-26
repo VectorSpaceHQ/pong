@@ -6,11 +6,11 @@
 #include <stdint.h>
 
 #include "Configs.h"
-#include "ScheduledInterval.h"
+#include "TimedInterval.h"
 #include "Shape.h"
 
 
-class LaserCtrl: public ScheduledInterval
+class LaserCtrl: public TimedInterval
 {
 public:
    /***
