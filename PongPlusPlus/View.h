@@ -6,7 +6,6 @@
 #include "Configs.h"
 #include "LaserCtrl.h"
 #include "Model.h"
-#include "NumberShapes.h"
 #include "ScheduledInterval.h"
 #include "Shape.h"
 
@@ -26,7 +25,6 @@ public:
 private:
    Model::DisplaySettings& display;
    Model::GameStatus&      gameStatus;
-   NumberShapes            numberShapes;
    LaserCtrl               leftPaddleLaser;
    LaserCtrl               rightPaddleLaser;
    LaserCtrl               ballLaser;

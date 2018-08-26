@@ -20,7 +20,7 @@
 #define  US_PER_STEP    (200)
 
 
-LaserCtrl::LaserCtrl(LaserConf& conf, const char* _name):
+LaserCtrl::LaserCtrl(LaserConf& conf, Shape& _shape, const char* _name):
    ScheduledInterval(50),
    name(_name),
    x(SERVO_MID_X),
@@ -28,7 +28,7 @@ LaserCtrl::LaserCtrl(LaserConf& conf, const char* _name):
    hskew(0),
    vskew(0),
    laserOn(false),
-   shape(),
+   shape(_shape),
    currentVertex(0),
    waitTime(0),
    currentPosition(),
@@ -51,14 +51,15 @@ LaserCtrl::LaserCtrl(LaserConf& conf, const char* _name):
 }
 
 
-void LaserCtrl::SetShape(const Shape& _shape, uint32_t scale)
+void LaserCtrl::UpdateShape(uint32_t scale)
 {
-   // Copy the shape
-   shape = _shape;
-   //shape.Scale(-1);        // Invert the shape
+   //shape.Scale(-1);      // Invert the shape
    shape.Scale(scale);     // Scale the shape
    shape.Add(x, y);        // Center the shape
-   ResetShape();
+
+   // Reset the shape
+   currentVertex = 0;
+   Move(shape.vertices[currentVertex]);
 }
 
 
@@ -77,15 +78,6 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
    // Update our new coordinates with the new ones
    x = newX;
    y = newY;
-}
-
-
-void LaserCtrl::ResetShape()
-{
-   currentVertex = 0;
-
-   // Get our next destination
-   Move(shape.vertices[currentVertex]);
 }
 
 

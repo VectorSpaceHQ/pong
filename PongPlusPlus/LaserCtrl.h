@@ -15,16 +15,13 @@ class LaserCtrl: public ScheduledInterval
 public:
    /***
     * Constructor
-    * @param _shape - The type of the shape
-    * @param conf - The configuration for the laser
-    * @param laserPin - The pin number for the laser control
     */
-   LaserCtrl(LaserConf& conf, const char* _name);
+   LaserCtrl(LaserConf& conf, Shape& _shape, const char* _name);
 
    /***
-    *
+    * This method is called afer the shape given to the laser changes
     */
-   void SetShape(const Shape& _shape, uint32_t scale);
+   void UpdateShape(uint32_t scale);
 
     /***
     * Control the laser and the gimble to draw the shape
@@ -32,7 +29,6 @@ public:
     * @param atY - The Y position at which to draw the shape
     */
    void SetPosition(CoordType atX, CoordType atY);
-   void ResetShape();
 
    /***
     * Sets the wait time to
@@ -70,7 +66,7 @@ private:
    Servo       xServo;
    Servo       yServo;
    uint8_t     laserPin;
-   Shape       shape;
+   Shape&      shape;
    uint32_t    currentVertex;
    unsigned long    waitTime;
 

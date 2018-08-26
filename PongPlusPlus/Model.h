@@ -10,8 +10,7 @@
 
 #include <stdint.h>
 
-#include "Shapes.h"
-
+#include "Shape.h"
 
 namespace Model
 {
@@ -63,31 +62,17 @@ namespace Model
       Score       leftPaddleScore;
       Score       rightPaddleScore;
 
-      Rectangle   leftPaddleShape;
-      Rectangle   rightPaddleShape;
-      Circle      ballShape;
+      Shape       leftPaddleShape;
+      Shape       rightPaddleShape;
+      Shape       ballShape;
 
       GameStatus():
          gameState(GameStateCalibrate),   // Default start in calibration mode
          leftPaddleScore(0),
          rightPaddleScore(0),
-
-      leftPaddleShape(
-         10,   // X Coord
-         0,    // Y Coord
-         5,    // Width
-         10 ), // Height
-
-      rightPaddleShape(
-         90,   // X Coord
-         0,    // Y Coord
-         5,    // Width
-         10 ), // Height
-
-      ballShape(
-         90,   // X Coord
-         0,    // Y Coord
-         5 )   // Radius
+         leftPaddleShape(),
+         rightPaddleShape(),
+         ballShape()
       {
       }
    };

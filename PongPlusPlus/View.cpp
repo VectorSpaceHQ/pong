@@ -23,15 +23,15 @@ View::View(Model::DisplaySettings&  _display,
    ScheduledInterval(VIEW_LOOP_INTERVAL),
    display(_display),
    gameStatus(_gameStatus),
-   numberShapes(),
-   leftPaddleLaser(_leftLaserConf, "LeftPaddle"),
-   rightPaddleLaser(_rightLaserConf, "RightPaddle"),
-   ballLaser(_ballLaserConf, "Ball")
+   leftPaddleLaser(_leftLaserConf, gameStatus.leftPaddleShape, "LeftPaddle"),
+   rightPaddleLaser(_rightLaserConf, gameStatus.rightPaddleShape, "RightPaddle"),
+   ballLaser(_ballLaserConf, gameStatus.ballShape, "Ball")
 {
    // Wait for our lasers to get to their initial position
    delay(100);
 
-   ballLaser.SetShape(numberShapes[2], 20);
+   gameStatus.ballShape.CreateShape(2);
+   ballLaser.UpdateShape(20);
    ballLaser.SetPosition(0, 0);
 }
 
@@ -70,16 +70,11 @@ void View::DisplayCalibration(void)
 
 void View::DisplayGamePlay(void)
 {
-   leftPaddleLaser.SetPosition(gameStatus.leftPaddleShape.x, gameStatus.leftPaddleShape.y);
-   rightPaddleLaser.SetPosition(gameStatus.rightPaddleShape.x, gameStatus.rightPaddleShape.y);
-   ballLaser.SetPosition(gameStatus.ballShape.x, gameStatus.ballShape.y);
 }
 
 
 void View::DisplayScore(void)
 {
-   leftPaddleLaser.DrawScore(SCORE_LEFT_X, SCORE_LEFT_Y, gameStatus.leftPaddleScore);
-   rightPaddleLaser.DrawScore(SCORE_RIGHT_X, SCORE_RIGHT_Y, gameStatus.rightPaddleScore);
 }
 
 

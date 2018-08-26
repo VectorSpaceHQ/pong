@@ -8,7 +8,6 @@
 #ifndef __shape_h__
 #define __shape_h__
 
-//#include <BasicLinearAlgebra.h>
 #include <stdint.h>
 
 
@@ -16,7 +15,6 @@
 
 typedef int32_t CoordType;
 
-//typedef BLA::Matrix<2,16,BLA::Array<2,16,int> > VertexMatrix;
 
 struct Vertex
 {
@@ -26,6 +24,23 @@ public:
    bool        draw;
 
    void Log();
+};
+
+enum ShapeType
+{
+   ShapeTypeNumeral0 = 0,
+   ShapeTypeNumeral1 = 1,
+   ShapeTypeNumeral2 = 2,
+   ShapeTypeNumeral3 = 3,
+   ShapeTypeNumeral4 = 4,
+   ShapeTypeNumeral5 = 5,
+   ShapeTypeNumeral6 = 6,
+   ShapeTypeNumeral7 = 7,
+   ShapeTypeNumeral8 = 8,
+   ShapeTypeNumeral9 = 9,
+
+   ShapeTypePaddle,
+   ShapeTypeBall
 };
 
 
@@ -43,6 +58,8 @@ public:
    void AddVertex(CoordType x, CoordType y, bool draw);
    void Scale(CoordType _scale);
    void Add(CoordType x, CoordType y);
+   void CreateShape(int numeral);
+   void Reset();
    void Log();
 
 private:
