@@ -130,12 +130,12 @@ void Shape::CreateShape(int numeral)
    {
       case ShapeTypeNumeral0:
          // Vertices for Shape '0'
-         AddVertex(  2,  2, true );    // Start top right corner (don't draw going there
+         AddVertex(  2,  2, false);    // Start top right corner (don't draw going there
          AddVertex( -2,  2, true );    // Draw to top left corner
          AddVertex( -2, -2, true );    // Draw to bottom left corner
          AddVertex(  2, -2, true );    // Draw to bottom right corner
          AddVertex(  2,  2, true );    // Draw to top right corner
-         //AddVertex( -2, -2, true );    // Draw to bottom left corner (the slash through the zero
+         AddVertex( -2, -2, true );    // Draw to bottom left corner (the slash through the zero
 
          // Reverse
          /*
@@ -148,13 +148,13 @@ void Shape::CreateShape(int numeral)
 
       case ShapeTypeNumeral1:
          // Vertices for Shape '1'
-         AddVertex(  0,  2, true);
-         AddVertex(  0, -2, true);     //  |
+         AddVertex(  0,  2, false);
+         AddVertex(  0, -2, true );     //  |
          break;
 
       case ShapeTypeNumeral2:
          // Vertices for Shape '2'
-         AddVertex( -2,  2, true);    // Start top left
+         AddVertex( -2,  2, false);    // Start top left
          AddVertex(  2,  2, true );    //  -
          AddVertex(  2,  0, true );    //   |
          AddVertex( -2,  0, true );    //  -

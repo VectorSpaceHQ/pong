@@ -56,6 +56,10 @@ void LaserCtrl::UpdateShape(uint32_t scale)
    shape.Scale(scale);     // Scale the shape
    shape.Add(x, y);        // Center the shape
 
+   Serial.print("New Shape for ");
+   Serial.println(name);
+   shape.Log();
+
    // Reset the shape
    currentVertex = 0;
    Move(shape.vertices[currentVertex]);

@@ -31,6 +31,7 @@ View::View(Model::DisplaySettings&  _display,
    delay(100);
 
    gameStatus.ballShape.CreateShape(2);
+   gameStatus.ballShape.Scale(-1);        // This laser needs its shape inverted
    ballLaser.UpdateShape(20);
    ballLaser.SetPosition(0, 0);
 
@@ -39,6 +40,7 @@ View::View(Model::DisplaySettings&  _display,
    leftPaddleLaser.SetPosition(0, 0);
 
    gameStatus.rightPaddleShape.CreateShape(0);
+   gameStatus.rightPaddleShape.Scale(-1);        // This laser needs its shape inverted
    rightPaddleLaser.UpdateShape(20);
    rightPaddleLaser.SetPosition(0, 0);
 }
