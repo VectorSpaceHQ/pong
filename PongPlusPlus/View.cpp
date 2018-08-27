@@ -43,6 +43,11 @@ View::View(Model::DisplaySettings&  _display,
    gameStatus.rightPaddleShape.Scale(-1);        // This laser needs its shape inverted
    rightPaddleLaser.UpdateShape(20);
    rightPaddleLaser.SetPosition(0, 0);
+
+   // Start the lasers
+   ballLaser.Start();
+   leftPaddleLaser.Start();
+   rightPaddleLaser.Start();
 }
 
 

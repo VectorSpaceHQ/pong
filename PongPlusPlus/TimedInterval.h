@@ -18,36 +18,55 @@ public:
    TimedInterval(uint32_t _interal);
    virtual ~TimedInterval() {}
 
+   void Start();
+   void Stop();
    void Run();
 
 protected:
    virtual void Update() = 0;
+
    uint32_t interval;
 
 private:
+   bool     running;
    uint32_t lastTime;
    uint32_t setTime;
 };
 
 
 inline TimedInterval::TimedInterval(uint32_t _interval):
-   interval(_interval)
+   running(false),
+   interval(_interval),
+   lastTime(0),
+   setTime(0)
+{
+}
+
+
+inline void TimedInterval::Start()
 {
    lastTime = micros();
    setTime = lastTime + interval;
+   Update();
+   running = true;
+}
+
+
+inline void TimedInterval::Stop()
+{
+   running = false;
 }
 
 
 inline void TimedInterval::Run()
 {
    // TODO: Need to handle wrap (every 70 minutes)
-   if(micros() >= setTime)
+   if(running && (micros() >= setTime))
    {
       Update();
       lastTime = micros();
       setTime = lastTime + interval;
    }
 }
-
 
 #endif   // __timed_interval_h__
