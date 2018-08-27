@@ -19,6 +19,7 @@
 
 #define  US_PER_STEP    (1000)
 
+static uint32_t absolute(int32_t val);
 
 LaserCtrl::LaserCtrl(LaserConf& conf, Shape& _shape, const char* _name):
    TimedInterval(400),     // This will change based on laser movement
@@ -72,6 +73,7 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
    // TODO:: Need a percentage scale
 
    // Shift to Laser coordinates
+
    CoordType newX = SERVO_MID_X + atX;
    CoordType newY = SERVO_MID_Y + atY;
 
@@ -88,14 +90,24 @@ void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
 {
    // TODO: Need to handle wrap (every 70 minutes)
 
-   if(x >= y)
+   uint32_t waitX = absolute(x);
+   uint32_t waitY = absolute(y);
+
+//   Serial.print("x,y: ");
+//   Serial.print(waitX);
+//   Serial.print(", ");
+//   Serial.println(waitY);
+
+   if(waitX >= waitY)
    {
-      interval = (x * US_PER_STEP);
+      interval = (waitX * US_PER_STEP);
    }
    else
    {
-      interval = (y * US_PER_STEP);
+      interval = (waitY * US_PER_STEP);
    }
+
+//   Serial.println(interval);
 }
 
 
@@ -126,7 +138,7 @@ void LaserCtrl::Update()
       stepY = (destination.y - currentPosition.y);
    }
 
-   SetWaitTime(abs(stepX), abs(stepY));
+   SetWaitTime(stepX, stepY);
 
    currentPosition.x += stepX;
    currentPosition.y += stepY;
@@ -162,6 +174,7 @@ void LaserCtrl::SetLaser()
    digitalWrite(laserPin, (laserOn ? HIGH : LOW));
 }
 
+
 void LaserCtrl::SetLaser(bool onOff)
 {
    laserOn = onOff;
@@ -180,6 +193,12 @@ void LaserCtrl::Move(Vertex& dest)
    step.y = diffY / shape.scale;
    step.draw = destination.draw;
 
-   SetWaitTime(abs(step.x), abs(step.y));
+   SetWaitTime(step.x, step.y);
    SetLaser(destination.draw);
+}
+
+
+uint32_t absolute(int32_t val)
+{
+   return static_cast<uint32_t>(static_cast<uint16_t>(~abs(val) + 1));
 }
