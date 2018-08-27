@@ -33,12 +33,22 @@ View::View(Model::DisplaySettings&  _display,
    gameStatus.ballShape.CreateShape(2);
    ballLaser.UpdateShape(20);
    ballLaser.SetPosition(0, 0);
+
+   gameStatus.leftPaddleShape.CreateShape(1);
+   leftPaddleLaser.UpdateShape(20);
+   leftPaddleLaser.SetPosition(0, 0);
+
+   gameStatus.rightPaddleShape.CreateShape(0);
+   rightPaddleLaser.UpdateShape(20);
+   rightPaddleLaser.SetPosition(0, 0);
 }
 
 
 void View::Update(void)
 {
    ballLaser.Run();
+   leftPaddleLaser.Run();
+   rightPaddleLaser.Run();
 
    /*
    switch(gameStatus.gameState)

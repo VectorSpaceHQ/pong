@@ -17,7 +17,7 @@
 #define  SERVO_MID_X    ((SERVO_MAX_X + SERVO_MIN_X) / 2)
 #define  SERVO_MID_Y    ((SERVO_MAX_Y + SERVO_MIN_Y) / 2)
 
-#define  US_PER_STEP    (200)
+#define  US_PER_STEP    (1000)
 
 
 LaserCtrl::LaserCtrl(LaserConf& conf, Shape& _shape, const char* _name):
