@@ -67,7 +67,8 @@ void Engine::SetupLaserCalibration()
 
    leftPaddle.SetLimits(-500, 500);
    rightPaddle.SetLimits(-500, 500);
-   gameStatus.gameState = Model::GameStateCalibrateLasers;
+
+   UpdateGameState(Model::GameStateCalibrateLasers);
 }
 
 
@@ -90,6 +91,11 @@ void Engine::LaserCalibrationButtonChange()
          case ButtonStateRight:
             leftPaddle.position = settings.rightLaserCal.xOffset;
             rightPaddle.position = settings.rightLaserCal.yOffset;
+            break;
+
+         // If both buttons are pressed, end configuration
+         case ButtonStateBoth:
+            UpdateGameState(Model::GameStateCalibrateView);
             break;
       }
 
@@ -125,41 +131,103 @@ void Engine::RunLaserCalibration()
          settings.rightLaserCal.xOffset = leftPaddle.position;    // Left paddle controls X-Axis
          settings.rightLaserCal.yOffset = rightPaddle.position;   // Right paddle controls Y-Axis
          break;
+   }
+}
 
-      // If both buttons are pressed, end configuration
-      case ButtonStateBoth:
-         gameStatus.gameState = Model::GameStateCalibrateView;
-         break;
+
+void Engine::ViewCalibrationButtonChange()
+{
+   if((leftPaddle.buttonStateChanged) || (rightPaddle.buttonStateChanged))
+   {
+      switch(buttonState)
+      {
+         case ButtonStateNone:
+            leftPaddle.position = settings.display.yMin;
+            rightPaddle.position = settings.display.xMin;
+            break;
+
+         case ButtonStateLeft:
+            leftPaddle.position = settings.display.yMax;
+            rightPaddle.position = settings.display.xMax;
+            break;
+
+         case ButtonStateRight:
+            leftPaddle.position = settings.display.vSkew;
+            rightPaddle.position = settings.display.hSkew;
+            break;
+
+         // If both buttons are pressed, end configuration
+         case ButtonStateBoth:
+            UpdateGameState(Model::GameStateReady);
+            break;
+      }
+
+      leftPaddle.buttonStateChanged = false;
+      rightPaddle.buttonStateChanged = false;
    }
 }
 
 
 void Engine::RunViewCalibration()
 {
+   leftPaddle.SetLimits(-500, 500);
+   rightPaddle.SetLimits(-500, 500);
+
+   ViewCalibrationButtonChange();
+
    switch(buttonState)
    {
       // Update X/Y position of the display if no buttons pressed
       case ButtonStateNone:
-         settings.display.xMin = leftPaddle.position;    // Left paddle controls X-Axis
-         settings.display.yMin = rightPaddle.position;   // Right paddle controls Y-Axis
+         if(settings.display.xMin != rightPaddle.position)
+         {
+            // TODO: ensure these can't cross
+            settings.display.xMin = rightPaddle.position;    // Left paddle controls X-Axis
+            gameStatus.gameStateChanged = true;
+         }
+
+         if(settings.display.yMin != leftPaddle.position)
+         {
+            settings.display.yMin = leftPaddle.position;   // Right paddle controls Y-Axis
+            gameStatus.gameStateChanged = true;
+         }
          break;
 
       // Update size of the display if the left button is pressed
       case ButtonStateLeft:
-         settings.display.xMax = leftPaddle.position;    // Left paddle controls X-Axis
-         settings.display.yMax = rightPaddle.position;   // Right paddle controls Y-Axis
+         if(settings.display.xMax != rightPaddle.position)
+         {
+            settings.display.xMax = rightPaddle.position;    // Left paddle controls X-Axis
+            gameStatus.gameStateChanged = true;
+         }
+
+         if(settings.display.yMax != leftPaddle.position)
+         {
+            settings.display.yMax = leftPaddle.position;   // Right paddle controls Y-Axis
+            gameStatus.gameStateChanged = true;
+         }
          break;
 
       // Update skew of the display if the right button is pressed
       case ButtonStateRight:
-         settings.display.hSkew = leftPaddle.position;   // Left paddle controls horizontal skew
-         settings.display.vSkew = rightPaddle.position;  // Right paddle controls vertical skew
-         break;
+         if(settings.display.hSkew != rightPaddle.position)
+         {
+            settings.display.hSkew = rightPaddle.position;   // Left paddle controls horizontal skew
+            gameStatus.gameStateChanged = true;
+         }
 
+         if(settings.display.vSkew != leftPaddle.position)
+         {
+            settings.display.vSkew = leftPaddle.position;  // Right paddle controls vertical skew
+            gameStatus.gameStateChanged = true;
+         }
+         break;
+/*
       // If both buttons are pressed, end configuration
       case ButtonStateBoth:
          gameStatus.gameState = Model::GameStateReady;
          break;
+*/
    }
 }
 
@@ -184,6 +252,36 @@ void Engine::CheckButtonState()
    }
 
    //PrintButtonState();
+}
+
+
+void Engine::UpdateGameState(Model::GameState newState)
+{
+   gameStatus.gameState = newState;
+   gameStatus.gameStateChanged = true;
+
+   switch(newState)
+   {
+      case Model::GameStateCalibrateLasers:
+         Serial.println("New Game State: Calibrate Lasers");
+         break;
+
+      case Model::GameStateCalibrateView:
+         Serial.println("New Game State: Calibrate View");
+         break;
+
+      case Model::GameStateReady:
+         Serial.println("New Game State: Ready");
+         break;
+
+      case Model::GameStatePlay:
+         Serial.println("New Game State: Play");
+         break;
+
+      case Model::GameStateGameOver:
+         Serial.println("New Game State: Game Over");
+         break;
+   }
 }
 
 

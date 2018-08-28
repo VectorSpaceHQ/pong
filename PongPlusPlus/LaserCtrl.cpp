@@ -18,7 +18,7 @@
 #define  SERVO_MID_X    ((SERVO_MAX_X + SERVO_MIN_X) / 2)
 #define  SERVO_MID_Y    ((SERVO_MAX_Y + SERVO_MIN_Y) / 2)
 
-#define  US_PER_STEP    (1000)
+#define  US_PER_STEP    (20)
 
 static uint32_t absolute(int32_t val);
 
@@ -56,19 +56,22 @@ LaserCtrl::LaserCtrl(LaserConf&                conf,
 }
 
 
-void LaserCtrl::UpdateShape(uint32_t scale)
+void LaserCtrl::UpdateShape(uint32_t scale, bool restart)
 {
-   //shape.Scale(-1);      // Invert the shape
+   shape.SetOrientation(cal.xOrientation, cal.yOrientation);   // Invert the shape if necessary
    shape.Scale(scale);     // Scale the shape
    shape.Add(x, y);        // Center the shape
 
-   Serial.print("New Shape for ");
-   Serial.println(name);
-   shape.Log();
+//   Serial.print("New Shape for ");
+//   Serial.println(name);
+//   shape.Log();
 
    // Reset the shape
-   currentVertex = 0;
-   Move(shape.vertices[currentVertex]);
+   if(restart)
+   {
+      currentVertex = 0;
+      Move(shape.vertices[currentVertex]);
+   }
 }
 
 

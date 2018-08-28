@@ -64,6 +64,16 @@ void Shape::Scale(CoordType _scale)
 }
 
 
+void Shape::SetOrientation(CoordType _scaleX, CoordType _scaleY)
+{
+   for(uint32_t cntr = 0; cntr < numVertices; cntr++)
+   {
+      vertices[cntr].x *= _scaleX;
+      vertices[cntr].y *= _scaleY;
+   }
+}
+
+
 void Shape::Add(CoordType x, CoordType y)
 {
    for(uint32_t cntr = 0; cntr < numVertices; cntr++)
@@ -188,6 +198,11 @@ void Shape::CreateShape(int numeral)
          break;
 
       case ShapeTypeNumeral9:
+         break;
+
+      case ShapeTypeCenterViewCal:
+         AddVertex( -1,  0, true);
+         AddVertex(  1,  0, true);
          break;
 
       default:

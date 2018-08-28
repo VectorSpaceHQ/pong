@@ -54,18 +54,18 @@ namespace Model
    struct DisplaySettings
    {
    public:
-      uint32_t xMin;
-      uint32_t xMax;
-      uint32_t yMin;
-      uint32_t yMax;
+      int32_t  xMin;
+      int32_t  xMax;
+      int32_t  yMin;
+      int32_t  yMax;
       uint32_t hSkew;   // TODO: Should skew be an integer where 0 is center?
       uint32_t vSkew;
 
       DisplaySettings():
-         xMin(0),
-         yMin(0),
-         xMax(800),
-         yMax(600),
+         xMin(-100),
+         yMin(-100),
+         xMax(100),
+         yMax(100),
          hSkew(0),
          vSkew(0)
       {
@@ -92,6 +92,7 @@ namespace Model
 
    public:
       GameState   gameState;
+      bool        gameStateChanged;
       Score       leftPaddleScore;
       Score       rightPaddleScore;
 
@@ -101,6 +102,7 @@ namespace Model
 
       GameStatus():
          gameState(GameStateCalibrateLasers),   // Default start in calibration mode
+         gameStateChanged(false),
          leftPaddleScore(0),
          rightPaddleScore(0),
          leftPaddleShape(),

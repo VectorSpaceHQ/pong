@@ -44,6 +44,7 @@ View::View(Model::Settings&         _settings,
    settings.leftLaserCal.yOrientation = -1;
    //settings.middleLaserCal.xOrientation = -1;
    settings.middleLaserCal.yOrientation = -1;
+   settings.middleLaserCal.xOrientation = -1;
 
 /*
    gameStatus.ballShape.CreateShape(2);
@@ -116,7 +117,24 @@ void View::DisplayLaserCalibration(void)
 
 void View::DisplayViewCalibration(void)
 {
-   // TODO: What to display for calibration? Perhaps have one laser draw a rectangle for the given size?
+   if(gameStatus.gameStateChanged)
+   {
+//      Serial.print("View X( ");
+//      Serial.print(settings.display.xMin);
+//      Serial.print(", ");
+//      Serial.print(settings.display.xMax);
+//      Serial.println(" )");
+
+      gameStatus.gameStateChanged = false;
+      gameStatus.ballShape.Reset();
+      gameStatus.ballShape.AddVertex(settings.display.xMin, 0, true);
+      gameStatus.ballShape.AddVertex(settings.display.xMax, 0, true);
+      ballLaser.UpdateShape(1, true);
+      ballLaser.SetPosition(0, 0);
+      ballLaser.running = true;
+   }
+
+   ballLaser.Run();
 }
 
 

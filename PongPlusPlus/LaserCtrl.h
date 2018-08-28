@@ -25,7 +25,7 @@ public:
    /***
     * This method is called afer the shape given to the laser changes
     */
-   void UpdateShape(uint32_t scale);
+   void UpdateShape(uint32_t scale, bool restart);
 
     /***
     * Control the laser and the gimble to draw the shape

@@ -36,10 +36,12 @@ private:
 
    void SetupLaserCalibration();
    void LaserCalibrationButtonChange();
+   void ViewCalibrationButtonChange();
 
    void RunLaserCalibration();
    void RunViewCalibration();
    void CheckButtonState();
+   void UpdateGameState(Model::GameState newState);
    void PrintButtonState();
 };
 

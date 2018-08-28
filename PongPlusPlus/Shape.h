@@ -39,6 +39,8 @@ enum ShapeType
    ShapeTypeNumeral8 = 8,
    ShapeTypeNumeral9 = 9,
 
+   ShapeTypeCenterViewCal,
+
    ShapeTypePaddle,
    ShapeTypeBall
 };
@@ -57,6 +59,7 @@ public:
 
    void AddVertex(CoordType x, CoordType y, bool draw);
    void Scale(CoordType _scale);
+   void SetOrientation(CoordType _scaleX, CoordType _scaleY);
    void Add(CoordType x, CoordType y);
    void CreateShape(int numeral);
    void Reset();
