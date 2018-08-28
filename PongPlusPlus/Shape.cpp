@@ -180,24 +180,62 @@ void Shape::CreateShape(int numeral)
          break;
 
       case ShapeTypeNumeral3:
+         AddVertex( -2,  2, false);    // Start top left
+         AddVertex(  2,  2, true );    //  -
+         AddVertex(  2,  0, true );    //   |
+         AddVertex(  0,  0, true );    //  -
+         AddVertex(  2, -2, true );    //   |
+         AddVertex(  2, -2, true );    //  -
          break;
 
       case ShapeTypeNumeral4:
+         AddVertex( -2,  2, false);    // Start top left
+         AddVertex( -2,  0, true );    //  | |
+         AddVertex(  2,  0, true );    //  |-|
+         AddVertex(  2,  2, true );    //    |
+         AddVertex(  2, -2, true );    //    |
          break;
 
       case ShapeTypeNumeral5:
+         AddVertex(  2,  2, false);    // Start top left
+         AddVertex(  0,  2, true );    //   -
+         AddVertex(  0,  0, true );    //  |
+         AddVertex(  2,  0, true );    //   -
+         AddVertex(  2, -2, true );    //    |
+         AddVertex(  0, -2, true );    //   -
          break;
 
       case ShapeTypeNumeral6:
+         AddVertex(  2,  2, false);    // Start top left
+         AddVertex(  0,  2, true );    //   -
+         AddVertex(  0, -2, true );    //  |
+         AddVertex(  2, -2, true );    //   -
+         AddVertex(  2,  0, true );    //  | |
+         AddVertex(  0,  0, true );    //   -
          break;
 
       case ShapeTypeNumeral7:
+         AddVertex(  0,  2, false);    // Start top left
+         AddVertex(  2,  2, true );    //   --
+         AddVertex(  0, -2, true );    //    /
+                                       //   /
          break;
 
       case ShapeTypeNumeral8:
+         AddVertex( -2,  2, false);    // Start top left
+         AddVertex(  2, -2, true );    //  ---
+         AddVertex( -2, -2, true );    //  \ /
+         AddVertex(  2,  2, true );    //   x
+         AddVertex( -2,  2, true );    //  / \
+                                       //  ---
          break;
 
       case ShapeTypeNumeral9:
+         AddVertex(  2, -2, false);    // Start bottom right
+         AddVertex(  2,  2, true );    //   -
+         AddVertex( -2,  2, true );    //  | |
+         AddVertex( -2,  0, true );    //   -|
+         AddVertex(  2,  0, true );    //    |
          break;
 
       case ShapeTypeCenterViewCal:

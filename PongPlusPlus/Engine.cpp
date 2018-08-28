@@ -10,6 +10,7 @@
 #include "Engine.h"
 #include "Model.h"
 #include "Timing.h"
+#include "Sound.h"
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
 
@@ -259,6 +260,7 @@ void Engine::UpdateGameState(Model::GameState newState)
 {
    gameStatus.gameState = newState;
    gameStatus.gameStateChanged = true;
+   PlayPaddleSound();
 
    switch(newState)
    {
