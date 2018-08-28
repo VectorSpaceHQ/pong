@@ -36,6 +36,7 @@ private:
    void Update();
    void UpdatePaddleStatus();
    void CheckButton();
+   void CheckRotaryEncoder();
 };
 
 

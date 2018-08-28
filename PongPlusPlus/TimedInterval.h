@@ -25,10 +25,10 @@ public:
 protected:
    virtual void Update() = 0;
 
+   bool     running;
    uint32_t interval;
 
 private:
-   bool     running;
    uint32_t lastTime;
    uint32_t setTime;
 };

@@ -19,7 +19,7 @@ class Engine: public ScheduledInterval
    };
 
 public:
-   Engine(Model::DisplaySettings&   _display,
+   Engine(Model::Settings&          _settings,
           Model::GameStatus&        _gameStatus,
           PaddleStatus&             _leftPaddle,
           PaddleStatus&             _rightPaddle);
@@ -27,14 +27,17 @@ public:
    void Update(void);
 
 private:
-   Model::DisplaySettings& display;
+   Model::Settings&        settings;
    Model::GameStatus&      gameStatus;
    PaddleStatus&           leftPaddle;
    PaddleStatus&           rightPaddle;
 
    ButtonState             buttonState;
 
-   void RunCalibration();
+   void SetupLaserCalibration();
+
+   void RunLaserCalibration();
+   void RunViewCalibration();
    void CheckButtonState();
    void PrintButtonState();
 };

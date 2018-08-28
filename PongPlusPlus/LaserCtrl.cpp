@@ -5,6 +5,7 @@
 
 #include "Configs.h"
 #include "LaserCtrl.h"
+#include "Model.h"
 #include "ScheduledInterval.h"
 #include "Shape.h"
 #include "Timing.h"
@@ -21,9 +22,13 @@
 
 static uint32_t absolute(int32_t val);
 
-LaserCtrl::LaserCtrl(LaserConf& conf, Shape& _shape, const char* _name):
+LaserCtrl::LaserCtrl(LaserConf&                conf,
+                     Model::LaserCalibration&  _cal,
+                     Shape&                    _shape,
+                     const char*               _name):
    TimedInterval(400),     // This will change based on laser movement
    name(_name),
+   cal(_cal),
    x(SERVO_MID_X),
    y(SERVO_MID_Y),
    hskew(0),
@@ -74,17 +79,40 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
 
    // Shift to Laser coordinates
 
-   CoordType newX = SERVO_MID_X + atX;
-   CoordType newY = SERVO_MID_Y + atY;
+   CoordType newX = SERVO_MID_X + atX + (cal.xOffset * cal.xOrientation);
+   CoordType newY = SERVO_MID_Y + atY + (cal.yOffset * cal.yOrientation);
+
+/*
+   Serial.print(name);
+   Serial.print(" Position( ");
+   Serial.print(cal.xOffset);
+   Serial.print(", ");
+   Serial.print(cal.yOffset);
+   Serial.print(", ");
+   Serial.print(newX);
+   Serial.print(", ");
+   Serial.print(newY);
+   Serial.println(")");
+*/
 
    // Move our vertex coordinates the difference
-   shape.Add((newX - x), (newY - y));
+   if(running)
+   {
+      shape.Add((newX - x), (newY - y));
+   }
 
    // Update our new coordinates with the new ones
    x = newX;
    y = newY;
 }
 
+void LaserCtrl::Move(CoordType atX, CoordType atY)
+{
+   SetPosition(atX, atY);
+
+   xServo.writeMicroseconds(x);
+   yServo.writeMicroseconds(y);
+}
 
 void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
 {

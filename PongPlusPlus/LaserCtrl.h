@@ -6,8 +6,9 @@
 #include <stdint.h>
 
 #include "Configs.h"
-#include "TimedInterval.h"
+#include "Model.h"
 #include "Shape.h"
+#include "TimedInterval.h"
 
 
 class LaserCtrl: public TimedInterval
@@ -16,7 +17,10 @@ public:
    /***
     * Constructor
     */
-   LaserCtrl(LaserConf& conf, Shape& _shape, const char* _name);
+   LaserCtrl(LaserConf&                conf,
+             Model::LaserCalibration&  _cal,
+             Shape&                    _shape,
+             const char*               _name);
 
    /***
     * This method is called afer the shape given to the laser changes
@@ -29,6 +33,8 @@ public:
     * @param atY - The Y position at which to draw the shape
     */
    void SetPosition(CoordType atX, CoordType atY);
+
+   void Move(CoordType atX, CoordType atY);
 
    /***
     * Turn the laser on
@@ -51,21 +57,22 @@ public:
    void Update();
 
 private:
-   const char*       name;
-   uint32_t    x;
-   uint32_t    y;
-   uint32_t    hskew;
-   uint32_t    vskew;
-   bool        laserOn;
-   Servo       xServo;
-   Servo       yServo;
-   uint8_t     laserPin;
-   Shape&      shape;
-   uint32_t    currentVertex;
+   const char*                name;
+   Model::LaserCalibration&   cal;
+   uint32_t                   x;
+   uint32_t                   y;
+   uint32_t                   hskew;
+   uint32_t                   vskew;
+   bool                       laserOn;
+   Servo                      xServo;
+   Servo                      yServo;
+   uint8_t                    laserPin;
+   Shape&                     shape;
+   uint32_t                   currentVertex;
 
-   Vertex      currentPosition;
-   Vertex      destination;
-   Vertex      step;
+   Vertex                     currentPosition;
+   Vertex                     destination;
+   Vertex                     step;
 
    void SetLaser(void);
    void SetLaser(bool onOff);

@@ -14,18 +14,20 @@
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
 
 
-Engine::Engine(Model::DisplaySettings&    _display,
+Engine::Engine(Model::Settings&           _settings,
                Model::GameStatus&         _gameStatus,
                PaddleStatus&              _leftPaddle,
                PaddleStatus&              _rightPaddle):
    ScheduledInterval(ENGINE_LOOP_INTERVAL),
-   display(_display),
+   settings(_settings),
    gameStatus(_gameStatus),
    leftPaddle(_leftPaddle),
    rightPaddle(_rightPaddle),
    buttonState(ButtonStateReset)
 {
    Serial.begin(115200);
+
+   SetupLaserCalibration();
 }
 
 
@@ -36,8 +38,12 @@ void Engine::Update(void)
 
    switch(gameStatus.gameState)
    {
-      case Model::GameStateCalibrate:
-         RunCalibration();
+      case Model::GameStateCalibrateLasers:
+         RunLaserCalibration();
+         break;
+
+      case Model::GameStateCalibrateView:
+         RunViewCalibration();
          break;
 
       case Model::GameStateReady:
@@ -53,26 +59,71 @@ void Engine::Update(void)
 }
 
 
-void Engine::RunCalibration()
+void Engine::SetupLaserCalibration()
+{
+   // Center for the laser
+   leftPaddle.position = 1500;
+   rightPaddle.position = 1500;
+
+   leftPaddle.SetLimits(-500, 500);
+   rightPaddle.SetLimits(-500, 500);
+   gameStatus.gameState = Model::GameStateCalibrateLasers;
+}
+
+
+void Engine::RunLaserCalibration()
+{
+   leftPaddle.SetLimits(-500, 500);
+   rightPaddle.SetLimits(-500, 500);
+
+   switch(buttonState)
+   {
+      // Update X/Y position of the display if no buttons pressed
+      case ButtonStateNone:
+         settings.middleLaserCal.xOffset = leftPaddle.position;    // Left paddle controls X-Axis
+         settings.middleLaserCal.yOffset = rightPaddle.position;   // Right paddle controls Y-Axis
+         break;
+
+      // Update size of the display if the left button is pressed
+      case ButtonStateLeft:
+         settings.leftLaserCal.xOffset = leftPaddle.position;    // Left paddle controls X-Axis
+         settings.leftLaserCal.yOffset = rightPaddle.position;   // Right paddle controls Y-Axis
+         break;
+
+      // Update skew of the display if the right button is pressed
+      case ButtonStateRight:
+         settings.rightLaserCal.xOffset = leftPaddle.position;    // Left paddle controls X-Axis
+         settings.rightLaserCal.yOffset = rightPaddle.position;   // Right paddle controls Y-Axis
+         break;
+
+      // If both buttons are pressed, end configuration
+      case ButtonStateBoth:
+         gameStatus.gameState = Model::GameStateCalibrateView;
+         break;
+   }
+}
+
+
+void Engine::RunViewCalibration()
 {
    switch(buttonState)
    {
       // Update X/Y position of the display if no buttons pressed
       case ButtonStateNone:
-         display.xMin = leftPaddle.position;    // Left paddle controls X-Axis
-         display.yMin = rightPaddle.position;   // Right paddle controls Y-Axis
+         settings.display.xMin = leftPaddle.position;    // Left paddle controls X-Axis
+         settings.display.yMin = rightPaddle.position;   // Right paddle controls Y-Axis
          break;
 
       // Update size of the display if the left button is pressed
       case ButtonStateLeft:
-         display.xMax = leftPaddle.position;    // Left paddle controls X-Axis
-         display.yMax = rightPaddle.position;   // Right paddle controls Y-Axis
+         settings.display.xMax = leftPaddle.position;    // Left paddle controls X-Axis
+         settings.display.yMax = rightPaddle.position;   // Right paddle controls Y-Axis
          break;
 
       // Update skew of the display if the right button is pressed
       case ButtonStateRight:
-         display.hSkew = leftPaddle.position;   // Left paddle controls horizontal skew
-         display.vSkew = rightPaddle.position;  // Right paddle controls vertical skew
+         settings.display.hSkew = leftPaddle.position;   // Left paddle controls horizontal skew
+         settings.display.vSkew = rightPaddle.position;  // Right paddle controls vertical skew
          break;
 
       // If both buttons are pressed, end configuration
@@ -85,8 +136,6 @@ void Engine::RunCalibration()
 
 void Engine::CheckButtonState()
 {
-   //PrintButtonState();
-
    if(leftPaddle.buttonPressed && rightPaddle.buttonPressed)
    {
       buttonState = ButtonStateBoth;
@@ -101,8 +150,10 @@ void Engine::CheckButtonState()
    }
    else
    {
-      buttonState == ButtonStateNone;
+      buttonState = ButtonStateNone;
    }
+
+   //PrintButtonState();
 }
 
 
@@ -120,5 +171,6 @@ void Engine::PrintButtonState()
    Serial.print(rightPaddle.buttonPressed);
    Serial.print(", ");
    Serial.print(rightPaddle.buttonTime);
-   Serial.println(" )");
+   Serial.print(" ) -> ");
+   Serial.println(buttonState);
 }

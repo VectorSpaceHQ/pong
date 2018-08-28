@@ -10,7 +10,7 @@
 
 
 #define MAIN_LOOP_TIME              (100)    // microseconds
-#define ENGINE_LOOP_INTERVAL        (3333)   // Run the engine at 30fps  3333 * 5 us = 0.016665s ~= 60hz ~= 30fps
+#define ENGINE_LOOP_INTERVAL        (167)   // Run the engine at 30fps  3333 * 5 us = 0.016665s ~= 60hz ~= 30fps
 #define VIEW_LOOP_INTERVAL          (1)      // Run the view every time for now for laser scheduling
 
 // TODO: Review controller timing!

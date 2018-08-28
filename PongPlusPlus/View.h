@@ -13,7 +13,7 @@
 class View: public ScheduledInterval
 {
 public:
-   View(Model::DisplaySettings&  _display,
+   View(Model::Settings&         _settings,
         Model::GameStatus&       _gameStatus,
         LaserConf&               _leftLaserConf,
         LaserConf&               _rightLaserConf,
@@ -23,13 +23,14 @@ public:
    void  Calibrate(void);
 
 private:
-   Model::DisplaySettings& display;
+   Model::Settings&        settings;
    Model::GameStatus&      gameStatus;
    LaserCtrl               leftPaddleLaser;
    LaserCtrl               rightPaddleLaser;
    LaserCtrl               ballLaser;
 
-   void DisplayCalibration(void);
+   void DisplayLaserCalibration(void);
+   void DisplayViewCalibration(void);
    void DisplayGamePlay(void);
    void DisplayScore(void);
 };

@@ -19,7 +19,7 @@ public:
 
 private:
    HwConfig                hardware;
-   Model::DisplaySettings  display;
+   Model::Settings         settings;
    Model::GameStatus       gameStatus;
 
    Engine                  engine;
