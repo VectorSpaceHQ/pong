@@ -119,22 +119,47 @@ void View::DisplayViewCalibration(void)
 {
    if(gameStatus.gameStateChanged)
    {
-//      Serial.print("View X( ");
-//      Serial.print(settings.display.xMin);
-//      Serial.print(", ");
-//      Serial.print(settings.display.xMax);
-//      Serial.println(" )");
+      Serial.print("View X-Y( ");
+      Serial.print(settings.display.xMin);
+      Serial.print(" - ");
+      Serial.print(settings.display.xMax);
+      Serial.print(", ");
+      Serial.print(settings.display.yMin);
+      Serial.print(" - ");
+      Serial.print(settings.display.yMax);
+      Serial.println(" )");
 
+      // Reset gameStateChanged
       gameStatus.gameStateChanged = false;
+
+      // Set up the ball shape to be a horizontal line in the center
       gameStatus.ballShape.Reset();
       gameStatus.ballShape.AddVertex(settings.display.xMin, 0, true);
       gameStatus.ballShape.AddVertex(settings.display.xMax, 0, true);
       ballLaser.UpdateShape(1, true);
       ballLaser.SetPosition(0, 0);
       ballLaser.running = true;
+
+      // Setup the left laser to be a vertical line  on the left of the screen
+      gameStatus.leftPaddleShape.Reset();
+      gameStatus.leftPaddleShape.AddVertex(0, settings.display.yMin, true);   // Top
+      gameStatus.leftPaddleShape.AddVertex(0, settings.display.yMax, true);   // Bottom
+      leftPaddleLaser.UpdateShape(1, true);
+      leftPaddleLaser.SetPosition(settings.display.xMin, 0);   // far left
+      leftPaddleLaser.running = true;
+
+      // Setup the right laser to be a vertical line  on the right of the screen
+      gameStatus.rightPaddleShape.Reset();
+      gameStatus.rightPaddleShape.AddVertex(0, settings.display.yMin, true);   // Top
+      gameStatus.rightPaddleShape.AddVertex(0, settings.display.yMax, true);   // Bottom
+      rightPaddleLaser.UpdateShape(1, true);
+      rightPaddleLaser.SetPosition(settings.display.xMax, 0);   // far right
+      rightPaddleLaser.running = true;
    }
 
    ballLaser.Run();
+   leftPaddleLaser.Run();
+   rightPaddleLaser.Run();
 }
 
 
@@ -146,46 +171,3 @@ void View::DisplayGamePlay(void)
 void View::DisplayScore(void)
 {
 }
-
-
-/* TODO: Need help accessing the leftPaddle buttonPin
- * ADT: Only the Engine will have access to controller information.
- *      The engine will update values in the Model DisplaySettings struct
- *      The View will be able to read the Display settings and update it's display accordingly.
-void View::Calibrate(void)
-{
-  // Use leftPaddle to point ballLaser at bottom left, top left, then top right corners.
-  // Press leftPaddle button to set position of each corner.
-
-  // Instead of pointing the laser at corners, what if the laser drew a rectangle for the size of the display,
-  // and we adjust the rectangle to match the shape of the building?
-
-
-  // Bottom left
-  while (digitalRead(leftPaddle.buttonPin) == HIGH){
-    ballLaser.Draw(ball.x, ball.y);
-  }
-  xmin = ball.x;
-  ymin = ball.y;
-  delay(1000);
-
-  // Top left
-  while (digitalRead(leftPaddle.buttonPin) == HIGH){
-    ballLaser.Draw(ball.x, ball.y);
-  }
-  hskew = ball.x - xmin;
-  ymax = ball.y;
-  delay(1000);
-
-  // Top right
-  while (digitalRead(leftPaddle.buttonPin) == HIGH){
-    ballLaser.Draw(ball.x, ball.y);
-  }
-  vskew = ball.y - ymax;
-  xmax = ball.x;
-
-  leftPaddleLaser.SetBounds(xmin, xmax, ymin, ymax, hskew, vskew);
-  rightPaddleLaser.SetBounds(xmin, xmax, ymin, ymax, hskew, vskew);
-  ballLaser.SetBounds(xmin, xmax, ymin, ymax, hskew, vskew);
-}
-*/

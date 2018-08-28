@@ -143,16 +143,22 @@ void Engine::ViewCalibrationButtonChange()
       switch(buttonState)
       {
          case ButtonStateNone:
+            leftPaddle.SetLimits(-500, settings.display.yMax);
+            rightPaddle.SetLimits(-500, settings.display.xMax);
             leftPaddle.position = settings.display.yMin;
             rightPaddle.position = settings.display.xMin;
             break;
 
          case ButtonStateLeft:
+            leftPaddle.SetLimits(settings.display.yMin, 500);
+            rightPaddle.SetLimits(settings.display.xMin, 500);
             leftPaddle.position = settings.display.yMax;
             rightPaddle.position = settings.display.xMax;
             break;
 
          case ButtonStateRight:
+            leftPaddle.SetLimits(settings.display.yMin, settings.display.yMax);
+            rightPaddle.SetLimits(settings.display.xMin, settings.display.xMax);
             leftPaddle.position = settings.display.vSkew;
             rightPaddle.position = settings.display.hSkew;
             break;
@@ -171,9 +177,6 @@ void Engine::ViewCalibrationButtonChange()
 
 void Engine::RunViewCalibration()
 {
-   leftPaddle.SetLimits(-500, 500);
-   rightPaddle.SetLimits(-500, 500);
-
    ViewCalibrationButtonChange();
 
    switch(buttonState)
@@ -223,12 +226,6 @@ void Engine::RunViewCalibration()
             gameStatus.gameStateChanged = true;
          }
          break;
-/*
-      // If both buttons are pressed, end configuration
-      case ButtonStateBoth:
-         gameStatus.gameState = Model::GameStateReady;
-         break;
-*/
    }
 }
 
