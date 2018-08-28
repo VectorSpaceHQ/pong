@@ -129,6 +129,7 @@ void Engine::RunLaserCalibration()
 
       // If both buttons are pressed, end configuration
       case ButtonStateBoth:
+         PlayPointSound();
          gameStatus.gameState = Model::GameStateCalibrateView;
          break;
    }
