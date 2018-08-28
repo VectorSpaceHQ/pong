@@ -62,8 +62,8 @@ void Engine::Update(void)
 void Engine::SetupLaserCalibration()
 {
    // Center for the laser
-   leftPaddle.position = 1500;
-   rightPaddle.position = 1500;
+   leftPaddle.position = 0;
+   rightPaddle.position = 0;
 
    leftPaddle.SetLimits(-500, 500);
    rightPaddle.SetLimits(-500, 500);
@@ -71,10 +71,40 @@ void Engine::SetupLaserCalibration()
 }
 
 
+void Engine::LaserCalibrationButtonChange()
+{
+   if((leftPaddle.buttonStateChanged) || (rightPaddle.buttonStateChanged))
+   {
+      switch(buttonState)
+      {
+         case ButtonStateNone:
+            leftPaddle.position = settings.middleLaserCal.xOffset;
+            rightPaddle.position = settings.middleLaserCal.yOffset;
+            break;
+
+         case ButtonStateLeft:
+            leftPaddle.position = settings.leftLaserCal.xOffset;
+            rightPaddle.position = settings.leftLaserCal.yOffset;
+            break;
+
+         case ButtonStateRight:
+            leftPaddle.position = settings.rightLaserCal.xOffset;
+            rightPaddle.position = settings.rightLaserCal.yOffset;
+            break;
+      }
+
+      leftPaddle.buttonStateChanged = false;
+      rightPaddle.buttonStateChanged = false;
+   }
+}
+
+
 void Engine::RunLaserCalibration()
 {
    leftPaddle.SetLimits(-500, 500);
    rightPaddle.SetLimits(-500, 500);
+
+   LaserCalibrationButtonChange();
 
    switch(buttonState)
    {

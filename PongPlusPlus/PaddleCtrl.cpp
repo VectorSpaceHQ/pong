@@ -63,7 +63,12 @@ void PaddleCtrl::UpdatePaddleStatus()
       hwStatus.position = 0;
    }
 
-   paddleStatus.buttonPressed = hwStatus.buttonPressed;
+   if(paddleStatus.buttonPressed != hwStatus.buttonPressed)
+   {
+      paddleStatus.buttonStateChanged = true;
+      paddleStatus.buttonPressed = hwStatus.buttonPressed;
+   }
+
    paddleStatus.buttonTime = hwStatus.buttonTime;
 }
 

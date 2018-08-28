@@ -35,6 +35,7 @@ private:
    ButtonState             buttonState;
 
    void SetupLaserCalibration();
+   void LaserCalibrationButtonChange();
 
    void RunLaserCalibration();
    void RunViewCalibration();
