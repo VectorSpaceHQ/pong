@@ -18,9 +18,8 @@
 #define  SERVO_MID_X    ((SERVO_MAX_X + SERVO_MIN_X) / 2)
 #define  SERVO_MID_Y    ((SERVO_MAX_Y + SERVO_MIN_Y) / 2)
 
-#define  US_PER_STEP    (20)
+#define  US_PER_STEP    (1000)
 
-static uint32_t absolute(int32_t val);
 
 LaserCtrl::LaserCtrl(LaserConf&                conf,
                      Model::LaserCalibration&  _cal,
@@ -121,8 +120,8 @@ void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
 {
    // TODO: Need to handle wrap (every 70 minutes)
 
-   uint32_t waitX = absolute(x);
-   uint32_t waitY = absolute(y);
+   uint32_t waitX = abs(x);
+   uint32_t waitY = abs(y);
 
 //   Serial.print("x,y: ");
 //   Serial.print(waitX);
@@ -226,10 +225,4 @@ void LaserCtrl::Move(Vertex& dest)
 
    SetWaitTime(step.x, step.y);
    SetLaser(destination.draw);
-}
-
-
-uint32_t absolute(int32_t val)
-{
-   return static_cast<uint32_t>(static_cast<uint16_t>(~abs(val) + 1));
 }

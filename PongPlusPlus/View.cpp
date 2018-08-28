@@ -48,9 +48,9 @@ View::View(Model::Settings&         _settings,
 
 /*
    gameStatus.ballShape.CreateShape(2);
-   gameStatus.ballShape.Scale(-1);        // This laser needs its shape inverted
-   ballLaser.UpdateShape(20);
+   ballLaser.UpdateShape(20, true);
    ballLaser.SetPosition(0, 0);
+   ballLaser.Start();
 
    gameStatus.leftPaddleShape.CreateShape(1);
    leftPaddleLaser.UpdateShape(20);
@@ -138,7 +138,7 @@ void View::DisplayViewCalibration(void)
       gameStatus.ballShape.AddVertex(settings.display.xMax, 0, true);
       ballLaser.UpdateShape(1, true);
       ballLaser.SetPosition(0, 0);
-      ballLaser.running = true;
+      ballLaser.Start();
 
       // Setup the left laser to be a vertical line  on the left of the screen
       gameStatus.leftPaddleShape.Reset();
@@ -146,7 +146,7 @@ void View::DisplayViewCalibration(void)
       gameStatus.leftPaddleShape.AddVertex(0, settings.display.yMax, true);   // Bottom
       leftPaddleLaser.UpdateShape(1, true);
       leftPaddleLaser.SetPosition(settings.display.xMin, 0);   // far left
-      leftPaddleLaser.running = true;
+      leftPaddleLaser.Start();
 
       // Setup the right laser to be a vertical line  on the right of the screen
       gameStatus.rightPaddleShape.Reset();
@@ -154,7 +154,7 @@ void View::DisplayViewCalibration(void)
       gameStatus.rightPaddleShape.AddVertex(0, settings.display.yMax, true);   // Bottom
       rightPaddleLaser.UpdateShape(1, true);
       rightPaddleLaser.SetPosition(settings.display.xMax, 0);   // far right
-      rightPaddleLaser.running = true;
+      rightPaddleLaser.Start();
    }
 
    ballLaser.Run();
