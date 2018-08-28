@@ -17,6 +17,7 @@ struct PaddleStatus
 
 public:
    bool        buttonPressed; // Whether the button is pressed
+   bool        buttonStateChanged;
    uint32_t    buttonTime;    // Time in ms since last button state change
    int16_t     position;      // The current position within min - max bounds
 
@@ -27,6 +28,7 @@ private:
 public:
    PaddleStatus():
       buttonPressed(false),
+      buttonStateChanged(false),
       buttonTime(0),
       position(0),            // Default to the middle
       minPosition(-32768),    // Default to absolute min limitation of the type
