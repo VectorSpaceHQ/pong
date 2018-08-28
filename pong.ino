@@ -237,7 +237,7 @@ void drawLine(){
   int height=gameHeight * 0.15;
   int width= height * 0.21;
   int miny = 1100;
-  int minx = 1000;
+  int minx = 1600;
   int maxy=miny+height;
   int maxx=minx+width;
   int thedelay;
