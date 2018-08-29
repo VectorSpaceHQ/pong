@@ -108,6 +108,7 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
    y = newY;
 }
 
+
 void LaserCtrl::Move(CoordType atX, CoordType atY)
 {
    SetPosition(atX, atY);
@@ -115,6 +116,7 @@ void LaserCtrl::Move(CoordType atX, CoordType atY)
    xServo.writeMicroseconds(x);
    yServo.writeMicroseconds(y);
 }
+
 
 void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
 {

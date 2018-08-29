@@ -26,7 +26,10 @@ void Vertex::Log()
 
 Shape::Shape():
    scale(1),
-   numVertices(0)
+   numVertices(0),
+   position(),
+   vector(),
+   acceleration(0)
 {
    for(uint32_t cntr = 0; cntr < MAX_VERTICES; cntr++)
    {

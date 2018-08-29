@@ -29,6 +29,14 @@ private:
    LaserCtrl               rightPaddleLaser;
    LaserCtrl               ballLaser;
 
+   void CheckGameStateChange(void);
+
+   void SetupLaserCalibration(void);
+   void SetupViewCalibration(void);
+   void SetupGamePlay(void);
+   void SetupGameReady(void);
+   void SetupGameOver(void);
+
    void DisplayLaserCalibration(void);
    void DisplayViewCalibration(void);
    void DisplayGamePlay(void);

@@ -93,6 +93,7 @@ namespace Model
    public:
       GameState   gameState;
       bool        gameStateChanged;
+      bool        viewSettingsChanged;
       Score       leftPaddleScore;
       Score       rightPaddleScore;
 
@@ -103,6 +104,7 @@ namespace Model
       GameStatus():
          gameState(GameStateCalibrateLasers),   // Default start in calibration mode
          gameStateChanged(false),
+         viewSettingsChanged(false),
          leftPaddleScore(0),
          rightPaddleScore(0),
          leftPaddleShape(),

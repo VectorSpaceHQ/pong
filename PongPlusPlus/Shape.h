@@ -53,9 +53,14 @@ public:
    Shape(uint32_t _numVertices, Vertex* _vertices);
    Shape(const Shape& other);
 
-   uint16_t   scale;
-   uint32_t   numVertices;
-   Vertex     vertices[MAX_VERTICES];
+   uint16_t    scale;
+   uint32_t    numVertices;
+   Vertex      vertices[MAX_VERTICES];
+
+   // Vertices for movement
+   Vertex      position;         // Where it currently is in normal game space
+   Vertex      vector;           // The direction/scale of the X/Y vector
+   uint32_t    acceleration;     // The current acceleration (future?)
 
    void AddVertex(CoordType x, CoordType y, bool draw);
    void Scale(CoordType _scale);
