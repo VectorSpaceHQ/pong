@@ -246,6 +246,14 @@ void Shape::CreateShape(int numeral)
          AddVertex(  1,  0, true);
          break;
 
+      case ShapeTypePaddle:
+         AddVertex( 0,  2, true);      // Start Top middle
+         AddVertex( 0, -2, true);      //   |
+         break;
+
+      case ShapeTypeBall:     // TODO: Still need to calculate vertices for a ball -- up to 16
+         break;
+
       default:
          break;
    }
