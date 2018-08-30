@@ -26,6 +26,12 @@ namespace Model
       GameStateGameOver
    };
 
+   enum WhoServes
+   {
+      LeftPlayerServes  = 0,
+      RightPlayerServes,
+      EitherPlayerServes
+   };
 
    /***
     *
@@ -96,6 +102,7 @@ namespace Model
       bool        viewSettingsChanged;
       Score       leftPaddleScore;
       Score       rightPaddleScore;
+      WhoServes   whoseServe;
 
       Shape       leftPaddleShape;
       Shape       rightPaddleShape;
@@ -107,6 +114,7 @@ namespace Model
          viewSettingsChanged(false),
          leftPaddleScore(0),
          rightPaddleScore(0),
+         whoseServe(EitherPlayerServes),
          leftPaddleShape(),
          rightPaddleShape(),
          ballShape()

@@ -82,6 +82,7 @@ public:
    void CopyVerticesToView();
 
    // Methods to operate on the vertices
+   void Move(CoordSet set, CoordType diffX, CoordType diffY);
    void Scale(CoordSet set, CoordType _scale);
    void SetOrientation(CoordSet set, CoordType _scaleX, CoordType _scaleY);
    void Add(CoordSet set, CoordType x, CoordType y);

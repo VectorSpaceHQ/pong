@@ -13,6 +13,7 @@
 #include "Sound.h"
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
+#define  MAX_SCORE               (9)
 
 
 Engine::Engine(Model::Settings&           _settings,
@@ -48,9 +49,11 @@ void Engine::Update(void)
          break;
 
       case Model::GameStateReady:
+         ReadyButtonChange();
          break;
 
       case Model::GameStatePlay:
+         RunGamePlay();
          break;
 
       case Model::GameStateGameOver:
@@ -69,7 +72,7 @@ void Engine::SetupLaserCalibration()
    leftPaddle.SetLimits(-500, 500);
    rightPaddle.SetLimits(-500, 500);
 
-   UpdateGameState(Model::GameStateCalibrateLasers);
+   ChangeGameState(Model::GameStateCalibrateLasers);
 }
 
 
@@ -96,7 +99,7 @@ void Engine::LaserCalibrationButtonChange()
 
          // If both buttons are pressed, end configuration
          case ButtonStateBoth:
-            UpdateGameState(Model::GameStateCalibrateView);
+            ChangeGameState(Model::GameStateCalibrateView);
             break;
       }
 
@@ -165,7 +168,7 @@ void Engine::ViewCalibrationButtonChange()
 
          // If both buttons are pressed, end configuration
          case ButtonStateBoth:
-            UpdateGameState(Model::GameStateReady);
+            ChangeGameState(Model::GameStateReady);
             break;
       }
 
@@ -230,6 +233,200 @@ void Engine::RunViewCalibration()
 }
 
 
+void Engine::ReadyButtonChange()
+{
+   // Whoever scored last gets to serve
+   if((leftPaddle.buttonStateChanged) || (rightPaddle.buttonStateChanged))
+   {
+      switch(buttonState)
+      {
+         case ButtonStateLeft:
+            if(gameStatus.whoseServe == Model::LeftPlayerServes)
+            {
+               ChangeGameState(Model::GameStatePlay);
+            }
+            else if(gameStatus.whoseServe == Model::EitherPlayerServes)
+            {
+               gameStatus.whoseServe = Model::LeftPlayerServes;
+
+               ChangeGameState(Model::GameStatePlay);
+            }
+            break;
+
+         case ButtonStateRight:
+            if(gameStatus.whoseServe == Model::RightPlayerServes)
+            {
+               ChangeGameState(Model::GameStatePlay);
+            }
+            else if(gameStatus.whoseServe == Model::EitherPlayerServes)
+            {
+               gameStatus.whoseServe = Model::RightPlayerServes;
+
+               ChangeGameState(Model::GameStatePlay);
+            }
+            break;
+
+         default:
+            // Do nothing, just wait for the correct player to serve
+            break;
+      }
+
+      leftPaddle.buttonStateChanged = false;
+      rightPaddle.buttonStateChanged = false;
+   }
+}
+
+
+void Engine::SetupGamePlay()
+{
+   randomSeed(micros());
+
+   // Randomly select top third or bottom third
+   if(random(1) == 1)
+   {
+      // Select top 1/3
+      gameStatus.ballShape.position.y = 2 * (settings.display.yMax + settings.display.yMin) / 3;
+   }
+   else
+   {
+      // Select bottom 1/3
+      gameStatus.ballShape.position.y = (settings.display.yMax + settings.display.yMin) / 3;
+   }
+
+   // Start the ball in the horizontal center
+   gameStatus.ballShape.position.x = 0;
+
+   // TODO: Randomize the y-component of the vector
+   // Select ball x vector
+   if(gameStatus.whoseServe == Model::LeftPlayerServes)
+   {
+      // If the left player is serving, set the vector to a positive (right) direction
+      gameStatus.ballShape.vector.x = 2;
+   }
+   else
+   {
+      // If the left player is serving, set the vector to a negative (left) direction
+      gameStatus.ballShape.vector.x = -2;
+   }
+
+   // Randomize up/down
+   if(random(1) == 1)
+   {
+      // Down, y is positive
+      gameStatus.ballShape.vector.y = random(2, 5);   // Slope is random of 2/2, 3/2, 4/2, or 5/2
+   }
+   else
+   {
+      // Up, y is negative
+      gameStatus.ballShape.vector.y =  -random(2, 5);
+   }
+}
+
+
+void Engine::RunGamePlay()
+{
+   Vertex   foundVertex;
+
+   // Move the ball along it's trajectory
+   gameStatus.ballShape.Move(CoordsWorld, gameStatus.ballShape.vector.x, gameStatus.ballShape.vector.y);
+
+   // Check collision of the ball with the top or bottom
+   if( (gameStatus.ballShape.CheckTop(settings.display.yMax, foundVertex)    ) ||
+       (gameStatus.ballShape.CheckBottom(settings.display.yMin, foundVertex) )    )
+   {
+      // Ball hit the top or bottom, so invert the y-component of the slope
+      gameStatus.ballShape.vector.y *= -1;
+
+      PlayWallSound();
+   }
+
+   // If the ball is traveling left, then check it for collision with the left paddle
+   if(gameStatus.ballShape.vector.x < 0)
+   {
+      // If the ball's left-most vertex is between the highest and lowest paddle vertices...
+      if((gameStatus.ballShape.leftMostVertex.y <= gameStatus.leftPaddleShape.highestVertex.y) &&
+         (gameStatus.ballShape.leftMostVertex.y >= gameStatus.leftPaddleShape.lowestVertex.y )    )
+      {
+         // And the it's beyond the paddle edge
+         if(gameStatus.ballShape.CheckLeft(gameStatus.leftPaddleShape.rightMostVertex.x, foundVertex))
+         {
+            // Ball hit the left paddle so invert the x-component of the slope
+            gameStatus.ballShape.vector.x *= -1;
+
+            PlayPaddleSound();
+
+            // TODO: take in velocity of the paddle to adjust slope of the ball
+         }
+      }
+
+      // Check to see if the ball has reached the left edge
+      if(gameStatus.ballShape.CheckLeft(settings.display.xMin, foundVertex))
+      {
+         gameStatus.rightPaddleScore++;
+         gameStatus.whoseServe = Model::RightPlayerServes;
+         PlayPointSound();
+         ChangeGameState(Model::GameStateGameOver);
+      }
+   }
+
+   // If the ball is traveling right, then check it for collision with the right paddle
+   if(gameStatus.ballShape.vector.x > 0)
+   {
+      // If the ball's left-most vertex is between the highest and lowest paddle vertices...
+      if((gameStatus.ballShape.rightMostVertex.y <= gameStatus.rightPaddleShape.highestVertex.y) &&
+         (gameStatus.ballShape.rightMostVertex.y >= gameStatus.rightPaddleShape.lowestVertex.y )    )
+      {
+         // And the it's beyond the paddle edge
+         if(gameStatus.ballShape.CheckRight(gameStatus.rightPaddleShape.leftMostVertex.x, foundVertex))
+         {
+            // Ball hit the left paddle so invert the x-component of the slope
+            gameStatus.ballShape.vector.x *= -1;
+
+            PlayPaddleSound();
+
+            // TODO: take in velocity of the paddle to adjust slope of the ball
+         }
+      }
+
+      // Check to see if the ball has reached the right edge
+      if(gameStatus.ballShape.CheckRight(settings.display.xMax, foundVertex))
+      {
+         gameStatus.leftPaddleScore++;
+         gameStatus.whoseServe = Model::LeftPlayerServes;
+         PlayPointSound();
+         ChangeGameState(Model::GameStateGameOver);
+      }
+   }
+}
+
+
+void Engine::GameOverButtonChange()
+{
+   // Either button will take us back to the ready state
+   if((leftPaddle.buttonStateChanged) || (rightPaddle.buttonStateChanged))
+   {
+      switch(buttonState)
+      {
+         case ButtonStateLeft:
+         case ButtonStateRight:
+            ChangeGameState(Model::GameStateReady);
+
+            if( (gameStatus.leftPaddleScore >= MAX_SCORE) ||
+                (gameStatus.rightPaddleScore >= MAX_SCORE)   )
+            {
+               gameStatus.leftPaddleScore = 0;
+               gameStatus.rightPaddleScore = 0;
+               gameStatus.whoseServe = Model::EitherPlayerServes;
+            }
+            break;
+      }
+
+      leftPaddle.buttonStateChanged = false;
+      rightPaddle.buttonStateChanged = false;
+   }
+}
+
+
 void Engine::CheckButtonState()
 {
    if(leftPaddle.buttonPressed && rightPaddle.buttonPressed)
@@ -253,19 +450,21 @@ void Engine::CheckButtonState()
 }
 
 
-void Engine::UpdateGameState(Model::GameState newState)
+void Engine::ChangeGameState(Model::GameState newState)
 {
+   // Notify the View of the new game state
    gameStatus.gameState = newState;
    gameStatus.gameStateChanged = true;
-   PlayPaddleSound();
 
    switch(newState)
    {
       case Model::GameStateCalibrateLasers:
+         PlayPaddleSound();
          Serial.println("New Game State: Calibrate Lasers");
          break;
 
       case Model::GameStateCalibrateView:
+         PlayPaddleSound();
          Serial.println("New Game State: Calibrate View");
          break;
 
@@ -274,6 +473,7 @@ void Engine::UpdateGameState(Model::GameState newState)
          break;
 
       case Model::GameStatePlay:
+         SetupGamePlay();
          Serial.println("New Game State: Play");
          break;
 

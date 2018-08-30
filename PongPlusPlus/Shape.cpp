@@ -51,6 +51,20 @@ Shape::Shape(const Shape& other)
 }
 
 
+void Shape::Move(CoordSet set, CoordType diffX, CoordType diffY)
+{
+   // Add the difference to our coordinates
+   Add(set, diffX, diffY);
+
+   // Update our current position
+   if(set == CoordsWorld)
+   {
+      position.x += diffX;
+      position.y += diffY;
+   }
+}
+
+
 void Shape::Scale(CoordSet set, CoordType _scale)
 {
    if(set == CoordsWorld)
@@ -110,6 +124,19 @@ void Shape::Add(CoordSet set, CoordType x, CoordType y)
          vertices[cntr].x += x;
          vertices[cntr].y += y;
       }
+
+      // Move our extreme vertices too
+      highestVertex.x += x;
+      highestVertex.y += y;
+
+      lowestVertex.x += x;
+      lowestVertex.y += y;
+
+      leftMostVertex.x += x;
+      leftMostVertex.y += y;
+
+      rightMostVertex.x += x;
+      rightMostVertex.y += y;
    }
    else
    {
