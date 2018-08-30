@@ -334,16 +334,24 @@ void Shape::CreateShape(int numeral)
          break;
 
       case ShapeTypeCenterViewCal:
-         AddVertex( -1,  0, true);
-         AddVertex(  1,  0, true);
+         AddVertex( -1,  0, true );
+         AddVertex(  1,  0, true );
          break;
 
       case ShapeTypePaddle:
-         AddVertex( 0,  2, true);      // Start Top middle
-         AddVertex( 0, -2, true);      //   |
+         AddVertex(  0,  2, true );    // Start Top middle
+         AddVertex(  0, -2, true );    //   |
          break;
 
-      case ShapeTypeBall:     // TODO: Still need to calculate vertices for a ball -- up to 16
+      case ShapeTypeBall:     // TODO: How about a more complicated ball with up to 16 vertices?
+         AddVertex(  1,  2, true );    // Start at the top right of the boll
+         AddVertex( -1,  2, true );    //  /---\       ***
+         AddVertex( -2,  1, true );    //  |   |      *   *
+         AddVertex( -2, -1, true );    //  |   |  or  *   *
+         AddVertex( -1, -2, true );    //  |   |      *   *
+         AddVertex(  1, -2, true );    //  \---/       ***
+         AddVertex(  2, -2, true );    //
+         AddVertex(  2,  1, true );    //
          break;
 
       default:
