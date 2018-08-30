@@ -57,9 +57,11 @@ LaserCtrl::LaserCtrl(LaserConf&                conf,
 
 void LaserCtrl::UpdateShape(uint32_t scale, bool restart)
 {
-   shape.SetOrientation(cal.xOrientation, cal.yOrientation);   // Invert the shape if necessary
-   shape.Scale(scale);     // Scale the shape
-   shape.Add(x, y);        // Center the shape
+   // Lasers work on the View set of coordinates
+   shape.CopyVerticesToView();
+   shape.SetOrientation(CoordsView, cal.xOrientation, cal.yOrientation);   // Invert the shape if necessary
+   shape.Scale(CoordsView, scale);     // Scale the shape
+   shape.Add(CoordsView, x, y);        // Center the shape
 
 //   Serial.print("New Shape for ");
 //   Serial.println(name);
@@ -69,7 +71,7 @@ void LaserCtrl::UpdateShape(uint32_t scale, bool restart)
    if(restart)
    {
       currentVertex = 0;
-      Move(shape.vertices[currentVertex]);
+      Move(shape.viewVertices[currentVertex]);
    }
 }
 
@@ -100,7 +102,7 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
    // Move our vertex coordinates the difference
    if(running)
    {
-      shape.Add((newX - x), (newY - y));
+      shape.Add(CoordsView, (newX - x), (newY - y));
    }
 
    // Update our new coordinates with the new ones
@@ -154,7 +156,7 @@ void LaserCtrl::Update()
       }
 
       // Get our next destination
-      Move(shape.vertices[currentVertex]);
+      Move(shape.viewVertices[currentVertex]);
    }
 
    CoordType   stepX = step.x;
