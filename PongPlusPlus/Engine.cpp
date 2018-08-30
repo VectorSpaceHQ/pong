@@ -235,6 +235,10 @@ void Engine::RunViewCalibration()
 
 void Engine::ReadyButtonChange()
 {
+   // Users can move paddles in the ready state
+   gameStatus.leftPaddleShape.position.x  =     (settings.display.xMin + settings.display.xMax) / 4;
+   gameStatus.rightPaddleShape.position.x = 3 * (settings.display.xMin + settings.display.xMax) / 4;
+
    // Whoever scored last gets to serve
    if((leftPaddle.buttonStateChanged) || (rightPaddle.buttonStateChanged))
    {
@@ -277,9 +281,23 @@ void Engine::ReadyButtonChange()
 }
 
 
+void Engine::SetupGameReady()
+{
+   // Paddles are at a fixed horizontal location
+   gameStatus.leftPaddleShape.position.x  =     (settings.display.xMin + settings.display.xMax) / 4;
+   gameStatus.rightPaddleShape.position.x = 3 * (settings.display.xMin + settings.display.xMax) / 4;
+   gameStatus.leftPaddleShape.position.y  = 0;
+   gameStatus.rightPaddleShape.position.y = 0;
+}
+
+
 void Engine::SetupGamePlay()
 {
    randomSeed(micros());
+
+   // Paddles are at a fixed horizontal location
+   gameStatus.leftPaddleShape.position.x  =     (settings.display.xMin + settings.display.xMax) / 4;
+   gameStatus.rightPaddleShape.position.x = 3 * (settings.display.xMin + settings.display.xMax) / 4;
 
    // Randomly select top third or bottom third
    if(random(1) == 1)
@@ -325,7 +343,13 @@ void Engine::SetupGamePlay()
 
 void Engine::RunGamePlay()
 {
-   Vertex   foundVertex;
+   Vertex      foundVertex;
+
+   // Move the paddles
+   // TODO: We probably need to convert the position into an actual location
+   // TODO: We should probably implement some form of scaling to prevent over-movement
+   gameStatus.leftPaddleShape.Move(CoordsWorld, 0, (leftPaddle.position - gameStatus.leftPaddleShape.position.y));
+   gameStatus.rightPaddleShape.Move(CoordsWorld, 0, (rightPaddle.position - gameStatus.rightPaddleShape.position.y));
 
    // Move the ball along it's trajectory
    gameStatus.ballShape.Move(CoordsWorld, gameStatus.ballShape.vector.x, gameStatus.ballShape.vector.y);
@@ -469,6 +493,7 @@ void Engine::ChangeGameState(Model::GameState newState)
          break;
 
       case Model::GameStateReady:
+         SetupGameReady();
          Serial.println("New Game State: Ready");
          break;
 
