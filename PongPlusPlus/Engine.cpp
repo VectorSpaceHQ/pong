@@ -406,7 +406,7 @@ void Engine::SetupGamePlay()
    }
 
    // Start the ball in the horizontal center
-   gameStatus.ballShape.position.x = 0;
+   gameStatus.ballShape.position.x = (settings.display.xMin + settings.display.xMax) / 2;
 
    // TODO: Randomize the y-component of the vector
    // Select ball x vector
@@ -446,6 +446,15 @@ void Engine::RunGamePlay()
    gameStatus.rightPaddleShape.Move(CoordsWorld, 0, (rightPaddle.position - gameStatus.rightPaddleShape.position.y));
 
    // Move the ball along it's trajectory
+   // PrintDisplayCoords();
+   // Serial.print(gameStatus.ballShape.position.x);
+   // Serial.print(", ");
+   // Serial.print(gameStatus.ballShape.position.y);
+   // Serial.print(", ");
+   // Serial.print(gameStatus.ballShape.vector.x);
+   // Serial.print(", ");
+   // Serial.println(gameStatus.ballShape.vector.y);
+   
    gameStatus.ballShape.Move(CoordsWorld, gameStatus.ballShape.vector.x, gameStatus.ballShape.vector.y);
 
    // Check collision of the ball with the top or bottom
@@ -481,6 +490,14 @@ void Engine::RunGamePlay()
       // Check to see if the ball has reached the left edge
       if(gameStatus.ballShape.CheckLeft(settings.display.xMin, foundVertex))
       {
+        Serial.println("Ball reached left edge");
+        PrintDisplayCoords();
+        Serial.print("Ball @ ");
+        Serial.print(gameStatus.ballShape.position.x);
+        Serial.print(", ");
+        Serial.print(gameStatus.ballShape.position.y);
+        Serial.println(", ");
+        
          gameStatus.rightPaddleScore++;
          gameStatus.whoseServe = Model::RightPlayerServes;
          PlayPointSound();
@@ -511,6 +528,7 @@ void Engine::RunGamePlay()
       // Check to see if the ball has reached the right edge
       if(gameStatus.ballShape.CheckRight(settings.display.xMax, foundVertex))
       {
+        Serial.println("Ball reached right edge");
          gameStatus.leftPaddleScore++;
          gameStatus.whoseServe = Model::LeftPlayerServes;
          PlayPointSound();

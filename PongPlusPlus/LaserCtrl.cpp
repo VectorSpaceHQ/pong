@@ -63,9 +63,15 @@ void LaserCtrl::UpdateShape(uint32_t scale, bool restart)
    shape.Scale(CoordsView, scale);     // Scale the shape
    shape.Add(CoordsView, x, y);        // Center the shape
 
-//   Serial.print("New Shape for ");
-//   Serial.println(name);
-//   shape.Log();
+  // Serial.print("New Shape for ");
+  // Serial.println(name);
+  // Serial.print(" @ x,y = ");
+  // Serial.print(x);
+  // Serial.print(", ");
+  // Serial.println(y);
+  
+  // shape.Log();
+  // delay(200);
 
    // Reset the shape
    if(restart)

@@ -245,7 +245,7 @@ void View::SetupGamePlay(void)
 
    // Create the ball shape
    gameStatus.ballShape.CreateShape(ShapeTypeBall);
-   leftPaddleLaser.UpdateShape(ballScale, true);
+   ballLaser.UpdateShape(ballScale, true);
    ballLaser.Start();
 
    // Create the left paddle shape
@@ -276,6 +276,12 @@ void View::DisplayGamePlay(void)
    ballLaser.Run();
    leftPaddleLaser.Run();
    rightPaddleLaser.Run();
+
+   // Serial.print("ball x,y = ");
+   // Serial.print(gameStatus.ballShape.position.x);
+   // Serial.print(", ");
+   // Serial.println(gameStatus.ballShape.position.y);
+   // delay(200); // debugging
 }
 
 

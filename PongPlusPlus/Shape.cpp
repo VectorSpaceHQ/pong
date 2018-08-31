@@ -221,15 +221,15 @@ void Shape::Reset()
    }
 
    highestVertex.x =  0;
-   highestVertex.y =  1000000;
+   highestVertex.y = -1000000;
 
    lowestVertex.x =  0;
-   lowestVertex.y = -1000000;
+   lowestVertex.y = 1000000;
 
-   leftMostVertex.x = -1000000;
+   leftMostVertex.x = 1000000;
    leftMostVertex.y =  0;
 
-   rightMostVertex.x = 1000000;
+   rightMostVertex.x = -1000000;
    rightMostVertex.y = 0;
 }
 
@@ -394,8 +394,12 @@ void Shape::SetExtremeVertices(void)
          rightMostVertex.y = vertices[cntr].y;
       }
 
+      // Serial.println("set left extreme?");
+      // Serial.print(vertices[cntr].x);
+      // Serial.print(leftMostVertex.x);
       if(vertices[cntr].x < leftMostVertex.x)
       {
+        Serial.println("setting leftmostvertices");
          leftMostVertex.x = vertices[cntr].x;
          leftMostVertex.y = vertices[cntr].y;
       }
@@ -438,6 +442,11 @@ bool Shape::CheckBottom(CoordType bottom, Vertex& foundVertex)
 bool Shape::CheckLeft(CoordType left, Vertex& foundVertex)
 {
    bool isBeyond = false;
+
+   Serial.print("checkleft: ");
+   Serial.print(leftMostVertex.x);
+   Serial.print(", ");
+   Serial.println(left);
 
    if(leftMostVertex.x <= left)
    {
