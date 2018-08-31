@@ -51,6 +51,8 @@ private:
    void ChangeGameState(Model::GameState newState);
 
    void PrintButtonState();
+   void LoadSettings();
+   void SaveSettings();
 };
 
 #endif  // __engine_h__
