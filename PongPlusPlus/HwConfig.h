@@ -41,13 +41,13 @@ public:
          A4 ), // Laser Pin
 
       leftPaddle(
-         7,    // DT
-         8,    // CLK
+         2,    // DT
+         4,    // CLK
          A0 ), // Button Pin
 
       rightPaddle(
-         2,    // DT
-         4,    // CLK
+         7,    // DT
+         8,    // CLK
          A1 )  // Button Pin
    {
    }

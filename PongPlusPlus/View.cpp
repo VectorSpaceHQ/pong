@@ -159,15 +159,15 @@ void View::DisplayLaserCalibration(void)
  ******************************************************************************/
 void View::SetupViewCalibration(void)
 {
-//   Serial.print("View X-Y( ");
-//   Serial.print(settings.display.xMin);
-//   Serial.print(" - ");
-//   Serial.print(settings.display.xMax);
-//   Serial.print(", ");
-//   Serial.print(settings.display.yMin);
-//   Serial.print(" - ");
-//   Serial.print(settings.display.yMax);
-//   Serial.println(" )");
+   Serial.print("View X-Y( ");
+   Serial.print(settings.display.xMin);
+   Serial.print(" - ");
+   Serial.print(settings.display.xMax);
+   Serial.print(", ");
+   Serial.print(settings.display.yMin);
+   Serial.print(" - ");
+   Serial.print(settings.display.yMax);
+   Serial.println(" )");
 
    // Set up the ball shape to be a horizontal line at the bottom
    gameStatus.ballShape.Reset();

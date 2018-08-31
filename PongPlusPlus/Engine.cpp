@@ -63,6 +63,7 @@ void Engine::Update(void)
 
       case Model::GameStateGameOver:
       default:
+         GameOverButtonChange();
          break;
    }
 }
@@ -129,6 +130,8 @@ void Engine::LaserCalibrationButtonChange()
 {
    if((leftPaddle.buttonStateChanged) || (rightPaddle.buttonStateChanged))
    {
+      PrintButtonState();
+
       switch(buttonState)
       {
          case ButtonStateNone:
@@ -171,18 +174,33 @@ void Engine::RunLaserCalibration()
       case ButtonStateNone:
          settings.middleLaserCal.xOffset = leftPaddle.position;    // Left paddle controls X-Axis
          settings.middleLaserCal.yOffset = rightPaddle.position;   // Right paddle controls Y-Axis
+         Serial.print("Middle: (");
+         Serial.print(settings.middleLaserCal.xOffset);
+         Serial.print(", ");
+         Serial.print(settings.middleLaserCal.yOffset);
+         Serial.println(" )");
          break;
 
       // Update size of the display if the left button is pressed
       case ButtonStateLeft:
          settings.leftLaserCal.xOffset = leftPaddle.position;    // Left paddle controls X-Axis
          settings.leftLaserCal.yOffset = rightPaddle.position;   // Right paddle controls Y-Axis
+         Serial.print("Left: (");
+         Serial.print(settings.leftLaserCal.xOffset);
+         Serial.print(", ");
+         Serial.print(settings.leftLaserCal.yOffset);
+         Serial.println(" )");
          break;
 
       // Update skew of the display if the right button is pressed
       case ButtonStateRight:
          settings.rightLaserCal.xOffset = leftPaddle.position;    // Left paddle controls X-Axis
          settings.rightLaserCal.yOffset = rightPaddle.position;   // Right paddle controls Y-Axis
+         Serial.print("Right: (");
+         Serial.print(settings.rightLaserCal.xOffset);
+         Serial.print(", ");
+         Serial.print(settings.rightLaserCal.yOffset);
+         Serial.println(" )");
          break;
    }
 }
@@ -192,6 +210,8 @@ void Engine::ViewCalibrationButtonChange()
 {
    if((leftPaddle.buttonStateChanged) || (rightPaddle.buttonStateChanged))
    {
+      PrintButtonState();
+
       switch(buttonState)
       {
          case ButtonStateNone:
@@ -285,8 +305,8 @@ void Engine::RunViewCalibration()
 void Engine::ReadyButtonChange()
 {
    // Users can move paddles in the ready state
-   gameStatus.leftPaddleShape.position.x  =     (settings.display.xMin + settings.display.xMax) / 4;
-   gameStatus.rightPaddleShape.position.x = 3 * (settings.display.xMin + settings.display.xMax) / 4;
+   gameStatus.leftPaddleShape.Move(CoordsWorld, 0, (leftPaddle.position - gameStatus.leftPaddleShape.position.y));
+   gameStatus.rightPaddleShape.Move(CoordsWorld, 0, (rightPaddle.position - gameStatus.rightPaddleShape.position.y));
 
    // Whoever scored last gets to serve
    if((leftPaddle.buttonStateChanged) || (rightPaddle.buttonStateChanged))
@@ -421,7 +441,8 @@ void Engine::RunGamePlay()
          (gameStatus.ballShape.leftMostVertex.y >= gameStatus.leftPaddleShape.lowestVertex.y )    )
       {
          // And the it's beyond the paddle edge
-         if(gameStatus.ballShape.CheckLeft(gameStatus.leftPaddleShape.rightMostVertex.x, foundVertex))
+         if(gameStatus.ballShape.CheckLeft(gameStatus.leftPaddleShape.rightMostVertex.x, foundVertex) &&
+            gameStatus.ballShape.CheckRight(gameStatus.leftPaddleShape.rightMostVertex.x, foundVertex)   )
          {
             // Ball hit the left paddle so invert the x-component of the slope
             gameStatus.ballShape.vector.x *= -1;
@@ -450,7 +471,8 @@ void Engine::RunGamePlay()
          (gameStatus.ballShape.rightMostVertex.y >= gameStatus.rightPaddleShape.lowestVertex.y )    )
       {
          // And the it's beyond the paddle edge
-         if(gameStatus.ballShape.CheckRight(gameStatus.rightPaddleShape.leftMostVertex.x, foundVertex))
+         if(gameStatus.ballShape.CheckRight(gameStatus.rightPaddleShape.leftMostVertex.x, foundVertex) &&
+            gameStatus.ballShape.CheckRight(gameStatus.rightPaddleShape.leftMostVertex.x, foundVertex)    )
          {
             // Ball hit the left paddle so invert the x-component of the slope
             gameStatus.ballShape.vector.x *= -1;
