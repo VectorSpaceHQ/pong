@@ -22,9 +22,9 @@ private:
    Model::Settings         settings;
    Model::GameStatus       gameStatus;
 
+   Controller              controller;
    Engine                  engine;
    View                    view;
-   Controller              controller;
 };
 
 

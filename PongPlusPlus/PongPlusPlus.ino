@@ -6,7 +6,9 @@ Pong*  pongGame;
 
 
 void setup() {
-  pongGame = new Pong();
+   Serial.begin(115200);
+   Serial.println("Welcome to Giant Pong!");
+   pongGame = new Pong();
 }
 
 void loop() {

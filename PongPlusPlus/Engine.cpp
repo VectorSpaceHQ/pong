@@ -27,9 +27,7 @@ Engine::Engine(Model::Settings&           _settings,
    rightPaddle(_rightPaddle),
    buttonState(ButtonStateReset)
 {
-   Serial.begin(115200);
-
-   SetupLaserCalibration();
+   Serial.println("Engine Up");
 }
 
 
@@ -40,6 +38,10 @@ void Engine::Update(void)
 
    switch(gameStatus.gameState)
    {
+      case Model::GameStateInit:
+         SetupLaserCalibration();
+         break;
+
       case Model::GameStateCalibrateLasers:
          RunLaserCalibration();
          break;

@@ -5,6 +5,8 @@
  *      Author: athiessen
  */
 
+#include <Arduino.h>
+
 #include "Configs.h"
 #include "Controller.h"
 #include "PaddleStatus.h"
@@ -23,6 +25,7 @@ Controller::Controller(PaddleConf& leftPaddleConf,
    rightPaddle(rightPaddleConf,
                rightPaddleStatus)
 {
+   Serial.println("Controller Up");
 }
 
 

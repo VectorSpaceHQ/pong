@@ -19,6 +19,7 @@ namespace Model
 
    enum GameState
    {
+      GameStateInit,
       GameStateCalibrateLasers,
       GameStateCalibrateView,
       GameStateReady,
@@ -109,7 +110,7 @@ namespace Model
       Shape       ballShape;
 
       GameStatus():
-         gameState(GameStateCalibrateLasers),   // Default start in calibration mode
+         gameState(GameStateInit),
          gameStateChanged(false),
          viewSettingsChanged(false),
          leftPaddleScore(0),

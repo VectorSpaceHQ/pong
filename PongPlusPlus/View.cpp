@@ -36,6 +36,8 @@ View::View(Model::Settings&         _settings,
              gameStatus.ballShape,
              "Ball")
 {
+   Serial.println("View Up");
+
    // Wait for our lasers to get to their initial position
    delay(100);
 

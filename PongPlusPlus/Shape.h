@@ -97,7 +97,7 @@ public:
 
    bool CheckBetweenVertical(CoordType top, CoordType bottom);
 
-   void Log();
+   void Log(CoordSet set);
 
 private:
    void CopyVertices(const Shape& other);

@@ -149,11 +149,18 @@ void Shape::Add(CoordSet set, CoordType x, CoordType y)
 }
 
 
-void Shape::Log()
+void Shape::Log(CoordSet set)
 {
    for(uint32_t cntr = 0; cntr < numVertices; cntr++)
    {
-      vertices[cntr].Log();
+      if(set == CoordsWorld)
+      {
+         vertices[cntr].Log();
+      }
+      else
+      {
+         viewVertices[cntr].Log();
+      }
    }
 }
 
