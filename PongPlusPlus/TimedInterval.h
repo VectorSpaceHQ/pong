@@ -22,10 +22,11 @@ public:
    void Stop();
    void Run();
 
+   bool     running;
+
 protected:
    virtual void Update() = 0;
 
-   bool     running;
    uint32_t interval;
 
 private:

@@ -14,6 +14,12 @@
 #include "ScheduledInterval.h"
 #include "Timing.h"
 
+// Whether or not to use interrupts or poll mechanism
+// Do not use interrupts
+#undef PADDLE_CONTROL_USE_INTERRUPTS
+// Use interrupts
+//#define PADDLE_CONTROL_USE_INTERRUPTS
+
 
 #define  UP_MASK     (0x66)
 #define  DOWN_MASK   (0x99)
@@ -34,7 +40,11 @@ PaddleCtrl::PaddleCtrl(PaddleConf&      config,
    updateCount(0),
    msCount(0)
 {
-   //IntHandler::GetInstance()->RegisterInterrupt(DT, CLK, hwStatus.position);
+
+#ifdef PADDLE_CONTROL_USE_INTERRUPTS
+   IntHandler::GetInstance()->RegisterInterrupt(DT, CLK, hwStatus.position);
+#endif
+
 }
 
 
@@ -42,7 +52,11 @@ void PaddleCtrl::Update()
 {
    // Check the button every time we're called
    CheckButton();
+
+// If we are not using interrupts, then call the poll algorithm
+#ifndef PADDLE_CONTROL_USE_INTERRUPTS
    CheckRotaryEncoder();
+#endif
 
    // Periodically update the external paddle status base on our current state
    if(++updateCount >= PADDLE_UPDATE_INTERVAL)
@@ -75,8 +89,6 @@ void PaddleCtrl::UpdatePaddleStatus()
 
 void PaddleCtrl::CheckButton()
 {
-   // TODO: Does this debounce algorithm work properly?
-
    // Increment the amount of time in ms the button has been in its current state
    if(++msCount >= PADDLE_BUTTON_INCR_INTERVAL)
    {

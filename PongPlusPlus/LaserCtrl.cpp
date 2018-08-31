@@ -20,7 +20,6 @@
 
 #define  US_PER_STEP    (1000)
 
-static uint32_t absolute(int32_t val);
 
 LaserCtrl::LaserCtrl(LaserConf&                conf,
                      Model::LaserCalibration&  _cal,
@@ -56,19 +55,24 @@ LaserCtrl::LaserCtrl(LaserConf&                conf,
 }
 
 
-void LaserCtrl::UpdateShape(uint32_t scale)
+void LaserCtrl::UpdateShape(uint32_t scale, bool restart)
 {
-   //shape.Scale(-1);      // Invert the shape
-   shape.Scale(scale);     // Scale the shape
-   shape.Add(x, y);        // Center the shape
+   // Lasers work on the View set of coordinates
+   shape.CopyVerticesToView();
+   shape.SetOrientation(CoordsView, cal.xOrientation, cal.yOrientation);   // Invert the shape if necessary
+   shape.Scale(CoordsView, scale);     // Scale the shape
+   shape.Add(CoordsView, x, y);        // Center the shape
 
-   Serial.print("New Shape for ");
-   Serial.println(name);
-   shape.Log();
+//   Serial.print("New Shape for ");
+//   Serial.println(name);
+//   shape.Log();
 
    // Reset the shape
-   currentVertex = 0;
-   Move(shape.vertices[currentVertex]);
+   if(restart)
+   {
+      currentVertex = 0;
+      Move(shape.viewVertices[currentVertex]);
+   }
 }
 
 
@@ -98,13 +102,14 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
    // Move our vertex coordinates the difference
    if(running)
    {
-      shape.Add((newX - x), (newY - y));
+      shape.Add(CoordsView, (newX - x), (newY - y));
    }
 
    // Update our new coordinates with the new ones
    x = newX;
    y = newY;
 }
+
 
 void LaserCtrl::Move(CoordType atX, CoordType atY)
 {
@@ -114,12 +119,13 @@ void LaserCtrl::Move(CoordType atX, CoordType atY)
    yServo.writeMicroseconds(y);
 }
 
+
 void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
 {
    // TODO: Need to handle wrap (every 70 minutes)
 
-   uint32_t waitX = absolute(x);
-   uint32_t waitY = absolute(y);
+   uint32_t waitX = abs(x);
+   uint32_t waitY = abs(y);
 
 //   Serial.print("x,y: ");
 //   Serial.print(waitX);
@@ -150,7 +156,7 @@ void LaserCtrl::Update()
       }
 
       // Get our next destination
-      Move(shape.vertices[currentVertex]);
+      Move(shape.viewVertices[currentVertex]);
    }
 
    CoordType   stepX = step.x;
@@ -223,10 +229,4 @@ void LaserCtrl::Move(Vertex& dest)
 
    SetWaitTime(step.x, step.y);
    SetLaser(destination.draw);
-}
-
-
-uint32_t absolute(int32_t val)
-{
-   return static_cast<uint32_t>(static_cast<uint16_t>(~abs(val) + 1));
 }

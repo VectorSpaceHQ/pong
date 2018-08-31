@@ -8,11 +8,11 @@
 #include "Timing.h"
 #include "View.h"
 
-// TODO: After we figure out game resolution and variable display, these may need to be configurable
-#define  SCORE_LEFT_X   (200)
-#define  SCORE_LEFT_Y   (300)
-#define  SCORE_RIGHT_X  (600)
-#define  SCORE_RIGHT_Y  (300)
+
+// TODO: What should be the scale of the paddles?
+#define PADDLE_SCALE_PERCENT        (15)           // Percent of the height of the paddle
+#define BALL_SCALE_PERCENT          (5)            // Percent of the height of the ball
+#define SCORE_SCALE_PERCENT         (50)           // Percent of the height of the score
 
 
 View::View(Model::Settings&         _settings,
@@ -40,41 +40,20 @@ View::View(Model::Settings&         _settings,
    delay(100);
 
    // Set Laser orientation
-   //settings.leftLaserCal.xOrientation = -1;
+   settings.leftLaserCal.xOrientation = -1;
    settings.leftLaserCal.yOrientation = -1;
-   //settings.middleLaserCal.xOrientation = -1;
+
+   settings.middleLaserCal.xOrientation = -1;
    settings.middleLaserCal.yOrientation = -1;
-
-/*
-   gameStatus.ballShape.CreateShape(2);
-   gameStatus.ballShape.Scale(-1);        // This laser needs its shape inverted
-   ballLaser.UpdateShape(20);
-   ballLaser.SetPosition(0, 0);
-
-   gameStatus.leftPaddleShape.CreateShape(1);
-   leftPaddleLaser.UpdateShape(20);
-   leftPaddleLaser.SetPosition(0, 0);
-
-   gameStatus.rightPaddleShape.CreateShape(0);
-   gameStatus.rightPaddleShape.Scale(-1);        // This laser needs its shape inverted
-   rightPaddleLaser.UpdateShape(20);
-   rightPaddleLaser.SetPosition(0, 0);
-
-   // Start the lasers
-   ballLaser.Start();
-   leftPaddleLaser.Start();
-   rightPaddleLaser.Start();
-*/
 }
 
 
+/******************************************************************************
+ * Main View Loop
+ ******************************************************************************/
 void View::Update(void)
 {
-/*
-   ballLaser.Run();
-   leftPaddleLaser.Run();
-   rightPaddleLaser.Run();
-*/
+   CheckGameStateChange();
 
    switch(gameStatus.gameState)
    {
@@ -86,6 +65,8 @@ void View::Update(void)
          DisplayViewCalibration();
          break;
 
+      // Game Ready and Play are almost the same for the view
+      // Only, in ready state, the ball is not in play and is not shown
       case Model::GameStateReady:
       case Model::GameStatePlay:
          DisplayGamePlay();
@@ -100,74 +81,236 @@ void View::Update(void)
 }
 
 
-void View::DisplayLaserCalibration(void)
+/***
+ * Checks to see if the game state has changed since the last time through.
+ */
+void View::CheckGameStateChange(void)
 {
+   // If so, then we need to run the setup for the new state
+   if(gameStatus.gameStateChanged)
+   {
+      // Reset gameStateChanged
+      gameStatus.gameStateChanged = false;
+
+      switch(gameStatus.gameState)
+      {
+         case Model::GameStateCalibrateLasers:
+            SetupLaserCalibration();
+            break;
+
+         case Model::GameStateCalibrateView:
+            SetupViewCalibration();
+            break;
+
+         case Model::GameStateReady:
+            SetupGameReady();
+            break;
+
+         case Model::GameStatePlay:
+            SetupGamePlay();
+            break;
+
+         case Model::GameStateGameOver:
+            SetupGameOver();
+            break;
+
+         default:
+            SetupGameReady();
+            // TODO: Maybe the Default should be the Vector Space logo?  :-)
+            break;
+      }
+   }
+}
+
+
+/******************************************************************************
+ * Laser Calibration
+ ******************************************************************************/
+void View::SetupLaserCalibration(void)
+{
+   // Stop the lasers from running through their shapes, so they stay in a single position
+   leftPaddleLaser.Stop();
+   ballLaser.Stop();
+   rightPaddleLaser.Stop();
+
    // Turn the lasers on
    leftPaddleLaser.On();
    ballLaser.On();
    rightPaddleLaser.On();
+}
 
-   // Set their position to the centerpoint
+
+void View::DisplayLaserCalibration(void)
+{
+   // Manually set laser position to the center point and let the offsets do the work.
+   // We do this in the main loop so the center point gets re-calculated
    leftPaddleLaser.Move(0, 0);
    ballLaser.Move(0, 0);
    rightPaddleLaser.Move(0, 0);
 }
 
 
+/******************************************************************************
+ * View Calibration
+ ******************************************************************************/
+void View::SetupViewCalibration(void)
+{
+//   Serial.print("View X-Y( ");
+//   Serial.print(settings.display.xMin);
+//   Serial.print(" - ");
+//   Serial.print(settings.display.xMax);
+//   Serial.print(", ");
+//   Serial.print(settings.display.yMin);
+//   Serial.print(" - ");
+//   Serial.print(settings.display.yMax);
+//   Serial.println(" )");
+
+   // Set up the ball shape to be a horizontal line at the bottom
+   gameStatus.ballShape.Reset();
+   gameStatus.ballShape.AddVertex(settings.display.xMin, settings.display.yMin, true);
+   gameStatus.ballShape.AddVertex(settings.display.xMax, settings.display.yMin, true);
+   ballLaser.UpdateShape(1, true);
+   ballLaser.SetPosition(0, 0);
+   ballLaser.Start();
+
+   // Setup the left laser to be a vertical line  on the left of the screen
+   gameStatus.leftPaddleShape.Reset();
+   gameStatus.leftPaddleShape.AddVertex(0, settings.display.yMin, true);   // Top
+   gameStatus.leftPaddleShape.AddVertex(0, settings.display.yMax, true);   // Bottom
+   leftPaddleLaser.UpdateShape(1, true);
+   leftPaddleLaser.SetPosition(settings.display.xMin, 0);   // far left
+   leftPaddleLaser.Start();
+
+   // Setup the right laser to be a vertical line  on the right of the screen
+   gameStatus.rightPaddleShape.Reset();
+   gameStatus.rightPaddleShape.AddVertex(0, settings.display.yMin, true);   // Top
+   gameStatus.rightPaddleShape.AddVertex(0, settings.display.yMax, true);   // Bottom
+   rightPaddleLaser.UpdateShape(1, true);
+   rightPaddleLaser.SetPosition(settings.display.xMax, 0);   // far right
+   rightPaddleLaser.Start();
+}
+
+
 void View::DisplayViewCalibration(void)
 {
-   // TODO: What to display for calibration? Perhaps have one laser draw a rectangle for the given size?
+   // If the view settings have changed, we need to update the size/location of the shapes
+   if(gameStatus.viewSettingsChanged)
+   {
+      // Reset gameStateChanged
+      gameStatus.viewSettingsChanged = false;
+
+      // Now setup the calibration with the updated settings
+      SetupViewCalibration();
+   }
+
+   // Run the lasers throught their shape
+   ballLaser.Run();
+   leftPaddleLaser.Run();
+   rightPaddleLaser.Run();
+}
+
+
+/******************************************************************************
+ * Game Ready/Play -- Almost the same
+ ******************************************************************************/
+void View::SetupGameReady(void)
+{
+   uint32_t paddleScale = PADDLE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100;
+
+   // Stop the ball laser from running its shape and turn it off
+   // Since it's not shown in the ready state
+   ballLaser.Stop();
+   ballLaser.Off();
+
+   // Create the left paddle shape
+   gameStatus.leftPaddleShape.CreateShape(ShapeTypePaddle);
+   leftPaddleLaser.UpdateShape(paddleScale, true);
+   leftPaddleLaser.Start();
+
+   // Create the right paddle shape
+   gameStatus.rightPaddleShape.CreateShape(ShapeTypePaddle);
+   rightPaddleLaser.UpdateShape(paddleScale, true);
+   rightPaddleLaser.Start();
+}
+
+
+void View::SetupGamePlay(void)
+{
+   uint32_t paddleScale = PADDLE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100;
+   uint32_t ballScale   = BALL_SCALE_PERCENT   * (settings.display.yMax - settings.display.yMin)  / 100;
+
+   // Create the ball shape
+   gameStatus.ballShape.CreateShape(ShapeTypeBall);
+   leftPaddleLaser.UpdateShape(ballScale, true);
+   ballLaser.Start();
+
+   // Create the left paddle shape
+   gameStatus.leftPaddleShape.CreateShape(ShapeTypePaddle);
+   leftPaddleLaser.UpdateShape(paddleScale, true);
+   leftPaddleLaser.Start();
+
+   // Create the right paddle shape
+   gameStatus.rightPaddleShape.CreateShape(ShapeTypePaddle);
+   rightPaddleLaser.UpdateShape(paddleScale, true);
+   rightPaddleLaser.Start();
 }
 
 
 void View::DisplayGamePlay(void)
 {
+   // Move the lasers
+   leftPaddleLaser.SetPosition(gameStatus.leftPaddleShape.position.x,
+                               gameStatus.leftPaddleShape.position.y);
+
+   rightPaddleLaser.SetPosition(gameStatus.rightPaddleShape.position.x,
+                                gameStatus.rightPaddleShape.position.y);
+
+   ballLaser.SetPosition(gameStatus.ballShape.position.x,
+                         gameStatus.ballShape.position.y);
+
+   // Run the lasers through their shapes
+   ballLaser.Run();
+   leftPaddleLaser.Run();
+   rightPaddleLaser.Run();
+}
+
+
+/******************************************************************************
+ * Game Over
+ ******************************************************************************/
+void View::SetupGameOver(void)
+{
+   uint32_t    paddleScale    = SCORE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100;
+   CoordType   leftScoreLoc   =     (settings.display.xMax - settings.display.xMin) / 4;
+   CoordType   rightScoreLoc  = 3 * (settings.display.xMax - settings.display.xMin) / 4;
+
+   // Set up the ball shape to be a hyphen
+   gameStatus.ballShape.Reset();
+   gameStatus.ballShape.AddVertex(-1, 0, true);
+   gameStatus.ballShape.AddVertex( 1, 0, true);
+   ballLaser.UpdateShape(1, true);
+   ballLaser.SetPosition(0, 0);
+   ballLaser.Start();
+
+   // Use the left paddle to display left player score
+   gameStatus.leftPaddleShape.CreateShape(gameStatus.leftPaddleScore);
+   leftPaddleLaser.UpdateShape(paddleScale, true);
+   leftPaddleLaser.SetPosition(leftScoreLoc, 0);
+   leftPaddleLaser.Start();
+
+   // Use the left paddle to display right player score
+   gameStatus.rightPaddleShape.CreateShape(gameStatus.rightPaddleScore);
+   rightPaddleLaser.UpdateShape(paddleScale, true);
+   rightPaddleLaser.SetPosition(rightScoreLoc, 0);
+   rightPaddleLaser.Start();
 }
 
 
 void View::DisplayScore(void)
 {
+   // Just let the lasers run through their shapes
+   ballLaser.Run();
+   leftPaddleLaser.Run();
+   rightPaddleLaser.Run();
 }
 
-
-/* TODO: Need help accessing the leftPaddle buttonPin
- * ADT: Only the Engine will have access to controller information.
- *      The engine will update values in the Model DisplaySettings struct
- *      The View will be able to read the Display settings and update it's display accordingly.
-void View::Calibrate(void)
-{
-  // Use leftPaddle to point ballLaser at bottom left, top left, then top right corners.
-  // Press leftPaddle button to set position of each corner.
-
-  // Instead of pointing the laser at corners, what if the laser drew a rectangle for the size of the display,
-  // and we adjust the rectangle to match the shape of the building?
-
-
-  // Bottom left
-  while (digitalRead(leftPaddle.buttonPin) == HIGH){
-    ballLaser.Draw(ball.x, ball.y);
-  }
-  xmin = ball.x;
-  ymin = ball.y;
-  delay(1000);
-
-  // Top left
-  while (digitalRead(leftPaddle.buttonPin) == HIGH){
-    ballLaser.Draw(ball.x, ball.y);
-  }
-  hskew = ball.x - xmin;
-  ymax = ball.y;
-  delay(1000);
-
-  // Top right
-  while (digitalRead(leftPaddle.buttonPin) == HIGH){
-    ballLaser.Draw(ball.x, ball.y);
-  }
-  vskew = ball.y - ymax;
-  xmax = ball.x;
-
-  leftPaddleLaser.SetBounds(xmin, xmax, ymin, ymax, hskew, vskew);
-  rightPaddleLaser.SetBounds(xmin, xmax, ymin, ymax, hskew, vskew);
-  ballLaser.SetBounds(xmin, xmax, ymin, ymax, hskew, vskew);
-}
-*/

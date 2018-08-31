@@ -35,11 +35,21 @@ private:
    ButtonState             buttonState;
 
    void SetupLaserCalibration();
+   void SetupGameReady();
+   void SetupGamePlay();
+
    void LaserCalibrationButtonChange();
+   void ViewCalibrationButtonChange();
+   void ReadyButtonChange();
+   void GameOverButtonChange();
 
    void RunLaserCalibration();
    void RunViewCalibration();
+   void RunGamePlay();
+
    void CheckButtonState();
+   void ChangeGameState(Model::GameState newState);
+
    void PrintButtonState();
    void LoadSettings();
    void SaveSettings();
