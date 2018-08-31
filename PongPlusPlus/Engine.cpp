@@ -78,22 +78,35 @@ void Engine::LoadSettings()
    int               checksum       = 0;
    int               imgChecksum;
 
-   // Read the bytes out of EEPROM and calculate the checksum
-   for(address = 0; address < sizeof(localSettings); address++)
-   {
-      readPtr[address] = EEPROM.read(address);
-      checksum ^= readPtr[address] & 0xFF;
-   }
+   Serial.println("LOADING SETTINGS");
+   settings.leftLaserCal.xOffset = 12;
+   settings.leftLaserCal.yOffset = 141;
+   settings.middleLaserCal.xOffset = -80;
+   settings.middleLaserCal.yOffset = 180;
+   settings.rightLaserCal.xOffset = -9;
+   settings.rightLaserCal.yOffset = 167;
+
+   settings.display.xMin = -143;
+   settings.display.xMax = 150;
+   settings.display.yMin = -64;
+   settings.display.yMax = 104;
+
+   // // Read the bytes out of EEPROM and calculate the checksum
+   // for(address = 0; address < sizeof(localSettings); address++)
+   // {
+   //    readPtr[address] = EEPROM.read(address);
+   //    checksum ^= readPtr[address] & 0xFF;
+   // }
 
    
-   Serial.println(checksum);
+   // Serial.println(checksum);
    
-   if(checksum == readPtr[0])
-   {
-      Serial.println("Loading Settings");
-      memcpy(&settings, &localSettings, sizeof(localSettings));
-      Serial.println(localSettings.leftLaserCal.xOffset);
-   }
+   // if(checksum == readPtr[0])
+   // {
+   //    Serial.println("Loading Settings");
+   //    memcpy(&settings, &localSettings, sizeof(localSettings));
+   //    Serial.println(localSettings.leftLaserCal.xOffset);
+   // }
    
 }
 
@@ -126,9 +139,9 @@ void Engine::LoadSettings()
 
 void Engine::SetupLaserCalibration()
 {
-   // Center for the laser
-   leftPaddle.position = 0;
-   rightPaddle.position = 0;
+   // use laser position from EEPROM
+   leftPaddle.position = settings.middleLaserCal.xOffset;
+   rightPaddle.position = settings.middleLaserCal.yOffset;
 
    leftPaddle.SetLimits(-500, 500);
    rightPaddle.SetLimits(-500, 500);
@@ -363,9 +376,10 @@ void Engine::ReadyButtonChange()
 
 void Engine::SetupGameReady()
 {
+   PrintDisplayCoords();
    // Paddles are at a fixed horizontal location
-   gameStatus.leftPaddleShape.position.x  =     (settings.display.xMin + settings.display.xMax) / 4;
-   gameStatus.rightPaddleShape.position.x = 3 * (settings.display.xMin + settings.display.xMax) / 4;
+   gameStatus.leftPaddleShape.position.x  =  settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4;
+   gameStatus.rightPaddleShape.position.x = settings.display.xMin + (3 * (settings.display.xMax - settings.display.xMin) / 4);
    gameStatus.leftPaddleShape.position.y  = 0;
    gameStatus.rightPaddleShape.position.y = 0;
 }
@@ -552,7 +566,7 @@ void Engine::CheckButtonState()
       buttonState = ButtonStateNone;
    }
 
-   //PrintButtonState();
+   // PrintButtonState();
 }
 
 
@@ -592,6 +606,7 @@ void Engine::ChangeGameState(Model::GameState newState)
          Serial.println(gameStatus.rightPaddleScore);
          break;
    }
+   delay(200); // button debounce
 }
 
 
@@ -611,4 +626,16 @@ void Engine::PrintButtonState()
    Serial.print(rightPaddle.buttonTime);
    Serial.print(" ) -> ");
    Serial.println(buttonState);
+}
+
+void Engine::PrintDisplayCoords()
+{
+  Serial.print("x = (");
+  Serial.print(settings.display.xMin);
+  Serial.print(", ");
+  Serial.print(settings.display.xMax);
+  Serial.print("), y = (");
+  Serial.print(settings.display.yMin);
+  Serial.print(", ");
+  Serial.println(settings.display.yMax);
 }

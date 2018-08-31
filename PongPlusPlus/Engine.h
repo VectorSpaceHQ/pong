@@ -51,6 +51,8 @@ private:
    void ChangeGameState(Model::GameState newState);
 
    void PrintButtonState();
+   void PrintDisplayCoords();
+    
    void LoadSettings();
    void StoreSettings();
 };
