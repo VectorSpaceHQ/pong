@@ -125,6 +125,11 @@ void Shape::Add(CoordSet set, CoordType x, CoordType y)
          vertices[cntr].y += y;
       }
 
+      // Serial.print("adding vertices: leftMostX, rightMostX ");
+      // Serial.print(leftMostVertex.x);
+      // Serial.print(", ");
+      // Serial.println(rightMostVertex.x);
+      
       // Move our extreme vertices too
       highestVertex.x += x;
       highestVertex.y += y;
@@ -374,7 +379,7 @@ void Shape::CreateShape(int numeral)
  ******************************************************************************/
 void Shape::SetExtremeVertices(void)
 {
-  Serial.println("Setting Extreme Vertices");
+  
    for(uint32_t cntr = 0; cntr < numVertices; cntr++)
    {
       if(vertices[cntr].y > highestVertex.y)

@@ -179,16 +179,16 @@ void View::SetupViewCalibration(void)
 
    // Setup the left laser to be a vertical line  on the left of the screen
    gameStatus.leftPaddleShape.Reset();
-   gameStatus.leftPaddleShape.AddVertex(0, settings.display.yMin, true);   // Top
-   gameStatus.leftPaddleShape.AddVertex(0, settings.display.yMax, true);   // Bottom
+   gameStatus.leftPaddleShape.AddVertex(settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4, settings.display.yMin, true);   // Top
+   gameStatus.leftPaddleShape.AddVertex(settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4, settings.display.yMax, true);   // Bottom
    leftPaddleLaser.UpdateShape(1, true);
    leftPaddleLaser.SetPosition(settings.display.xMin, 0);   // far left
    leftPaddleLaser.Start();
 
    // Setup the right laser to be a vertical line  on the right of the screen
    gameStatus.rightPaddleShape.Reset();
-   gameStatus.rightPaddleShape.AddVertex(0, settings.display.yMin, true);   // Top
-   gameStatus.rightPaddleShape.AddVertex(0, settings.display.yMax, true);   // Bottom
+   gameStatus.rightPaddleShape.AddVertex(settings.display.xMin + 3 * (settings.display.xMax - settings.display.xMin) / 4, settings.display.yMin, true);   // Top
+   gameStatus.rightPaddleShape.AddVertex(settings.display.xMin + 3 * (settings.display.xMax - settings.display.xMin) / 4, settings.display.yMax, true);   // Bottom
    rightPaddleLaser.UpdateShape(1, true);
    rightPaddleLaser.SetPosition(settings.display.xMax, 0);   // far right
    rightPaddleLaser.Start();

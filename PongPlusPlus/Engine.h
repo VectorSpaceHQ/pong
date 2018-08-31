@@ -53,6 +53,7 @@ private:
    void PrintButtonState();
    void PrintDisplayCoords();
    void PrintLeftPaddleCoords();
+   void PrintBallCoords();
     
    void LoadSettings();
    void StoreSettings();

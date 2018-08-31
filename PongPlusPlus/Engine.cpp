@@ -471,7 +471,6 @@ void Engine::RunGamePlay()
    if(gameStatus.ballShape.vector.x < 0)
    {
 
-     PrintLeftPaddleCoords();
       // If the ball's left-most vertex is between the highest and lowest paddle vertices...
      // Check if ball is at the right elevation
       if((gameStatus.ballShape.lowestVertex.y <= gameStatus.leftPaddleShape.highestVertex.y) &&
@@ -479,13 +478,12 @@ void Engine::RunGamePlay()
       {
         Serial.println("Checking for left side collision");        
         Serial.println("paddle is at right elevation for bounce");
-        Serial.println(gameStatus.ballShape.lowestVertex.y);
-        Serial.println(gameStatus.ballShape.highestVertex.y);
+        PrintBallCoords();
         PrintLeftPaddleCoords();
         
          // And the it's beyond the paddle edge
-        if((gameStatus.ballShape.leftMostVertex.x <= gameStatus.leftPaddleShape.rightMostVertex.x) &&
-           (gameStatus.ballShape.rightMostVertex.x >= gameStatus.leftPaddleShape.rightMostVertex.x) )
+        if((gameStatus.ballShape.leftMostVertex.x <= gameStatus.leftPaddleShape.position.x) &&
+           (gameStatus.ballShape.rightMostVertex.x >= gameStatus.leftPaddleShape.position.x) )
          {
            Serial.println("BOUNCE");
            
@@ -671,7 +669,9 @@ void Engine::PrintDisplayCoords()
 
 void Engine::PrintLeftPaddleCoords()
 {
-  Serial.print("LeftPaddle xmin, xmax, ymin, ymax = (");
+  Serial.print("LeftPaddle x, xmin, xmax, ymin, ymax = (");
+  Serial.print(gameStatus.leftPaddleShape.position.x);
+  Serial.print(", ");
   Serial.print(gameStatus.leftPaddleShape.leftMostVertex.x);
   Serial.print(", ");
   Serial.print(gameStatus.leftPaddleShape.rightMostVertex.x);
@@ -679,5 +679,18 @@ void Engine::PrintLeftPaddleCoords()
   Serial.print(gameStatus.leftPaddleShape.lowestVertex.y);
   Serial.print(", ");
   Serial.print(gameStatus.leftPaddleShape.highestVertex.y);
+  Serial.println(")");
+}
+
+void Engine::PrintBallCoords()
+{
+  Serial.print("Ball xmin, xmax, ymin, ymax = (");
+  Serial.print(gameStatus.ballShape.leftMostVertex.x);
+  Serial.print(", ");
+  Serial.print(gameStatus.ballShape.rightMostVertex.x);
+  Serial.print(", ");
+  Serial.print(gameStatus.ballShape.lowestVertex.y);
+  Serial.print(", ");
+  Serial.print(gameStatus.ballShape.highestVertex.y);
   Serial.println(")");
 }
