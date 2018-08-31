@@ -11,6 +11,8 @@
 #include "Model.h"
 #include "Timing.h"
 #include "Sound.h"
+#include <EEPROM.h>
+
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
 
@@ -205,4 +207,34 @@ void Engine::PrintButtonState()
    Serial.print(rightPaddle.buttonTime);
    Serial.print(" ) -> ");
    Serial.println(buttonState);
+}
+
+void Engine::LoadSettings(){
+  settings.display.xMin = EEPROM.read(0);
+  delay(50);
+  settings.display.yMin = EEPROM.read(4);
+  delay(50);
+  settings.display.xMax = EEPROM.read(8);
+  delay(50);
+  settings.display.yMax = EEPROM.read(12);
+  delay(50);
+  settings.display.hSkew = EEPROM.read(16);
+  delay(50);
+  settings.display.vSkew = EEPROM.read(20);
+  delay(50);
+}
+
+void Engine::SaveSettings(){
+  EEPROM.write(0, settings.display.xMin);
+  delay(50); // An EEPROM write takes 3.3 ms to complete.
+  EEPROM.write(4, settings.display.yMin);
+  delay(50); 
+  EEPROM.write(8, settings.display.xMax);
+  delay(50); 
+  EEPROM.write(12, settings.display.yMax);
+  delay(50); 
+  EEPROM.write(16, settings.display.hSkew);
+  delay(50); 
+  EEPROM.write(20, settings.display.vSkew);
+  delay(50); 
 }
