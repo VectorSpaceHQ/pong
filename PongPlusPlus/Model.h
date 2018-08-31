@@ -82,6 +82,7 @@ namespace Model
 
    struct Settings
    {
+      uint8_t           checksum;
       LaserCalibration  leftLaserCal;
       LaserCalibration  middleLaserCal;
       LaserCalibration  rightLaserCal;

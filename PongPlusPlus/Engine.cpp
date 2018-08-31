@@ -42,6 +42,7 @@ void Engine::Update(void)
    switch(gameStatus.gameState)
    {
       case Model::GameStateInit:
+         LoadSettings();
          SetupLaserCalibration();
          break;
 
@@ -76,40 +77,50 @@ void Engine::LoadSettings()
    int               checksum       = 0;
    int               imgChecksum;
 
-   // Read the checksum from EEPROM
-   imgChecksum = readPtr[0];
-
    // Read the bytes out of EEPROM and calculate the checksum
-   for(address = 1; address < sizeof(localSettings) + 1; address++)
+   for(address = 0; address < sizeof(localSettings); address++)
    {
       readPtr[address] = EEPROM.read(address);
       checksum ^= readPtr[address] & 0xFF;
    }
 
-   if(checksum == imgChecksum)
+   
+   Serial.println(checksum);
+   
+   if(checksum == readPtr[0])
    {
+      Serial.println("Loading Settings");
       memcpy(&settings, &localSettings, sizeof(localSettings));
+      Serial.println(localSettings.leftLaserCal.xOffset);
    }
+   
 }
 
 
-void Engine::StoreSettings()
-{
-   Model::Settings   localSettings;
-   uint8_t*          readPtr        = reinterpret_cast<uint8_t*>(&localSettings);
-   int               address        = 0;
-   int               checksum       = 0;
-   int               imgChecksum;
+// void Engine::StoreSettings()
+// {
+//    Model::Settings   localSettings;
+//    uint8_t*          readPtr        = reinterpret_cast<uint8_t*>(&localSettings);
+//    int               address        = 0;
+//    int               checksum       = 0;
+//    int               imgChecksum;
 
 
-   // Read the bytes out of EEPROM and calculate the checksum
-   for(address = 1; address < sizeof(localSettings) + 1; address++)
-   {
-      readPtr[address] = EEPROM.read(address);
-      checksum ^= readPtr[address] & 0xFF;
-   }
+//    // Read the bytes out of EEPROM and calculate the checksum
+//    for(address = 0; address < sizeof(localSettings); address++)
+//    {
+//       readPtr[address] = EEPROM.read(address);
+//       checksum ^= readPtr[address] & 0xFF;
+//    }
 
-}
+//    if(checksum == readPtr[0])
+//      {
+//        for(address = 0; address < sizeof(localSettings); address++)
+//          {
+//            EEPROM.write(address, localSettings[address]);
+//          }
+//      }
+// }
 
 
 void Engine::SetupLaserCalibration()
@@ -530,13 +541,11 @@ void Engine::ChangeGameState(Model::GameState newState)
    {
       case Model::GameStateCalibrateLasers:
          PlayPaddleSound();
-         Serial.println("New Game State: Calibrate Lasers");
          SetupLaserCalibration();
          break;
 
       case Model::GameStateCalibrateView:
          PlayPaddleSound();
-         Serial.println("New Game State: Calibrate View");
          break;
 
       case Model::GameStateReady:
