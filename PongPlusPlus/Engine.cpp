@@ -195,16 +195,22 @@ void Engine::ViewCalibrationButtonChange()
       switch(buttonState)
       {
          case ButtonStateNone:
+            leftPaddle.SetLimits(-500, settings.display.yMax);
+            rightPaddle.SetLimits(-500, settings.display.xMax);
             leftPaddle.position = settings.display.yMin;
             rightPaddle.position = settings.display.xMin;
             break;
 
          case ButtonStateLeft:
+            leftPaddle.SetLimits(settings.display.yMin, 500);
+            rightPaddle.SetLimits(settings.display.xMin, 500);
             leftPaddle.position = settings.display.yMax;
             rightPaddle.position = settings.display.xMax;
             break;
 
          case ButtonStateRight:
+            leftPaddle.SetLimits(settings.display.yMin, settings.display.yMax);
+            rightPaddle.SetLimits(settings.display.xMin, settings.display.xMax);
             leftPaddle.position = settings.display.vSkew;
             rightPaddle.position = settings.display.hSkew;
             break;
@@ -223,9 +229,6 @@ void Engine::ViewCalibrationButtonChange()
 
 void Engine::RunViewCalibration()
 {
-   leftPaddle.SetLimits(-500, 500);
-   rightPaddle.SetLimits(-500, 500);
-
    ViewCalibrationButtonChange();
 
    switch(buttonState)
@@ -236,13 +239,13 @@ void Engine::RunViewCalibration()
          {
             // TODO: ensure these can't cross
             settings.display.xMin = rightPaddle.position;    // Left paddle controls X-Axis
-            gameStatus.gameStateChanged = true;
+            gameStatus.viewSettingsChanged = true;
          }
 
          if(settings.display.yMin != leftPaddle.position)
          {
             settings.display.yMin = leftPaddle.position;   // Right paddle controls Y-Axis
-            gameStatus.gameStateChanged = true;
+            gameStatus.viewSettingsChanged = true;
          }
          break;
 
@@ -251,13 +254,13 @@ void Engine::RunViewCalibration()
          if(settings.display.xMax != rightPaddle.position)
          {
             settings.display.xMax = rightPaddle.position;    // Left paddle controls X-Axis
-            gameStatus.gameStateChanged = true;
+            gameStatus.viewSettingsChanged = true;
          }
 
          if(settings.display.yMax != leftPaddle.position)
          {
             settings.display.yMax = leftPaddle.position;   // Right paddle controls Y-Axis
-            gameStatus.gameStateChanged = true;
+            gameStatus.viewSettingsChanged = true;
          }
          break;
 
@@ -266,13 +269,13 @@ void Engine::RunViewCalibration()
          if(settings.display.hSkew != rightPaddle.position)
          {
             settings.display.hSkew = rightPaddle.position;   // Left paddle controls horizontal skew
-            gameStatus.gameStateChanged = true;
+            gameStatus.viewSettingsChanged = true;
          }
 
          if(settings.display.vSkew != leftPaddle.position)
          {
             settings.display.vSkew = leftPaddle.position;  // Right paddle controls vertical skew
-            gameStatus.gameStateChanged = true;
+            gameStatus.viewSettingsChanged = true;
          }
          break;
    }
@@ -531,7 +534,6 @@ void Engine::ChangeGameState(Model::GameState newState)
       case Model::GameStateCalibrateLasers:
          PlayPaddleSound();
          Serial.println("New Game State: Calibrate Lasers");
-         SetupLaserCalibration();
          break;
 
       case Model::GameStateCalibrateView:
