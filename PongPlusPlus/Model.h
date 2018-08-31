@@ -69,10 +69,10 @@ namespace Model
       uint32_t vSkew;
 
       DisplaySettings():
-         xMin(-100),
-         yMin(-100),
-         xMax(100),
-         yMax(100),
+         xMin(-200),
+         yMin(-200),
+         xMax(200),
+         yMax(200),
          hSkew(0),
          vSkew(0)
       {

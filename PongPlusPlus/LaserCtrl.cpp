@@ -83,7 +83,7 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
 
    // Shift to Laser coordinates
 
-   CoordType newX = SERVO_MID_X + atX + (cal.xOffset * cal.xOrientation);
+   CoordType newX = 3000 - (SERVO_MID_X + atX + (cal.xOffset * cal.xOrientation));
    CoordType newY = SERVO_MID_Y + atY + (cal.yOffset * cal.yOrientation);
 
 /*
