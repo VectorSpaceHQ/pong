@@ -506,6 +506,11 @@ void Engine::ChangeGameState(Model::GameState newState)
 
       case Model::GameStateGameOver:
          Serial.println("New Game State: Game Over");
+
+         Serial.print("Score: ");
+         Serial.print(gameStatus.leftPaddleScore);
+         Serial.print(" - ");
+         Serial.println(gameStatus.rightPaddleScore);
          break;
    }
 }

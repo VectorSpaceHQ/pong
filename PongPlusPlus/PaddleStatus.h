@@ -10,6 +10,8 @@
 
 #include <stdint.h>
 
+#define PADDLE_SENSITIVITY   (0.5)
+
 // For now, we'll make the paddle status a structure.
 // In the future we may need something more complex
 struct PaddleStatus
@@ -38,7 +40,7 @@ public:
 
    void Increment(int16_t value)
    {
-      int32_t newPos = position + value;
+      int32_t newPos = position + (value * PADDLE_SENSITIVITY);
 
       if(newPos > maxPosition)
       {
