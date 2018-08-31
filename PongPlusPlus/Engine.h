@@ -52,7 +52,7 @@ private:
 
    void PrintButtonState();
    void LoadSettings();
-   void SaveSettings();
+   void StoreSettings();
 };
 
 #endif  // __engine_h__

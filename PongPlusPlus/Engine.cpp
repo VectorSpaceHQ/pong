@@ -6,6 +6,7 @@
  */
 
 #include <Arduino.h>
+#include <stdio.h>
 
 #include "Engine.h"
 #include "Model.h"
@@ -64,6 +65,50 @@ void Engine::Update(void)
       default:
          break;
    }
+}
+
+
+void Engine::LoadSettings()
+{
+   Model::Settings   localSettings;
+   uint8_t*          readPtr        = reinterpret_cast<uint8_t*>(&localSettings);
+   int               address        = 0;
+   int               checksum       = 0;
+   int               imgChecksum;
+
+   // Read the checksum from EEPROM
+   imgChecksum = readPtr[0];
+
+   // Read the bytes out of EEPROM and calculate the checksum
+   for(address = 1; address < sizeof(localSettings) + 1; address++)
+   {
+      readPtr[address] = EEPROM.read(address);
+      checksum ^= readPtr[address] & 0xFF;
+   }
+
+   if(checksum == imgChecksum)
+   {
+      memcpy(&settings, &localSettings, sizeof(localSettings));
+   }
+}
+
+
+void Engine::StoreSettings()
+{
+   Model::Settings   localSettings;
+   uint8_t*          readPtr        = reinterpret_cast<uint8_t*>(&localSettings);
+   int               address        = 0;
+   int               checksum       = 0;
+   int               imgChecksum;
+
+
+   // Read the bytes out of EEPROM and calculate the checksum
+   for(address = 1; address < sizeof(localSettings) + 1; address++)
+   {
+      readPtr[address] = EEPROM.read(address);
+      checksum ^= readPtr[address] & 0xFF;
+   }
+
 }
 
 
@@ -150,22 +195,16 @@ void Engine::ViewCalibrationButtonChange()
       switch(buttonState)
       {
          case ButtonStateNone:
-            leftPaddle.SetLimits(-500, settings.display.yMax);
-            rightPaddle.SetLimits(-500, settings.display.xMax);
             leftPaddle.position = settings.display.yMin;
             rightPaddle.position = settings.display.xMin;
             break;
 
          case ButtonStateLeft:
-            leftPaddle.SetLimits(settings.display.yMin, 500);
-            rightPaddle.SetLimits(settings.display.xMin, 500);
             leftPaddle.position = settings.display.yMax;
             rightPaddle.position = settings.display.xMax;
             break;
 
          case ButtonStateRight:
-            leftPaddle.SetLimits(settings.display.yMin, settings.display.yMax);
-            rightPaddle.SetLimits(settings.display.xMin, settings.display.xMax);
             leftPaddle.position = settings.display.vSkew;
             rightPaddle.position = settings.display.hSkew;
             break;
@@ -184,6 +223,9 @@ void Engine::ViewCalibrationButtonChange()
 
 void Engine::RunViewCalibration()
 {
+   leftPaddle.SetLimits(-500, 500);
+   rightPaddle.SetLimits(-500, 500);
+
    ViewCalibrationButtonChange();
 
    switch(buttonState)
@@ -194,13 +236,13 @@ void Engine::RunViewCalibration()
          {
             // TODO: ensure these can't cross
             settings.display.xMin = rightPaddle.position;    // Left paddle controls X-Axis
-            gameStatus.viewSettingsChanged = true;
+            gameStatus.gameStateChanged = true;
          }
 
          if(settings.display.yMin != leftPaddle.position)
          {
             settings.display.yMin = leftPaddle.position;   // Right paddle controls Y-Axis
-            gameStatus.viewSettingsChanged = true;
+            gameStatus.gameStateChanged = true;
          }
          break;
 
@@ -209,13 +251,13 @@ void Engine::RunViewCalibration()
          if(settings.display.xMax != rightPaddle.position)
          {
             settings.display.xMax = rightPaddle.position;    // Left paddle controls X-Axis
-            gameStatus.viewSettingsChanged = true;
+            gameStatus.gameStateChanged = true;
          }
 
          if(settings.display.yMax != leftPaddle.position)
          {
             settings.display.yMax = leftPaddle.position;   // Right paddle controls Y-Axis
-            gameStatus.viewSettingsChanged = true;
+            gameStatus.gameStateChanged = true;
          }
          break;
 
@@ -224,13 +266,13 @@ void Engine::RunViewCalibration()
          if(settings.display.hSkew != rightPaddle.position)
          {
             settings.display.hSkew = rightPaddle.position;   // Left paddle controls horizontal skew
-            gameStatus.viewSettingsChanged = true;
+            gameStatus.gameStateChanged = true;
          }
 
          if(settings.display.vSkew != leftPaddle.position)
          {
             settings.display.vSkew = leftPaddle.position;  // Right paddle controls vertical skew
-            gameStatus.viewSettingsChanged = true;
+            gameStatus.gameStateChanged = true;
          }
          break;
    }
@@ -489,6 +531,7 @@ void Engine::ChangeGameState(Model::GameState newState)
       case Model::GameStateCalibrateLasers:
          PlayPaddleSound();
          Serial.println("New Game State: Calibrate Lasers");
+         SetupLaserCalibration();
          break;
 
       case Model::GameStateCalibrateView:
@@ -534,34 +577,4 @@ void Engine::PrintButtonState()
    Serial.print(rightPaddle.buttonTime);
    Serial.print(" ) -> ");
    Serial.println(buttonState);
-}
-
-void Engine::LoadSettings(){
-  settings.display.xMin = EEPROM.read(0);
-  delay(50);
-  settings.display.yMin = EEPROM.read(4);
-  delay(50);
-  settings.display.xMax = EEPROM.read(8);
-  delay(50);
-  settings.display.yMax = EEPROM.read(12);
-  delay(50);
-  settings.display.hSkew = EEPROM.read(16);
-  delay(50);
-  settings.display.vSkew = EEPROM.read(20);
-  delay(50);
-}
-
-void Engine::SaveSettings(){
-  EEPROM.write(0, settings.display.xMin);
-  delay(50); // An EEPROM write takes 3.3 ms to complete.
-  EEPROM.write(4, settings.display.yMin);
-  delay(50); 
-  EEPROM.write(8, settings.display.xMax);
-  delay(50); 
-  EEPROM.write(12, settings.display.yMax);
-  delay(50); 
-  EEPROM.write(16, settings.display.hSkew);
-  delay(50); 
-  EEPROM.write(20, settings.display.vSkew);
-  delay(50); 
 }
