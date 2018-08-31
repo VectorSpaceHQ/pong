@@ -14,6 +14,9 @@
 #include "Sound.h"
 #include <EEPROM.h>
 
+// TODO: What should be the scale of the paddles?
+#define PADDLE_SCALE_PERCENT        (50)           // Percent of the height of the paddle
+#define BALL_SCALE_PERCENT          (5)            // Percent of the height of the ball
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
 #define  MAX_SCORE               (9)
@@ -376,7 +379,27 @@ void Engine::ReadyButtonChange()
 
 void Engine::SetupGameReady()
 {
+   // We'll setup the shapes for both Game Ready and Game Play states here.
+   uint32_t paddleScale = PADDLE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100;
+   uint32_t ballScale   = BALL_SCALE_PERCENT   * (settings.display.yMax - settings.display.yMin)  / 100;
+
+   // Create the paddle and ball shapes
+   gameStatus.ballShape.CreateShape(ShapeTypeBall);
+   gameStatus.leftPaddleShape.CreateShape(ShapeTypePaddle);
+   gameStatus.rightPaddleShape.CreateShape(ShapeTypePaddle);
+
+   // Copy the un-scaled shapes to their view coordinates from their world coordinates
+   gameStatus.ballShape.CopyVerticesToView();
+   gameStatus.leftPaddleShape.CopyVerticesToView();
+   gameStatus.rightPaddleShape.CopyVerticesToView();
+
+   // Now scale the shapes for the game world, the View will scale the view shape for the lasers
+   gameStatus.ballShape.Scale(CoordsWorld, ballScale);
+   gameStatus.leftPaddleShape.Scale(CoordsWorld, paddleScale);
+   gameStatus.rightPaddleShape.Scale(CoordsWorld, paddleScale);
+
    PrintDisplayCoords();
+
    // Paddles are at a fixed horizontal location
    gameStatus.leftPaddleShape.position.x  =  settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4;
    gameStatus.rightPaddleShape.position.x = settings.display.xMin + (3 * (settings.display.xMax - settings.display.xMin) / 4);

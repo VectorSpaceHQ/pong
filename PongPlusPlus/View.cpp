@@ -9,9 +9,6 @@
 #include "View.h"
 
 
-// TODO: What should be the scale of the paddles?
-#define PADDLE_SCALE_PERCENT        (50)           // Percent of the height of the paddle
-#define BALL_SCALE_PERCENT          (5)            // Percent of the height of the ball
 #define SCORE_SCALE_PERCENT         (50)           // Percent of the height of the score
 
 
@@ -173,7 +170,7 @@ void View::SetupViewCalibration(void)
    gameStatus.ballShape.Reset();
    gameStatus.ballShape.AddVertex(settings.display.xMin, settings.display.yMin, true);
    gameStatus.ballShape.AddVertex(settings.display.xMax, settings.display.yMin, true);
-   ballLaser.UpdateShape(1, true);
+   ballLaser.UpdateShape(1, true, true);
    ballLaser.SetPosition(0, 0);
    ballLaser.Start();
 
@@ -181,7 +178,7 @@ void View::SetupViewCalibration(void)
    gameStatus.leftPaddleShape.Reset();
    gameStatus.leftPaddleShape.AddVertex(settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4, settings.display.yMin, true);   // Top
    gameStatus.leftPaddleShape.AddVertex(settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4, settings.display.yMax, true);   // Bottom
-   leftPaddleLaser.UpdateShape(1, true);
+   leftPaddleLaser.UpdateShape(1, true, true);
    leftPaddleLaser.SetPosition(settings.display.xMin, 0);   // far left
    leftPaddleLaser.Start();
 
@@ -189,7 +186,7 @@ void View::SetupViewCalibration(void)
    gameStatus.rightPaddleShape.Reset();
    gameStatus.rightPaddleShape.AddVertex(settings.display.xMin + 3 * (settings.display.xMax - settings.display.xMin) / 4, settings.display.yMin, true);   // Top
    gameStatus.rightPaddleShape.AddVertex(settings.display.xMin + 3 * (settings.display.xMax - settings.display.xMin) / 4, settings.display.yMax, true);   // Bottom
-   rightPaddleLaser.UpdateShape(1, true);
+   rightPaddleLaser.UpdateShape(1, true, true);
    rightPaddleLaser.SetPosition(settings.display.xMax, 0);   // far right
    rightPaddleLaser.Start();
 }
@@ -219,43 +216,34 @@ void View::DisplayViewCalibration(void)
  ******************************************************************************/
 void View::SetupGameReady(void)
 {
-   uint32_t paddleScale = PADDLE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100;
+   // For now, set the Lasers to the same scale as the game
+   uint32_t paddleScale = gameStatus.leftPaddleShape.scale;
+   uint32_t ballScale = gameStatus.ballShape.scale;
 
    // Stop the ball laser from running its shape and turn it off
    // Since it's not shown in the ready state
+   ballLaser.UpdateShape(ballScale, true, false);
    ballLaser.Stop();
    ballLaser.Off();
 
    // Create the left paddle shape
-   gameStatus.leftPaddleShape.CreateShape(ShapeTypePaddle);
-   leftPaddleLaser.UpdateShape(paddleScale, true);
+   leftPaddleLaser.UpdateShape(paddleScale, true, false);
    leftPaddleLaser.Start();
 
    // Create the right paddle shape
-   gameStatus.rightPaddleShape.CreateShape(ShapeTypePaddle);
-   rightPaddleLaser.UpdateShape(paddleScale, true);
+   rightPaddleLaser.UpdateShape(paddleScale, true, false);
    rightPaddleLaser.Start();
 }
 
 
 void View::SetupGamePlay(void)
 {
-   uint32_t paddleScale = PADDLE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100;
-   uint32_t ballScale   = BALL_SCALE_PERCENT   * (settings.display.yMax - settings.display.yMin)  / 100;
+   // The shapes for game play are now configured in the engine
+   // We can just use the same shape settings as Game Ready, so no need to configure anything here.
 
-   // Create the ball shape
-   gameStatus.ballShape.CreateShape(ShapeTypeBall);
-   ballLaser.UpdateShape(ballScale, true);
+   // Just make sure the lasers are started to run through their shapes
    ballLaser.Start();
-
-   // Create the left paddle shape
-   gameStatus.leftPaddleShape.CreateShape(ShapeTypePaddle);
-   leftPaddleLaser.UpdateShape(paddleScale, true);
    leftPaddleLaser.Start();
-
-   // Create the right paddle shape
-   gameStatus.rightPaddleShape.CreateShape(ShapeTypePaddle);
-   rightPaddleLaser.UpdateShape(paddleScale, true);
    rightPaddleLaser.Start();
 }
 
@@ -298,20 +286,20 @@ void View::SetupGameOver(void)
    gameStatus.ballShape.Reset();
    gameStatus.ballShape.AddVertex(-1, 0, true);
    gameStatus.ballShape.AddVertex( 1, 0, true);
-   ballLaser.UpdateShape(1, true);
+   ballLaser.UpdateShape(1, true, true);
    ballLaser.SetPosition((settings.display.xMin + settings.display.xMax) / 2,
                          (settings.display.yMin + settings.display.yMax) / 2);
    ballLaser.Start();
 
    // Use the left paddle to display left player score
    gameStatus.leftPaddleShape.CreateShape(gameStatus.leftPaddleScore);
-   leftPaddleLaser.UpdateShape(paddleScale, true);
+   leftPaddleLaser.UpdateShape(paddleScale, true, true);
    leftPaddleLaser.SetPosition(leftScoreLoc, (settings.display.yMin + settings.display.yMax) / 2);
    leftPaddleLaser.Start();
 
    // Use the left paddle to display right player score
    gameStatus.rightPaddleShape.CreateShape(gameStatus.rightPaddleScore);
-   rightPaddleLaser.UpdateShape(paddleScale, true);
+   rightPaddleLaser.UpdateShape(paddleScale, true, true);
    rightPaddleLaser.SetPosition(rightScoreLoc, (settings.display.yMin + settings.display.yMax) / 2);
    rightPaddleLaser.Start();
 }

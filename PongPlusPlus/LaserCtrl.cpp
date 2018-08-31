@@ -55,10 +55,15 @@ LaserCtrl::LaserCtrl(LaserConf&                conf,
 }
 
 
-void LaserCtrl::UpdateShape(uint32_t scale, bool restart)
+void LaserCtrl::UpdateShape(uint32_t scale, bool restart, bool needToCopy)
 {
    // Lasers work on the View set of coordinates
-   shape.CopyVerticesToView();
+
+   if(needToCopy)
+   {
+      shape.CopyVerticesToView();
+   }
+
    shape.SetOrientation(CoordsView, cal.xOrientation, cal.yOrientation);   // Invert the shape if necessary
    shape.Scale(CoordsView, scale);     // Scale the shape
    shape.Add(CoordsView, x, y);        // Center the shape
