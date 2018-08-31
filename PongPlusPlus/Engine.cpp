@@ -390,8 +390,8 @@ void Engine::SetupGamePlay()
    randomSeed(micros());
 
    // Paddles are at a fixed horizontal location
-   gameStatus.leftPaddleShape.position.x  =     (settings.display.xMin + settings.display.xMax) / 4;
-   gameStatus.rightPaddleShape.position.x = 3 * (settings.display.xMin + settings.display.xMax) / 4;
+   gameStatus.leftPaddleShape.position.x  =  settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4;
+   gameStatus.rightPaddleShape.position.x = settings.display.xMin + (3 * (settings.display.xMax - settings.display.xMin) / 4);
 
    // Randomly select top third or bottom third
    if(random(1) == 1)
