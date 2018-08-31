@@ -374,6 +374,7 @@ void Shape::CreateShape(int numeral)
  ******************************************************************************/
 void Shape::SetExtremeVertices(void)
 {
+  Serial.println("Setting Extreme Vertices");
    for(uint32_t cntr = 0; cntr < numVertices; cntr++)
    {
       if(vertices[cntr].y > highestVertex.y)
@@ -394,12 +395,8 @@ void Shape::SetExtremeVertices(void)
          rightMostVertex.y = vertices[cntr].y;
       }
 
-      // Serial.println("set left extreme?");
-      // Serial.print(vertices[cntr].x);
-      // Serial.print(leftMostVertex.x);
       if(vertices[cntr].x < leftMostVertex.x)
       {
-        Serial.println("setting leftmostvertices");
          leftMostVertex.x = vertices[cntr].x;
          leftMostVertex.y = vertices[cntr].y;
       }
@@ -443,10 +440,10 @@ bool Shape::CheckLeft(CoordType left, Vertex& foundVertex)
 {
    bool isBeyond = false;
 
-   Serial.print("checkleft: ");
-   Serial.print(leftMostVertex.x);
-   Serial.print(", ");
-   Serial.println(left);
+   // Serial.print("CheckLeft: ");
+   // Serial.print(leftMostVertex.x);
+   // Serial.print(", ");
+   // Serial.println(left);
 
    if(leftMostVertex.x <= left)
    {
@@ -463,6 +460,11 @@ bool Shape::CheckLeft(CoordType left, Vertex& foundVertex)
 bool Shape::CheckRight(CoordType right, Vertex& foundVertex)
 {
    bool isBeyond = false;
+
+   // Serial.print("CheckRight: ");
+   // Serial.print(rightMostVertex.x);
+   // Serial.print(", ");
+   // Serial.println(right);
 
    if(rightMostVertex.x >= right)
    {

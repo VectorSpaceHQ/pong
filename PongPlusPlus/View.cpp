@@ -10,7 +10,7 @@
 
 
 // TODO: What should be the scale of the paddles?
-#define PADDLE_SCALE_PERCENT        (15)           // Percent of the height of the paddle
+#define PADDLE_SCALE_PERCENT        (50)           // Percent of the height of the paddle
 #define BALL_SCALE_PERCENT          (5)            // Percent of the height of the ball
 #define SCORE_SCALE_PERCENT         (50)           // Percent of the height of the score
 
