@@ -47,6 +47,8 @@ View::View(Model::Settings&         _settings,
 
    settings.middleLaserCal.xOrientation = -1;
    settings.middleLaserCal.yOrientation = -1;
+
+   settings.rightLaserCal.xOrientation = -1;
 }
 
 
