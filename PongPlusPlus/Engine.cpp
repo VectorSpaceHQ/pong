@@ -420,12 +420,12 @@ void Engine::SetupGamePlay()
    if(random(1) == 1)
    {
       // Select top 1/3
-      gameStatus.ballShape.position.y = 2 * (settings.display.yMax + settings.display.yMin) / 3;
+      gameStatus.ballShape.position.y = settings.display.yMin + 2 * (settings.display.yMax - settings.display.yMin) / 3;
    }
    else
    {
       // Select bottom 1/3
-      gameStatus.ballShape.position.y = (settings.display.yMax + settings.display.yMin) / 3;
+      gameStatus.ballShape.position.y = settings.display.yMin + (settings.display.yMax - settings.display.yMin) / 3;
    }
 
    // Start the ball in the horizontal center
