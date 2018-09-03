@@ -413,6 +413,7 @@ void Engine::SetupGameReady()
    gameStatus.rightPaddleShape.position.x = settings.display.xMin + (3 * (settings.display.xMax - settings.display.xMin) / 4);
    gameStatus.leftPaddleShape.position.y  = 0;
    gameStatus.rightPaddleShape.position.y = 0;
+<<<<<<< normalize_coords
 
    // Set the limits on the paddleStatus, so we can't overdrive the paddles
    // The paddles should be the same size, so just use the left one as the benchmark
@@ -425,6 +426,8 @@ void Engine::SetupGameReady()
    // Now, ensure the status is in the vertical middle, since we moved our paddle shapes to the middle a few lines above
    leftPaddle.position = 0;
    rightPaddle.position = 0;
+=======
+>>>>>>> 41b3bbf more vertices limits in shape::Add
 }
 
 
