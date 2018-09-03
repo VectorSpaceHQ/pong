@@ -497,6 +497,13 @@ bool Shape::CheckRight(CoordType right, Vertex& foundVertex)
 }
 
 
-bool Shape::CheckBetweenVertical(CoordType top, CoordType bottom)
+int16_t Shape::Height()
 {
+   return(highestVertex.y - lowestVertex.y);
+}
+
+
+int16_t Shape::Width()
+{
+   return(rightMostVertex.x - leftMostVertex.x);
 }

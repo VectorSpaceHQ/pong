@@ -101,7 +101,8 @@ public:
    bool CheckLeft(CoordType left, Vertex& foundVertex);
    bool CheckRight(CoordType right, Vertex& foundVertex);
 
-   bool CheckBetweenVertical(CoordType top, CoordType bottom);
+   int16_t  Height();
+   int16_t  Width();
 
    void Log(CoordSet set);
 

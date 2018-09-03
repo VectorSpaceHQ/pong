@@ -406,8 +406,6 @@ void Engine::SetupGameReady()
    gameStatus.leftPaddleShape.Scale(CoordsWorld, paddleScale);
    gameStatus.rightPaddleShape.Scale(CoordsWorld, paddleScale);
 
-
-
    PrintDisplayCoords();
 
    // Paddles are at a fixed horizontal location
@@ -415,6 +413,16 @@ void Engine::SetupGameReady()
    gameStatus.rightPaddleShape.position.x = settings.display.xMin + (3 * (settings.display.xMax - settings.display.xMin) / 4);
    gameStatus.leftPaddleShape.position.y  = 0;
    gameStatus.rightPaddleShape.position.y = 0;
+
+   // Set the limits on the paddleStatus, so we can't overdrive the paddles
+   // The paddles should be the same size, so just use the left one as the benchmark
+   int16_t  minLimit = settings.display.yMin + (gameStatus.leftPaddleShape.Height() / 2);
+   int16_t  maxLimit = settings.display.yMax - (gameStatus.leftPaddleShape.Height() / 2);
+
+   leftPaddle.SetLimits(minLimit, maxLimit);
+   rightPaddle.SetLimits(minLimit, maxLimit);
+
+   // Now, ensure the status is in the vertical middle, since we moved our paddle shapes to the middle a few lines above
    leftPaddle.position = 0;
    rightPaddle.position = 0;
 }
