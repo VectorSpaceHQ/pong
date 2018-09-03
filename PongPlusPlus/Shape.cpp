@@ -125,8 +125,8 @@ void Shape::Add(CoordSet set, CoordType x, CoordType y)
    {
       for(uint32_t cntr = 0; cntr < numVertices; cntr++)
       {
-         vertices[cntr].x += x;
-         vertices[cntr].y += y;
+	vertices[cntr].x = max(min(vertices[cntr].x + x, maxXpos), minXpos);
+	vertices[cntr].y = max(min(vertices[cntr].y + y, maxYpos), minYpos);
       }
 
       // Serial.print("adding vertices: leftMostX, rightMostX ");
@@ -135,8 +135,8 @@ void Shape::Add(CoordSet set, CoordType x, CoordType y)
       // Serial.println(rightMostVertex.x);
       
       // Move our extreme vertices too
-      highestVertex.x += x;
-      highestVertex.y += y;
+      highestVertex.x = x;
+      highestVertex.y = y;
 
       lowestVertex.x += x;
       lowestVertex.y += y;
@@ -151,8 +151,8 @@ void Shape::Add(CoordSet set, CoordType x, CoordType y)
    {
       for(uint32_t cntr = 0; cntr < numVertices; cntr++)
       {
-         viewVertices[cntr].x += x;
-         viewVertices[cntr].y += y;
+	viewVertices[cntr].x = min(max(viewVertices[cntr].x + x, minXpos), maxXpos);
+	viewVertices[cntr].y = min(max(viewVertices[cntr].y + y, minYpos), maxYpos);
       }
    }
 }

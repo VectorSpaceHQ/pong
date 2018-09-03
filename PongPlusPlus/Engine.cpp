@@ -415,6 +415,8 @@ void Engine::SetupGameReady()
    gameStatus.rightPaddleShape.position.x = settings.display.xMin + (3 * (settings.display.xMax - settings.display.xMin) / 4);
    gameStatus.leftPaddleShape.position.y  = 0;
    gameStatus.rightPaddleShape.position.y = 0;
+   leftPaddle.position = 0;
+   rightPaddle.position = 0;
 }
 
 
