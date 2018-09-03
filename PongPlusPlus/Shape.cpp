@@ -34,7 +34,11 @@ Shape::Shape():
    lowestVertex(),
    leftMostVertex(),
    rightMostVertex(),
-   acceleration(0)
+   acceleration(0),
+   minXpos(-2000),
+   maxXpos(2000),
+   minYpos(-2000),
+   maxYpos(2000)
 {
    Reset();
 }
@@ -73,8 +77,8 @@ void Shape::Scale(CoordSet set, CoordType _scale)
 
       for(uint32_t cntr = 0; cntr < numVertices; cntr++)
       {
-         vertices[cntr].x *= scale;
-         vertices[cntr].y *= scale;
+	vertices[cntr].x = max(min(vertices[cntr].x * scale, maxXpos), minXpos);
+	vertices[cntr].y = max(min(vertices[cntr].y * scale, maxYpos), minYpos);
       }
 
       SetExtremeVertices();
@@ -85,8 +89,8 @@ void Shape::Scale(CoordSet set, CoordType _scale)
 
       for(uint32_t cntr = 0; cntr < numVertices; cntr++)
       {
-         viewVertices[cntr].x *= scale;
-         viewVertices[cntr].y *= scale;
+	 viewVertices[cntr].x = max(min(viewVertices[cntr].x * viewScale, maxXpos), minXpos);
+	 viewVertices[cntr].y = max(min(viewVertices[cntr].y * viewScale, maxYpos), minYpos);
       }
    }
 }
@@ -170,12 +174,22 @@ void Shape::Log(CoordSet set)
 }
 
 
+void Shape::SetLimits(int16_t _minX, int16_t _maxX,
+		      int16_t _minY, int16_t _maxY)
+{
+  minXpos = _minX;
+  maxXpos = _maxX;
+  minYpos = _minY;
+  maxYpos = _maxY;
+}
+
+
 void Shape::AddVertex(CoordType x, CoordType y, bool draw)
 {
    if(numVertices < MAX_VERTICES)
    {
-      vertices[numVertices].x = x;
-      vertices[numVertices].y = y;
+      vertices[numVertices].x = max(min(x, maxXpos), minXpos);
+      vertices[numVertices].y = max(min(y, maxYpos), minYpos);
       vertices[numVertices].draw = draw;
       ++numVertices;
       SetExtremeVertices();

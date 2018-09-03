@@ -393,10 +393,20 @@ void Engine::SetupGameReady()
    gameStatus.leftPaddleShape.CopyVerticesToView();
    gameStatus.rightPaddleShape.CopyVerticesToView();
 
+   // Set the shape limits
+   gameStatus.ballShape.SetLimits(settings.display.xMin, settings.display.xMax,
+				  settings.display.yMin, settings.display.yMax);
+   gameStatus.leftPaddleShape.SetLimits(settings.display.xMin, settings.display.xMax,
+					settings.display.yMin, settings.display.yMax);
+   gameStatus.rightPaddleShape.SetLimits(settings.display.xMin, settings.display.xMax,
+					 settings.display.yMin, settings.display.yMax);
+   
    // Now scale the shapes for the game world, the View will scale the view shape for the lasers
    gameStatus.ballShape.Scale(CoordsWorld, ballScale);
    gameStatus.leftPaddleShape.Scale(CoordsWorld, paddleScale);
    gameStatus.rightPaddleShape.Scale(CoordsWorld, paddleScale);
+
+
 
    PrintDisplayCoords();
 

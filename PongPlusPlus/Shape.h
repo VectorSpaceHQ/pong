@@ -64,6 +64,10 @@ public:
    uint32_t    numVertices;
    Vertex      vertices[MAX_VERTICES];       // World vertices
    Vertex      viewVertices[MAX_VERTICES];   // View vertices
+   int16_t     minXpos;
+   int16_t     maxXpos;
+   int16_t     minYpos;
+   int16_t     maxYpos;
 
    // Vertices for movement
    Vertex      position;         // Where it currently is in normal world space
@@ -78,6 +82,8 @@ public:
 
    void Reset();
    void CreateShape(int numeral);
+   void SetLimits(int16_t _minX, int16_t _maxX,
+		  int16_t _minY, int16_t _maxY);
    void AddVertex(CoordType x, CoordType y, bool draw);
    void CopyVerticesToView();
 

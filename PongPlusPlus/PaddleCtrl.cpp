@@ -4,21 +4,26 @@
  *  Created on: Aug 16, 2018
  *      Author: athiessen
  */
-
-#include <Arduino.h>
-
-#include "Configs.h"
-#include "IntHandler.h"
-#include "PaddleCtrl.h"
-#include "PaddleStatus.h"
-#include "ScheduledInterval.h"
-#include "Timing.h"
-
 // Whether or not to use interrupts or poll mechanism
 // Do not use interrupts
 #undef PADDLE_CONTROL_USE_INTERRUPTS
 // Use interrupts
 //#define PADDLE_CONTROL_USE_INTERRUPTS
+
+#include <Arduino.h>
+
+// #ifdef PADDLE_CONTROL_USE_INTERRUPTS
+// #include “IntHandler.h”
+// #endif
+
+#include "Configs.h"
+
+#include "PaddleCtrl.h"
+#include "PaddleStatus.h"
+#include "ScheduledInterval.h"
+#include "Timing.h"
+
+
 
 
 #define  UP_MASK     (0x66)
