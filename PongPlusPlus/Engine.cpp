@@ -393,14 +393,6 @@ void Engine::SetupGameReady()
    gameStatus.leftPaddleShape.CopyVerticesToView();
    gameStatus.rightPaddleShape.CopyVerticesToView();
 
-   // Set the shape limits
-   gameStatus.ballShape.SetLimits(settings.display.xMin, settings.display.xMax,
-				  settings.display.yMin, settings.display.yMax);
-   gameStatus.leftPaddleShape.SetLimits(settings.display.xMin, settings.display.xMax,
-					settings.display.yMin, settings.display.yMax);
-   gameStatus.rightPaddleShape.SetLimits(settings.display.xMin, settings.display.xMax,
-					 settings.display.yMin, settings.display.yMax);
-   
    // Now scale the shapes for the game world, the View will scale the view shape for the lasers
    gameStatus.ballShape.Scale(CoordsWorld, ballScale);
    gameStatus.leftPaddleShape.Scale(CoordsWorld, paddleScale);
@@ -413,7 +405,6 @@ void Engine::SetupGameReady()
    gameStatus.rightPaddleShape.position.x = settings.display.xMin + (3 * (settings.display.xMax - settings.display.xMin) / 4);
    gameStatus.leftPaddleShape.position.y  = 0;
    gameStatus.rightPaddleShape.position.y = 0;
-<<<<<<< normalize_coords
 
    // Set the limits on the paddleStatus, so we can't overdrive the paddles
    // The paddles should be the same size, so just use the left one as the benchmark
@@ -426,8 +417,6 @@ void Engine::SetupGameReady()
    // Now, ensure the status is in the vertical middle, since we moved our paddle shapes to the middle a few lines above
    leftPaddle.position = 0;
    rightPaddle.position = 0;
-=======
->>>>>>> 41b3bbf more vertices limits in shape::Add
 }
 
 
