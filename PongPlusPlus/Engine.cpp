@@ -15,7 +15,7 @@
 #include <EEPROM.h>
 
 // TODO: What should be the scale of the paddles?
-#define PADDLE_SCALE_PERCENT        (5)           // Percent of the height of the paddle
+#define PADDLE_SCALE_PERCENT        (10)           // Percent of the height of the paddle
 #define BALL_SCALE_PERCENT          (2)            // Percent of the height of the ball
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
@@ -41,7 +41,6 @@ void Engine::Update(void)
 {
    // First, update the button status
    CheckButtonState();
-   PrintLeftPaddleCoords();
 
    switch(gameStatus.gameState)
    {
@@ -242,7 +241,6 @@ void Engine::ViewCalibrationButtonChange()
 
       switch(buttonState)
       {
-        delay(300); // debounce button
          case ButtonStateNone:
             leftPaddle.SetLimits(-500, settings.display.yMax);
             rightPaddle.SetLimits(-500, settings.display.xMax);
@@ -385,7 +383,7 @@ void Engine::SetupGameReady()
    // We'll setup the shapes for both Game Ready and Game Play states here.
    uint32_t paddleScale = PADDLE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100;
    uint32_t ballScale   = BALL_SCALE_PERCENT   * (settings.display.yMax - settings.display.yMin)  / 100;
-   paddleScale = 2;
+
    ballScale = 1;
 
    // Create the paddle and ball shapes
@@ -455,7 +453,6 @@ void Engine::SetupGamePlay()
    // Start the ball in the horizontal center
    PrintDisplayCoords();
    gameStatus.ballShape.position.x = (settings.display.xMin + settings.display.xMax) / 2;
-   delay(3000);
 
    // TODO: Randomize the y-component of the vector
    // Select ball x vector
@@ -529,12 +526,14 @@ void Engine::RunGamePlay()
         Serial.println("paddle is at right elevation for bounce");
         PrintBallCoords();
         PrintLeftPaddleCoords();
+        delay(200);
         
          // And the it's beyond the paddle edge
         if((gameStatus.ballShape.leftMostVertex.x <= gameStatus.leftPaddleShape.position.x) &&
            (gameStatus.ballShape.rightMostVertex.x >= gameStatus.leftPaddleShape.position.x) )
          {
            Serial.println("BOUNCE");
+           delay(1000);
            
             // Ball hit the left paddle so invert the x-component of the slope
             gameStatus.ballShape.vector.x *= -1;
@@ -667,7 +666,6 @@ void Engine::ChangeGameState(Model::GameState newState)
       case Model::GameStateReady:
          SetupGameReady();
          Serial.println("New Game State: Ready");
-         PrintLeftPaddleCoords();
          break;
 
       case Model::GameStatePlay:

@@ -9,7 +9,7 @@
 #include "View.h"
 
 
-#define SCORE_SCALE_PERCENT         (50)           // Percent of the height of the score
+#define SCORE_SCALE_PERCENT         (10)           // Percent of the height of the score
 
 
 View::View(Model::Settings&         _settings,
@@ -225,7 +225,7 @@ void View::SetupGameReady(void)
    ballLaser.UpdateShape(ballScale, true, false);
    ballLaser.Stop();
    ballLaser.Off();
-
+   
    // Create the left paddle shape
    leftPaddleLaser.UpdateShape(paddleScale, true, false);
    leftPaddleLaser.Start();
