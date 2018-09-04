@@ -35,6 +35,8 @@ LaserCtrl::LaserCtrl(LaserConf&                conf,
    laserOn(false),
    shape(_shape),
    currentVertex(0),
+   displayMin(),
+   displayMax(),
    currentPosition(),
    destination(),
    step()
@@ -128,6 +130,15 @@ void LaserCtrl::Move(CoordType atX, CoordType atY)
 
    xServo.writeMicroseconds(x);
    yServo.writeMicroseconds(y);
+}
+
+
+void LaserCtrl::SetLimits(CoordType xMin, CoordType yMin, CoordType xMax, CoordType yMax)
+{
+   displayMin.x = xMin;
+   displayMin.y = yMin;
+   displayMax.x = xMax;
+   displayMax.y = yMax;
 }
 
 
@@ -230,6 +241,12 @@ void LaserCtrl::SetLaser(bool onOff)
 void LaserCtrl::Move(Vertex& dest)
 {
    destination = dest;
+
+   // Check for out of bounds
+   if(destination.x < displayMin.x) { destination.x = displayMin.x; }
+   if(destination.x > displayMax.x) { destination.x = displayMax.x; }
+   if(destination.y < displayMin.y) { destination.y = displayMin.y; }
+   if(destination.y > displayMax.y) { destination.y = displayMax.y; }
 
    CoordType diffX = (destination.x - currentPosition.x);
    CoordType diffY = (destination.y - currentPosition.y);

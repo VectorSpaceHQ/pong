@@ -216,6 +216,24 @@ void View::DisplayViewCalibration(void)
  ******************************************************************************/
 void View::SetupGameReady(void)
 {
+   // Set the Laser Min/Max
+   // We really only need to do this once after view calibration, but the code is not setup for that, so
+   // do it every time we go to Game Ready State
+   leftPaddleLaser.SetLimits(settings.display.xMin,
+                             settings.display.yMin,
+                             settings.display.xMax,
+                             settings.display.yMax);
+
+   ballLaser.SetLimits(settings.display.xMin,
+                       settings.display.yMin,
+                       settings.display.xMax,
+                       settings.display.yMax);
+
+   rightPaddleLaser.SetLimits(settings.display.xMin,
+                              settings.display.yMin,
+                              settings.display.xMax,
+                              settings.display.yMax);
+
    // For now, set the Lasers to the same scale as the game
    uint32_t paddleScale = gameStatus.leftPaddleShape.scale;
    uint32_t ballScale = gameStatus.ballShape.scale;

@@ -36,6 +36,8 @@ public:
 
    void Move(CoordType atX, CoordType atY);
 
+   void SetLimits(CoordType xMin, CoordType yMin, CoordType xMax, CoordType yMax);
+
    /***
     * Turn the laser on
     */
@@ -68,11 +70,14 @@ private:
    Servo                      yServo;
    uint8_t                    laserPin;
    Shape&                     shape;
-   uint32_t                   currentVertex;
+   uint32_t                   currentVertex;    // Which vertex in the shape is the laser drawing to?
 
-   Vertex                     currentPosition;
-   Vertex                     destination;
-   Vertex                     step;
+   Vertex                     displayMin;       // Bottom left vertex
+   Vertex                     displayMax;       // Top right vertex
+
+   Vertex                     currentPosition;  // Where the laser currently is pointed while stepping
+   Vertex                     destination;      // Where the laser is going in the current sweep
+   Vertex                     step;             // The slope of the line/sweep the laser is making
 
    void SetLaser(void);
    void SetLaser(bool onOff);
