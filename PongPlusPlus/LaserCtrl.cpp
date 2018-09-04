@@ -35,8 +35,6 @@ LaserCtrl::LaserCtrl(LaserConf&                conf,
    laserOn(false),
    shape(_shape),
    currentVertex(0),
-   displayMin(),
-   displayMax(),
    currentPosition(),
    destination(),
    step()
@@ -46,6 +44,11 @@ LaserCtrl::LaserCtrl(LaserConf&                conf,
    yServo.attach(conf.yPin);
    laserPin = conf.laserPin;
    pinMode(laserPin, OUTPUT);
+
+   displayMin.x = 1000;
+   displayMax.x = 2000;
+   displayMin.y = 1000;
+   displayMax.y = 2000;
 
    // Turn off and center the laser
    currentPosition.x = x;
