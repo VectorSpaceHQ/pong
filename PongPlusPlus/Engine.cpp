@@ -41,7 +41,6 @@ void Engine::Update(void)
 {
    // First, update the button status
    CheckButtonState();
-   PrintBallCoords();
 
    switch(gameStatus.gameState)
    {
@@ -385,8 +384,6 @@ void Engine::SetupGameReady()
    uint32_t paddleScale = PADDLE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100;
    uint32_t ballScale   = BALL_SCALE_PERCENT   * (settings.display.yMax - settings.display.yMin)  / 100;
 
-   ballScale = 1;
-
    // Create the paddle and ball shapes
    gameStatus.ballShape.CreateShape(ShapeTypeBall);
    gameStatus.leftPaddleShape.CreateShape(ShapeTypePaddle);
@@ -401,8 +398,6 @@ void Engine::SetupGameReady()
    gameStatus.ballShape.Scale(CoordsWorld, ballScale);
    gameStatus.leftPaddleShape.Scale(CoordsWorld, paddleScale);
    gameStatus.rightPaddleShape.Scale(CoordsWorld, paddleScale);
-
-   PrintDisplayCoords();
 
    // Paddles are at a fixed horizontal location
    gameStatus.leftPaddleShape.position.x  =  settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4;
@@ -452,7 +447,6 @@ void Engine::SetupGamePlay()
    }
 
    // Start the ball in the horizontal center
-   PrintDisplayCoords();
    gameStatus.ballShape.position.x = (settings.display.xMin + settings.display.xMax) / 2;
 
    // TODO: Randomize the y-component of the vector
@@ -525,8 +519,8 @@ void Engine::RunGamePlay()
       {
         Serial.println("Checking for left side collision");        
         Serial.println("paddle is at right elevation for bounce");
-        PrintBallCoords();
-        PrintLeftPaddleCoords();
+        // PrintBallCoords();
+        // PrintLeftPaddleCoords();
         // delay(200);
         
          // And the it's beyond the paddle edge

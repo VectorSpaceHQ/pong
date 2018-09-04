@@ -162,14 +162,16 @@ void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
 
 void LaserCtrl::Update()
 {
-  if(name == "Ball"){
-    Serial.print("Ball updating position, ");
-    Serial.print(currentPosition.y);
-    Serial.print(", ");
-    Serial.print(destination.y);
-    Serial.print(", ");
-    Serial.println(step.y);
-  }
+  // if(name == "Ball"){
+  //   Serial.print("Ball updating position, ");
+  //   Serial.print(currentPosition.x);
+  //   Serial.print(", ");
+  //   Serial.print(destination.x);
+  //   Serial.print(", ");
+  //   Serial.print(currentPosition.y);
+  //   Serial.print(", ");
+  //   Serial.println(destination.y);
+  // }
   
    // Have we reached our destination?
    if( (currentPosition.x == destination.x) && (currentPosition.y == destination.y))
@@ -252,6 +254,15 @@ void LaserCtrl::Move(Vertex& dest)
 
    step.x = diffX / shape.scale;
    step.y = diffY / shape.scale;
+
+   if (diffX > 0)
+     {
+       step.x = max(step.x, 1);
+     }
+   else if (diffX < 0)
+     {
+       step.x = min(step.x, -1);
+     }
 
    if (diffY > 0)
      {
