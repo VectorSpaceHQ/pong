@@ -655,6 +655,7 @@ void Engine::ChangeGameState(Model::GameState newState)
 
       case Model::GameStateCalibrateView:
          PlayPaddleSound();
+         Serial.println("New Game State: Calibrate View");
          break;
 
       case Model::GameStateReady:
@@ -676,7 +677,7 @@ void Engine::ChangeGameState(Model::GameState newState)
          Serial.println(gameStatus.rightPaddleScore);
          break;
    }
-   delay(200); // button debounce
+   delay(800); // button debounce
 }
 
 
