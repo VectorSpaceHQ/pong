@@ -68,12 +68,16 @@ void LaserCtrl::UpdateShape(uint32_t scale, bool restart, bool needToCopy)
    shape.Scale(CoordsView, scale);     // Scale the shape
    shape.Add(CoordsView, x, y);        // Center the shape
 
-  // Serial.print("New Shape for ");
-  // Serial.println(name);
-  // Serial.print(" @ x,y = ");
-  // Serial.print(x);
-  // Serial.print(", ");
-  // Serial.println(y);
+   
+   if(name == "Ball"){
+     Serial.print("New Shape for ");
+     Serial.println(name);
+     Serial.print(" @ x,y = ");
+     Serial.print(x);
+     Serial.print(", ");
+     Serial.println(y);
+     delay(1000);
+   }
   
   // shape.Log();
   // delay(200);
@@ -158,14 +162,14 @@ void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
 
 void LaserCtrl::Update()
 {
-  // if(name == "LeftPaddle"){
-  //   Serial.print("leftPaddle updating, ");
-  //   Serial.print(currentPosition.y);
-  //   Serial.print(", ");
-  //   Serial.print(destination.y);
-  //   Serial.print(", ");
-  //   Serial.println(step.y);
-  // }
+  if(name == "Ball"){
+    Serial.print("Ball updating position, ");
+    Serial.print(currentPosition.y);
+    Serial.print(", ");
+    Serial.print(destination.y);
+    Serial.print(", ");
+    Serial.println(step.y);
+  }
   
    // Have we reached our destination?
    if( (currentPosition.x == destination.x) && (currentPosition.y == destination.y))

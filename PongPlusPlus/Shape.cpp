@@ -376,7 +376,7 @@ void Shape::CreateShape(int numeral)
          AddVertex( -2, -1, true );    //  |   |  or  *   *
          AddVertex( -1, -2, true );    //  |   |      *   *
          AddVertex(  1, -2, true );    //  \---/       ***
-         AddVertex(  2, -2, true );    //
+         AddVertex(  2, -1, true );    //
          AddVertex(  2,  1, true );    //
          break;
 

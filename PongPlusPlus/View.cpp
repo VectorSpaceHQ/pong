@@ -265,11 +265,11 @@ void View::DisplayGamePlay(void)
    leftPaddleLaser.Run();
    rightPaddleLaser.Run();
 
-   // Serial.print("ball x,y = ");
+   // Serial.print("View DisplayGamePlay ball x,y = ");
    // Serial.print(gameStatus.ballShape.position.x);
    // Serial.print(", ");
    // Serial.println(gameStatus.ballShape.position.y);
-   // delay(200); // debugging
+   
 }
 
 

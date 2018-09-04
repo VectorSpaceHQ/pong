@@ -41,6 +41,7 @@ void Engine::Update(void)
 {
    // First, update the button status
    CheckButtonState();
+   PrintBallCoords();
 
    switch(gameStatus.gameState)
    {
@@ -526,14 +527,14 @@ void Engine::RunGamePlay()
         Serial.println("paddle is at right elevation for bounce");
         PrintBallCoords();
         PrintLeftPaddleCoords();
-        delay(200);
+        // delay(200);
         
          // And the it's beyond the paddle edge
         if((gameStatus.ballShape.leftMostVertex.x <= gameStatus.leftPaddleShape.position.x) &&
            (gameStatus.ballShape.rightMostVertex.x >= gameStatus.leftPaddleShape.position.x) )
          {
            Serial.println("BOUNCE");
-           delay(1000);
+           // delay(1000);
            
             // Ball hit the left paddle so invert the x-component of the slope
             gameStatus.ballShape.vector.x *= -1;
