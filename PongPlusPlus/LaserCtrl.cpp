@@ -97,18 +97,18 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
    CoordType newX = 3000 - (SERVO_MID_X + atX + (cal.xOffset * cal.xOrientation));
    CoordType newY = SERVO_MID_Y + atY + (cal.yOffset * cal.yOrientation);
 
-/*
-   Serial.print(name);
-   Serial.print(" Position( ");
-   Serial.print(cal.xOffset);
-   Serial.print(", ");
-   Serial.print(cal.yOffset);
-   Serial.print(", ");
-   Serial.print(newX);
-   Serial.print(", ");
-   Serial.print(newY);
-   Serial.println(")");
-*/
+
+     // if(name == "LeftPaddle"){
+     //   Serial.print(atX);
+     //   Serial.print(", ");
+     //   Serial.print(atY);
+     //   Serial.print(", ");
+     //   Serial.print(newX);
+     //   Serial.print(", ");
+     //   Serial.println(newY);
+     //   delay(1000);
+     // }
+
 
    // Move our vertex coordinates the difference
    if(running)
@@ -158,6 +158,15 @@ void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
 
 void LaserCtrl::Update()
 {
+  // if(name == "LeftPaddle"){
+  //   Serial.print("leftPaddle updating, ");
+  //   Serial.print(currentPosition.y);
+  //   Serial.print(", ");
+  //   Serial.print(destination.y);
+  //   Serial.print(", ");
+  //   Serial.println(step.y);
+  // }
+  
    // Have we reached our destination?
    if( (currentPosition.x == destination.x) && (currentPosition.y == destination.y))
    {
@@ -234,9 +243,32 @@ void LaserCtrl::Move(Vertex& dest)
    CoordType diffX = (destination.x - currentPosition.x);
    CoordType diffY = (destination.y - currentPosition.y);
 
+   // if diff is nonzero, step must be nonzero
+   // previous bug had diff of 1 but step of 0, so never reached destination
+
    step.x = diffX / shape.scale;
    step.y = diffY / shape.scale;
+
+   if (diffY > 0)
+     {
+       step.y = max(step.y, 1);
+     }
+   else if (diffY < 0)
+     {
+       step.y = min(step.y, -1);
+     }
+
    step.draw = destination.draw;
+
+
+   // if(name == "LeftPaddle"){
+   //   Serial.print("LaserCTRL::MOVE step.y, ");
+   //   Serial.print(step.y);
+   //   Serial.print(", ");
+   //   Serial.print(shape.scale);
+   //   Serial.print(", ");
+   //   Serial.println(diffY);
+   // }
 
    SetWaitTime(step.x, step.y);
    SetLaser(destination.draw);
