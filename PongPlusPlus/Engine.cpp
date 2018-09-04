@@ -15,7 +15,7 @@
 #include "Timing.h"
 
 // TODO: What should be the scale of the paddles?
-#define PADDLE_SCALE_PERCENT        (50)           // Percent of the height of the paddle
+#define PADDLE_SCALE_PERCENT        (2)            // Percent of the height of the paddle
 #define BALL_SCALE_PERCENT          (5)            // Percent of the height of the ball
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
@@ -413,9 +413,9 @@ void Engine::SetupGameReady()
    PrintDisplayCoords();
 
    // Paddles are at a fixed horizontal location
-   int16_t  threeQuarters = 3 * gameWidth / 4;
-   gameStatus.leftPaddleShape.position.x  = -threeQuarters;
-   gameStatus.rightPaddleShape.position.x =  threeQuarters;
+   int16_t  oneQuarter = gameWidth / 4;
+   gameStatus.leftPaddleShape.position.x  = -oneQuarter;
+   gameStatus.rightPaddleShape.position.x =  oneQuarter;
    gameStatus.leftPaddleShape.position.y  =  0;
    gameStatus.rightPaddleShape.position.y =  0;
 
@@ -435,7 +435,7 @@ void Engine::SetupGameReady()
 
 void Engine::SetupGamePlay()
 {
-   int16_t twoThirdsHeight = 2 * gameHeight / 3;
+   int16_t twoThirdsHeight = 2 * gameHeight / 6;
 
    randomSeed(micros());
 
