@@ -32,6 +32,10 @@ private:
    PaddleStatus&           leftPaddle;
    PaddleStatus&           rightPaddle;
 
+   // Game coords
+   int16_t                 gameHeight;
+   int16_t                 gameWidth;
+
    ButtonState             buttonState;
 
    void SetupLaserCalibration();
@@ -45,6 +49,7 @@ private:
 
    void RunLaserCalibration();
    void RunViewCalibration();
+   void ViewCalibrationComplete();
    void RunGamePlay();
 
    void CheckButtonState();

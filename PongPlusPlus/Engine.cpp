@@ -6,13 +6,13 @@
  */
 
 #include <Arduino.h>
+#include <EEPROM.h>
 #include <stdio.h>
 
 #include "Engine.h"
 #include "Model.h"
-#include "Timing.h"
 #include "Sound.h"
-#include <EEPROM.h>
+#include "Timing.h"
 
 // TODO: What should be the scale of the paddles?
 #define PADDLE_SCALE_PERCENT        (50)           // Percent of the height of the paddle
@@ -31,7 +31,9 @@ Engine::Engine(Model::Settings&           _settings,
    gameStatus(_gameStatus),
    leftPaddle(_leftPaddle),
    rightPaddle(_rightPaddle),
-   buttonState(ButtonStateReset)
+   buttonState(ButtonStateReset),
+   gameHeight(0),
+   gameWidth(0)
 {
    Serial.println("Engine Up");
 }
@@ -82,6 +84,7 @@ void Engine::LoadSettings()
    int               imgChecksum;
 
    Serial.println("LOADING SETTINGS");
+
    settings.leftLaserCal.xOffset = 12;
    settings.leftLaserCal.yOffset = 141;
    settings.middleLaserCal.xOffset = -80;
@@ -264,6 +267,7 @@ void Engine::ViewCalibrationButtonChange()
 
          // If both buttons are pressed, end configuration
          case ButtonStateBoth:
+            ViewCalibrationComplete();
             ChangeGameState(Model::GameStateReady);
             break;
       }
@@ -329,6 +333,14 @@ void Engine::RunViewCalibration()
 }
 
 
+void Engine::ViewCalibrationComplete()
+{
+   // Set the game dimensions
+   gameHeight = settings.display.yMax - settings.display.yMin;
+   gameWidth = settings.display.xMax - settings.display.xMin;
+}
+
+
 void Engine::ReadyButtonChange()
 {
    // Users can move paddles in the ready state
@@ -380,8 +392,8 @@ void Engine::ReadyButtonChange()
 void Engine::SetupGameReady()
 {
    // We'll setup the shapes for both Game Ready and Game Play states here.
-   uint32_t paddleScale = PADDLE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100;
-   uint32_t ballScale   = BALL_SCALE_PERCENT   * (settings.display.yMax - settings.display.yMin)  / 100;
+   uint32_t paddleScale = PADDLE_SCALE_PERCENT * gameHeight / 100;
+   uint32_t ballScale   = BALL_SCALE_PERCENT   * gameHeight / 100;
 
    // Create the paddle and ball shapes
    gameStatus.ballShape.CreateShape(ShapeTypeBall);
@@ -401,15 +413,16 @@ void Engine::SetupGameReady()
    PrintDisplayCoords();
 
    // Paddles are at a fixed horizontal location
-   gameStatus.leftPaddleShape.position.x  =  settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4;
-   gameStatus.rightPaddleShape.position.x = settings.display.xMin + (3 * (settings.display.xMax - settings.display.xMin) / 4);
-   gameStatus.leftPaddleShape.position.y  = 0;
-   gameStatus.rightPaddleShape.position.y = 0;
+   int16_t  threeQuarters = 3 * gameWidth / 4;
+   gameStatus.leftPaddleShape.position.x  = -threeQuarters;
+   gameStatus.rightPaddleShape.position.x =  threeQuarters;
+   gameStatus.leftPaddleShape.position.y  =  0;
+   gameStatus.rightPaddleShape.position.y =  0;
 
    // Set the limits on the paddleStatus, so we can't overdrive the paddles
    // The paddles should be the same size, so just use the left one as the benchmark
-   int16_t  minLimit = settings.display.yMin + (gameStatus.leftPaddleShape.Height() / 2);
-   int16_t  maxLimit = settings.display.yMax - (gameStatus.leftPaddleShape.Height() / 2);
+   int16_t  minLimit =  -(gameHeight / 2) + (gameStatus.leftPaddleShape.Height() / 2);
+   int16_t  maxLimit =   (gameHeight / 2) - (gameStatus.leftPaddleShape.Height() / 2);
 
    leftPaddle.SetLimits(minLimit, maxLimit);
    rightPaddle.SetLimits(minLimit, maxLimit);
@@ -422,26 +435,24 @@ void Engine::SetupGameReady()
 
 void Engine::SetupGamePlay()
 {
-   randomSeed(micros());
+   int16_t twoThirdsHeight = 2 * gameHeight / 3;
 
-   // Paddles are at a fixed horizontal location
-   gameStatus.leftPaddleShape.position.x  =  settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4;
-   gameStatus.rightPaddleShape.position.x = settings.display.xMin + (3 * (settings.display.xMax - settings.display.xMin) / 4);
+   randomSeed(micros());
 
    // Randomly select top third or bottom third
    if(random(1) == 1)
    {
-      // Select top 1/3
-      gameStatus.ballShape.position.y = settings.display.yMin + 2 * (settings.display.yMax - settings.display.yMin) / 3;
+      // Select top 1/3 (0 + 2/3)
+      gameStatus.ballShape.position.y = twoThirdsHeight;
    }
    else
    {
-      // Select bottom 1/3
-      gameStatus.ballShape.position.y = settings.display.yMin + (settings.display.yMax - settings.display.yMin) / 3;
+      // Select bottom 1/3 (0 - 2/3)
+      gameStatus.ballShape.position.y = -twoThirdsHeight;
    }
 
    // Start the ball in the horizontal center
-   gameStatus.ballShape.position.x = (settings.display.xMin + settings.display.xMax) / 2;
+   gameStatus.ballShape.position.x = 0;
 
    // TODO: Randomize the y-component of the vector
    // Select ball x vector
@@ -475,8 +486,6 @@ void Engine::RunGamePlay()
    Vertex      foundVertex;
 
    // Move the paddles
-   // TODO: We probably need to convert the position into an actual location
-   // TODO: We should probably implement some form of scaling to prevent over-movement
    gameStatus.leftPaddleShape.Move(CoordsWorld, 0, (leftPaddle.position - gameStatus.leftPaddleShape.position.y));
    gameStatus.rightPaddleShape.Move(CoordsWorld, 0, (rightPaddle.position - gameStatus.rightPaddleShape.position.y));
 
@@ -493,8 +502,8 @@ void Engine::RunGamePlay()
    gameStatus.ballShape.Move(CoordsWorld, gameStatus.ballShape.vector.x, gameStatus.ballShape.vector.y);
 
    // Check collision of the ball with the top or bottom
-   if( (gameStatus.ballShape.CheckTop(settings.display.yMax, foundVertex)    ) ||
-       (gameStatus.ballShape.CheckBottom(settings.display.yMin, foundVertex) )    )
+   if( (gameStatus.ballShape.CheckTop(-(gameHeight / 2), foundVertex)    ) ||
+       (gameStatus.ballShape.CheckBottom( (gameHeight / 2), foundVertex) )    )
    {
       // Ball hit the top or bottom, so invert the y-component of the slope
       gameStatus.ballShape.vector.y *= -1;
@@ -505,23 +514,22 @@ void Engine::RunGamePlay()
    // If the ball is traveling left, then check it for collision with the left paddle
    if(gameStatus.ballShape.vector.x < 0)
    {
-
       // If the ball's left-most vertex is between the highest and lowest paddle vertices...
-     // Check if ball is at the right elevation
-      if((gameStatus.ballShape.lowestVertex.y <= gameStatus.leftPaddleShape.highestVertex.y) &&
-         (gameStatus.ballShape.highestVertex.y >= gameStatus.leftPaddleShape.lowestVertex.y ) )
+      // Check if ball is at the right elevation
+      if((gameStatus.ballShape.lowestVertex.y  <= gameStatus.leftPaddleShape.highestVertex.y) &&
+         (gameStatus.ballShape.highestVertex.y >= gameStatus.leftPaddleShape.lowestVertex.y )    )
       {
-        Serial.println("Checking for left side collision");        
-        Serial.println("paddle is at right elevation for bounce");
-        PrintBallCoords();
-        PrintLeftPaddleCoords();
-        
+         Serial.println("Checking for left side collision");
+         Serial.println("paddle is at right elevation for bounce");
+         PrintBallCoords();
+         PrintLeftPaddleCoords();
+
          // And the it's beyond the paddle edge
-        if((gameStatus.ballShape.leftMostVertex.x <= gameStatus.leftPaddleShape.position.x) &&
-           (gameStatus.ballShape.rightMostVertex.x >= gameStatus.leftPaddleShape.position.x) )
+         if((gameStatus.ballShape.leftMostVertex.x  <= gameStatus.leftPaddleShape.position.x) &&
+            (gameStatus.ballShape.rightMostVertex.x >= gameStatus.leftPaddleShape.position.x)    )
          {
-           Serial.println("BOUNCE");
-           
+            Serial.println("BOUNCE");
+
             // Ball hit the left paddle so invert the x-component of the slope
             gameStatus.ballShape.vector.x *= -1;
 
@@ -532,16 +540,16 @@ void Engine::RunGamePlay()
       }
 
       // Check to see if the ball has reached the left edge
-      if(gameStatus.ballShape.CheckLeft(settings.display.xMin, foundVertex))
+      if(gameStatus.ballShape.CheckLeft(-(gameWidth / 2), foundVertex))
       {
-        Serial.println("Ball reached left edge");
-        PrintDisplayCoords();
-        Serial.print("Ball @ ");
-        Serial.print(gameStatus.ballShape.position.x);
-        Serial.print(", ");
-        Serial.print(gameStatus.ballShape.position.y);
-        Serial.println(", ");
-        
+         Serial.println("Ball reached left edge");
+         PrintDisplayCoords();
+         Serial.print("Ball @ ");
+         Serial.print(gameStatus.ballShape.position.x);
+         Serial.print(", ");
+         Serial.print(gameStatus.ballShape.position.y);
+         Serial.println(", ");
+
          gameStatus.rightPaddleScore++;
          gameStatus.whoseServe = Model::RightPlayerServes;
          PlayPointSound();
@@ -570,9 +578,10 @@ void Engine::RunGamePlay()
       }
 
       // Check to see if the ball has reached the right edge
-      if(gameStatus.ballShape.CheckRight(settings.display.xMax, foundVertex))
+      if(gameStatus.ballShape.CheckRight((gameWidth / 2), foundVertex))
       {
-        Serial.println("Ball reached right edge");
+         Serial.println("Ball reached right edge");
+
          gameStatus.leftPaddleScore++;
          gameStatus.whoseServe = Model::LeftPlayerServes;
          PlayPointSound();
@@ -593,8 +602,8 @@ void Engine::GameOverButtonChange()
          case ButtonStateRight:
             ChangeGameState(Model::GameStateReady);
 
-            if( (gameStatus.leftPaddleScore >= MAX_SCORE) ||
-                (gameStatus.rightPaddleScore >= MAX_SCORE)   )
+            if( (gameStatus.leftPaddleScore  >= MAX_SCORE) ||
+                (gameStatus.rightPaddleScore >= MAX_SCORE)    )
             {
                gameStatus.leftPaddleScore = 0;
                gameStatus.rightPaddleScore = 0;
@@ -668,6 +677,7 @@ void Engine::ChangeGameState(Model::GameState newState)
          Serial.println(gameStatus.rightPaddleScore);
          break;
    }
+
    delay(200); // button debounce
 }
 
@@ -692,40 +702,40 @@ void Engine::PrintButtonState()
 
 void Engine::PrintDisplayCoords()
 {
-  Serial.print("x = (");
-  Serial.print(settings.display.xMin);
-  Serial.print(", ");
-  Serial.print(settings.display.xMax);
-  Serial.print("), y = (");
-  Serial.print(settings.display.yMin);
-  Serial.print(", ");
-  Serial.println(settings.display.yMax);
+   Serial.print("x = (");
+   Serial.print(settings.display.xMin);
+   Serial.print(", ");
+   Serial.print(settings.display.xMax);
+   Serial.print("), y = (");
+   Serial.print(settings.display.yMin);
+   Serial.print(", ");
+   Serial.println(settings.display.yMax);
 }
 
 void Engine::PrintLeftPaddleCoords()
 {
-  Serial.print("LeftPaddle x, xmin, xmax, ymin, ymax = (");
-  Serial.print(gameStatus.leftPaddleShape.position.x);
-  Serial.print(", ");
-  Serial.print(gameStatus.leftPaddleShape.leftMostVertex.x);
-  Serial.print(", ");
-  Serial.print(gameStatus.leftPaddleShape.rightMostVertex.x);
-  Serial.print(", ");
-  Serial.print(gameStatus.leftPaddleShape.lowestVertex.y);
-  Serial.print(", ");
-  Serial.print(gameStatus.leftPaddleShape.highestVertex.y);
-  Serial.println(")");
+   Serial.print("LeftPaddle x, xmin, xmax, ymin, ymax = (");
+   Serial.print(gameStatus.leftPaddleShape.position.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.leftPaddleShape.leftMostVertex.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.leftPaddleShape.rightMostVertex.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.leftPaddleShape.lowestVertex.y);
+   Serial.print(", ");
+   Serial.print(gameStatus.leftPaddleShape.highestVertex.y);
+   Serial.println(")");
 }
 
 void Engine::PrintBallCoords()
 {
-  Serial.print("Ball xmin, xmax, ymin, ymax = (");
-  Serial.print(gameStatus.ballShape.leftMostVertex.x);
-  Serial.print(", ");
-  Serial.print(gameStatus.ballShape.rightMostVertex.x);
-  Serial.print(", ");
-  Serial.print(gameStatus.ballShape.lowestVertex.y);
-  Serial.print(", ");
-  Serial.print(gameStatus.ballShape.highestVertex.y);
-  Serial.println(")");
+   Serial.print("Ball xmin, xmax, ymin, ymax = (");
+   Serial.print(gameStatus.ballShape.leftMostVertex.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.ballShape.rightMostVertex.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.ballShape.lowestVertex.y);
+   Serial.print(", ");
+   Serial.print(gameStatus.ballShape.highestVertex.y);
+   Serial.println(")");
 }
