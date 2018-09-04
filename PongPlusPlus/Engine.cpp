@@ -15,8 +15,8 @@
 #include <EEPROM.h>
 
 // TODO: What should be the scale of the paddles?
-#define PADDLE_SCALE_PERCENT        (50)           // Percent of the height of the paddle
-#define BALL_SCALE_PERCENT          (5)            // Percent of the height of the ball
+#define PADDLE_SCALE_PERCENT        (5)           // Percent of the height of the paddle
+#define BALL_SCALE_PERCENT          (2)            // Percent of the height of the ball
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
 #define  MAX_SCORE               (9)
@@ -41,6 +41,7 @@ void Engine::Update(void)
 {
    // First, update the button status
    CheckButtonState();
+   PrintLeftPaddleCoords();
 
    switch(gameStatus.gameState)
    {
@@ -241,6 +242,7 @@ void Engine::ViewCalibrationButtonChange()
 
       switch(buttonState)
       {
+        delay(300); // debounce button
          case ButtonStateNone:
             leftPaddle.SetLimits(-500, settings.display.yMax);
             rightPaddle.SetLimits(-500, settings.display.xMax);
@@ -379,9 +381,12 @@ void Engine::ReadyButtonChange()
 
 void Engine::SetupGameReady()
 {
+  Serial.println("SetupGameReady");
    // We'll setup the shapes for both Game Ready and Game Play states here.
    uint32_t paddleScale = PADDLE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100;
    uint32_t ballScale   = BALL_SCALE_PERCENT   * (settings.display.yMax - settings.display.yMin)  / 100;
+   paddleScale = 2;
+   ballScale = 1;
 
    // Create the paddle and ball shapes
    gameStatus.ballShape.CreateShape(ShapeTypeBall);
@@ -393,22 +398,10 @@ void Engine::SetupGameReady()
    gameStatus.leftPaddleShape.CopyVerticesToView();
    gameStatus.rightPaddleShape.CopyVerticesToView();
 
-   // Set the shape limits
-   // gameStatus.ballShape.SetLimits(settings.display.xMin, settings.display.xMax,
-   //      			  settings.display.yMin, settings.display.yMax);
-   // gameStatus.leftPaddleShape.SetLimits(settings.display.xMin, settings.display.xMax,
-   //      				settings.display.yMin, settings.display.yMax);
-   // gameStatus.rightPaddleShape.SetLimits(settings.display.xMin, settings.display.xMax,
-   //      				 settings.display.yMin, settings.display.yMax);
-
-   // Serial.println("SET LIMITS");
-   // delay(2000);
-   
    // Now scale the shapes for the game world, the View will scale the view shape for the lasers
    gameStatus.ballShape.Scale(CoordsWorld, ballScale);
    gameStatus.leftPaddleShape.Scale(CoordsWorld, paddleScale);
    gameStatus.rightPaddleShape.Scale(CoordsWorld, paddleScale);
-
 
    PrintDisplayCoords();
 
@@ -424,19 +417,23 @@ void Engine::SetupGameReady()
    int16_t  minLimit = settings.display.yMin + (gameStatus.leftPaddleShape.Height() / 2);
    int16_t  maxLimit = settings.display.yMax - (gameStatus.leftPaddleShape.Height() / 2);
 
-   leftPaddle.SetLimits(minLimit, maxLimit);
-   rightPaddle.SetLimits(minLimit, maxLimit);
+   leftPaddle.SetLimits(minLimit+1, maxLimit-1);
+   rightPaddle.SetLimits(minLimit+1, maxLimit-1);
 
+   Serial.print("Paddle Limits: ");
+   Serial.print(minLimit);
+   Serial.print(", ");
+   Serial.println(maxLimit);
 
    // Now, ensure the status is in the vertical middle, since we moved our paddle shapes to the middle a few lines above
    leftPaddle.position = 0;
    rightPaddle.position = 0;
-
 }
 
 
 void Engine::SetupGamePlay()
 {
+  Serial.println("SetupGamePlay");
    randomSeed(micros());
 
    // Paddles are at a fixed horizontal location
@@ -456,7 +453,9 @@ void Engine::SetupGamePlay()
    }
 
    // Start the ball in the horizontal center
+   PrintDisplayCoords();
    gameStatus.ballShape.position.x = (settings.display.xMin + settings.display.xMax) / 2;
+   delay(3000);
 
    // TODO: Randomize the y-component of the vector
    // Select ball x vector
@@ -668,6 +667,7 @@ void Engine::ChangeGameState(Model::GameState newState)
       case Model::GameStateReady:
          SetupGameReady();
          Serial.println("New Game State: Ready");
+         PrintLeftPaddleCoords();
          break;
 
       case Model::GameStatePlay:
@@ -708,7 +708,7 @@ void Engine::PrintButtonState()
 
 void Engine::PrintDisplayCoords()
 {
-  Serial.print("x = (");
+  Serial.print("Display Coords x = (");
   Serial.print(settings.display.xMin);
   Serial.print(", ");
   Serial.print(settings.display.xMax);
@@ -716,6 +716,7 @@ void Engine::PrintDisplayCoords()
   Serial.print(settings.display.yMin);
   Serial.print(", ");
   Serial.println(settings.display.yMax);
+  Serial.println(")");
 }
 
 void Engine::PrintLeftPaddleCoords()
