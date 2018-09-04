@@ -394,17 +394,21 @@ void Engine::SetupGameReady()
    gameStatus.rightPaddleShape.CopyVerticesToView();
 
    // Set the shape limits
-   gameStatus.ballShape.SetLimits(settings.display.xMin, settings.display.xMax,
-				  settings.display.yMin, settings.display.yMax);
-   gameStatus.leftPaddleShape.SetLimits(settings.display.xMin, settings.display.xMax,
-					settings.display.yMin, settings.display.yMax);
-   gameStatus.rightPaddleShape.SetLimits(settings.display.xMin, settings.display.xMax,
-					 settings.display.yMin, settings.display.yMax);
+   // gameStatus.ballShape.SetLimits(settings.display.xMin, settings.display.xMax,
+   //      			  settings.display.yMin, settings.display.yMax);
+   // gameStatus.leftPaddleShape.SetLimits(settings.display.xMin, settings.display.xMax,
+   //      				settings.display.yMin, settings.display.yMax);
+   // gameStatus.rightPaddleShape.SetLimits(settings.display.xMin, settings.display.xMax,
+   //      				 settings.display.yMin, settings.display.yMax);
+
+   // Serial.println("SET LIMITS");
+   // delay(2000);
    
    // Now scale the shapes for the game world, the View will scale the view shape for the lasers
    gameStatus.ballShape.Scale(CoordsWorld, ballScale);
    gameStatus.leftPaddleShape.Scale(CoordsWorld, paddleScale);
    gameStatus.rightPaddleShape.Scale(CoordsWorld, paddleScale);
+
 
    PrintDisplayCoords();
 
@@ -414,6 +418,7 @@ void Engine::SetupGameReady()
    gameStatus.leftPaddleShape.position.y  = 0;
    gameStatus.rightPaddleShape.position.y = 0;
 
+
    // Set the limits on the paddleStatus, so we can't overdrive the paddles
    // The paddles should be the same size, so just use the left one as the benchmark
    int16_t  minLimit = settings.display.yMin + (gameStatus.leftPaddleShape.Height() / 2);
@@ -422,9 +427,11 @@ void Engine::SetupGameReady()
    leftPaddle.SetLimits(minLimit, maxLimit);
    rightPaddle.SetLimits(minLimit, maxLimit);
 
+
    // Now, ensure the status is in the vertical middle, since we moved our paddle shapes to the middle a few lines above
    leftPaddle.position = 0;
    rightPaddle.position = 0;
+
 }
 
 
