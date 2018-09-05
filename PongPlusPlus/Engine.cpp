@@ -15,8 +15,8 @@
 #include <EEPROM.h>
 
 // TODO: What should be the scale of the paddles?
-#define PADDLE_SCALE_PERCENT        (5)           // Percent of the height of the paddle
-#define BALL_SCALE_PERCENT          (1)            // Percent of the height of the ball
+#define PADDLE_SCALE_PERCENT        (10)           // Percent of the height of the paddle
+#define BALL_SCALE_PERCENT          (2)            // Percent of the height of the ball
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
 #define  MAX_SCORE               (9)
@@ -41,7 +41,7 @@ void Engine::Update(void)
 {
    // First, update the button status
    CheckButtonState();
-   // PrintLeftPaddleCoords();
+   PrintLeftPaddleCoords();
    // PrintRightPaddleCoords();
    // PrintBallCoords();
    PrintDisplayCoords();
@@ -484,6 +484,8 @@ void Engine::SetupGamePlay()
 void Engine::RunGamePlay()
 {
    Vertex      foundVertex;
+   
+   int ballXoffset = 10;
 
    // Move the paddles
    // TODO: We probably need to convert the position into an actual location
@@ -528,11 +530,13 @@ void Engine::RunGamePlay()
         // delay(200);
         
          // And the it's beyond the paddle edge
-        if((gameStatus.ballShape.leftMostVertex.x <= gameStatus.leftPaddleShape.position.x) &&
-           (gameStatus.ballShape.rightMostVertex.x >= gameStatus.leftPaddleShape.position.x) )
+        if((gameStatus.ballShape.leftMostVertex.x - ballXoffset <= gameStatus.leftPaddleShape.position.x) &&
+           (gameStatus.ballShape.rightMostVertex.x - ballXoffset >= gameStatus.leftPaddleShape.position.x) )
          {
-           Serial.println("BOUNCE");
-           // delay(1000);
+           Serial.println("BOUNCE left paddle");
+           PrintLeftPaddleCoords();
+           PrintBallCoords();
+           delay(10000);
            
             // Ball hit the left paddle so invert the x-component of the slope
             gameStatus.ballShape.vector.x *= -1;
@@ -545,14 +549,6 @@ void Engine::RunGamePlay()
       // Check to see if the ball has reached the left edge
       if(gameStatus.ballShape.CheckLeft(settings.display.xMin, foundVertex))
       {
-        Serial.println("Ball reached left edge");
-        PrintDisplayCoords();
-        Serial.print("Ball @ ");
-        Serial.print(gameStatus.ballShape.position.x);
-        Serial.print(", ");
-        Serial.print(gameStatus.ballShape.position.y);
-        Serial.println(", ");
-        
          gameStatus.rightPaddleScore++;
          gameStatus.whoseServe = Model::RightPlayerServes;
          PlayPointSound();
@@ -564,13 +560,17 @@ void Engine::RunGamePlay()
    if(gameStatus.ballShape.vector.x > 0)
    {
       // If the ball's left-most vertex is between the highest and lowest paddle vertices...
-      if((gameStatus.ballShape.rightMostVertex.y <= gameStatus.rightPaddleShape.highestVertex.y) &&
-         (gameStatus.ballShape.rightMostVertex.y >= gameStatus.rightPaddleShape.lowestVertex.y )    )
+      if((gameStatus.ballShape.lowestVertex.y <= gameStatus.rightPaddleShape.highestVertex.y) &&
+         (gameStatus.ballShape.highestVertex.y >= gameStatus.rightPaddleShape.lowestVertex.y )    )
       {
          // And the it's beyond the paddle edge
-         if(gameStatus.ballShape.CheckRight(gameStatus.rightPaddleShape.leftMostVertex.x, foundVertex) &&
-            gameStatus.ballShape.CheckRight(gameStatus.rightPaddleShape.leftMostVertex.x, foundVertex)    )
-         {
+        if((gameStatus.ballShape.leftMostVertex.x - ballXoffset <= gameStatus.rightPaddleShape.position.x) &&
+           (gameStatus.ballShape.rightMostVertex.x -ballXoffset >= gameStatus.rightPaddleShape.position.x) )
+          {
+            Serial.println("BOUNCE right paddle");
+            PrintRightPaddleCoords();
+            PrintBallCoords();
+            delay(200);
             // Ball hit the left paddle so invert the x-component of the slope
             gameStatus.ballShape.vector.x *= -1;
 

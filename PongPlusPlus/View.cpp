@@ -220,6 +220,16 @@ void View::SetupGameReady(void)
    uint32_t paddleScale = gameStatus.leftPaddleShape.scale;
    uint32_t ballScale = gameStatus.ballShape.scale;
 
+   // Serial.print("SetupGameReady leftpaddle pos,  ");
+   // Serial.print(gameStatus.leftPaddleShape.position.x);
+   // Serial.print(", ");
+   // Serial.print(gameStatus.leftPaddleShape.position.y);
+   // Serial.print(", ");
+   // Serial.print(gameStatus.ballShape.position.x);
+   // Serial.print(", ");
+   // Serial.println(gameStatus.ballShape.position.y);
+   // delay(10000);
+
    gameStatus.ballShape.position.x = 0;
    gameStatus.ballShape.position.y = 0;
 
