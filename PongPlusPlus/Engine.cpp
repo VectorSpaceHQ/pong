@@ -33,7 +33,8 @@ Engine::Engine(Model::Settings&           _settings,
    rightPaddle(_rightPaddle),
    buttonState(ButtonStateReset),
    gameHeight(0),
-   gameWidth(0)
+   gameWidth(0),
+   cornerCounter(0)
 {
    Serial.println("Engine Up");
 }
@@ -57,6 +58,10 @@ void Engine::Update(void)
 
       case Model::GameStateCalibrateView:
          RunViewCalibration();
+         break;
+
+      case Model::GameStateCalibrateHomography:
+         RunHomographyCalibration();
          break;
 
       case Model::GameStateReady:
@@ -275,6 +280,90 @@ void Engine::ViewCalibrationButtonChange()
       leftPaddle.buttonStateChanged = false;
       rightPaddle.buttonStateChanged = false;
    }
+}
+
+
+void Engine::RunHomographyCalibration()
+{
+  // ViewCalibrationButtonChange();
+  
+  switch(buttonState)
+    {
+    case ButtonStateNone: 
+      {
+	if (cornerCounter == 0) // top left
+	  {
+	    settings.middleLaserCal.topLeftX = leftPaddle.position;
+	    settings.middleLaserCal.topLeftY = rightPaddle.position;
+	  }
+	else if (cornerCounter == 1) // top right
+	  {
+	    settings.middleLaserCal.topRightX = leftPaddle.position;
+	    settings.middleLaserCal.topRightY = rightPaddle.position;
+	  }
+	else if (cornerCounter == 2) // bottom right
+	  {
+	    settings.middleLaserCal.botRightX = leftPaddle.position;
+	    settings.middleLaserCal.botRightY = rightPaddle.position;
+	  }
+	else if (cornerCounter == 3)
+	  {
+	    settings.middleLaserCal.botLeftX = leftPaddle.position;
+	    settings.middleLaserCal.botLeftY = rightPaddle.position;
+	  }
+      }
+    case ButtonStateLeft:
+      {
+	if (cornerCounter == 0) // top left
+	  {
+	    settings.leftLaserCal.topLeftX = leftPaddle.position;
+	    settings.leftLaserCal.topLeftY = rightPaddle.position;
+	  }
+	else if (cornerCounter == 1) // top right
+	  {
+	    settings.leftLaserCal.topRightX = leftPaddle.position;
+	    settings.leftLaserCal.topRightY = rightPaddle.position;
+	  }
+	else if (cornerCounter == 2) // bot right
+	  {
+	    settings.leftLaserCal.botRightX = leftPaddle.position;
+	    settings.leftLaserCal.botRightY = rightPaddle.position;
+	  }
+	else if (cornerCounter == 3)
+	  {
+	    settings.leftLaserCal.botLeftX = leftPaddle.position;
+	    settings.leftLaserCal.botLeftY = rightPaddle.position;
+	  }
+      }
+    case ButtonStateRight:
+      {
+	if (cornerCounter == 0) // top left
+	  {
+	    settings.rightLaserCal.topLeftX = leftPaddle.position;
+	    settings.rightLaserCal.topLeftY = rightPaddle.position;
+	  }
+	else if (cornerCounter == 1) // top right
+	  {
+	    settings.rightLaserCal.topRightX = leftPaddle.position;
+	    settings.rightLaserCal.topRightY = rightPaddle.position;
+	  }
+	else if (cornerCounter == 2) // bot right
+	  {
+	    settings.rightLaserCal.botRightX = leftPaddle.position;
+	    settings.rightLaserCal.botRightY = rightPaddle.position;
+	  }
+	else if (cornerCounter == 3)
+	  {
+	    settings.rightLaserCal.botLeftX = leftPaddle.position;
+	    settings.rightLaserCal.botLeftY = rightPaddle.position;
+	  }
+      }
+    case ButtonStateBoth:
+      {
+	cornerCounter++;
+      }
+    
+    }
 }
 
 

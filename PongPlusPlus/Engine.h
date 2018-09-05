@@ -35,6 +35,7 @@ private:
    // Game coords
    int16_t                 gameHeight;
    int16_t                 gameWidth;
+   int8_t                  cornerCounter;
 
    ButtonState             buttonState;
 
@@ -49,6 +50,7 @@ private:
 
    void RunLaserCalibration();
    void RunViewCalibration();
+   void RunHomographyCalibration();
    void ViewCalibrationComplete();
    void RunGamePlay();
 

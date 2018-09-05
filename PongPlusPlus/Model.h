@@ -22,6 +22,7 @@ namespace Model
       GameStateInit,
       GameStateCalibrateLasers,
       GameStateCalibrateView,
+      GameStateCalibrateHomography,
       GameStateReady,
       GameStatePlay,
       GameStateGameOver
@@ -44,12 +45,28 @@ namespace Model
       int32_t yOffset;
       int32_t xOrientation;
       int32_t yOrientation;
+      int32_t topLeftX;
+      int32_t topLeftY;
+      int32_t topRightX;
+      int32_t topRightY;
+      int32_t botLeftX;
+      int32_t botLeftY;
+      int32_t botRightX;
+      int32_t botRightY;
 
       LaserCalibration():
          xOffset(0),
          yOffset(0),
          xOrientation(1),
-         yOrientation(1)
+	 yOrientation(1),
+         topLeftX(-500),
+         topLeftY(500),
+	 topRightX(500),
+         topRightY(500),
+	 botLeftX(-500),
+         botLeftY(-500),
+         botRightX(500),
+         botRightY(-500)
       {
       }
    };
