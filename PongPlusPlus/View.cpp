@@ -40,10 +40,10 @@ View::View(Model::Settings&         _settings,
 
    // Set Laser orientation
    settings.leftLaserCal.xOrientation = -1;
-   settings.leftLaserCal.yOrientation = -1;
+   // settings.leftLaserCal.yOrientation = -1;
 
    settings.middleLaserCal.xOrientation = -1;
-   settings.middleLaserCal.yOrientation = -1;
+   // settings.middleLaserCal.yOrientation = -1;
 
    settings.rightLaserCal.xOrientation = -1;
 }
@@ -220,6 +220,9 @@ void View::SetupGameReady(void)
    uint32_t paddleScale = gameStatus.leftPaddleShape.scale;
    uint32_t ballScale = gameStatus.ballShape.scale;
 
+   gameStatus.ballShape.position.x = 0;
+   gameStatus.ballShape.position.y = 0;
+
    // Stop the ball laser from running its shape and turn it off
    // Since it's not shown in the ready state
    ballLaser.UpdateShape(ballScale, true, false);
@@ -265,11 +268,6 @@ void View::DisplayGamePlay(void)
    leftPaddleLaser.Run();
    rightPaddleLaser.Run();
 
-   // Serial.print("View DisplayGamePlay ball x,y = ");
-   // Serial.print(gameStatus.ballShape.position.x);
-   // Serial.print(", ");
-   // Serial.println(gameStatus.ballShape.position.y);
-   
 }
 
 

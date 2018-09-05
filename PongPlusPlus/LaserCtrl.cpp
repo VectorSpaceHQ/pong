@@ -84,6 +84,16 @@ void LaserCtrl::UpdateShape(uint32_t scale, bool restart, bool needToCopy)
    // Reset the shape
    if(restart)
    {
+     // reset center position
+     Serial.print("Resetting ");
+     Serial.println(name);
+     delay(100);
+     currentPosition.x = SERVO_MID_X;
+     currentPosition.y = SERVO_MID_Y;
+     destination.x = SERVO_MID_X;
+     destination.y = SERVO_MID_Y;
+     // ------- End Debug ------
+     
       currentVertex = 0;
       Move(shape.viewVertices[currentVertex]);
    }
@@ -101,18 +111,6 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
    CoordType newY = SERVO_MID_Y + atY + (cal.yOffset * cal.yOrientation);
 
 
-     // if(name == "LeftPaddle"){
-     //   Serial.print(atX);
-     //   Serial.print(", ");
-     //   Serial.print(atY);
-     //   Serial.print(", ");
-     //   Serial.print(newX);
-     //   Serial.print(", ");
-     //   Serial.println(newY);
-     //   delay(1000);
-     // }
-
-
    // Move our vertex coordinates the difference
    if(running)
    {
@@ -122,11 +120,13 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
    // Update our new coordinates with the new ones
    x = newX;
    y = newY;
+
 }
 
 
 void LaserCtrl::Move(CoordType atX, CoordType atY)
 {
+  
    SetPosition(atX, atY);
 
    xServo.writeMicroseconds(x);
@@ -141,11 +141,6 @@ void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
    uint32_t waitX = abs(x);
    uint32_t waitY = abs(y);
 
-//   Serial.print("x,y: ");
-//   Serial.print(waitX);
-//   Serial.print(", ");
-//   Serial.println(waitY);
-
    if(waitX >= waitY)
    {
       interval = (waitX * US_PER_STEP);
@@ -155,12 +150,12 @@ void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
       interval = (waitY * US_PER_STEP);
    }
 
-//   Serial.println(interval);
 }
 
 
 void LaserCtrl::Update()
 {
+
   // if(name == "Ball"){
   //   Serial.print("Ball updating position, ");
   //   Serial.print(currentPosition.x);
@@ -171,6 +166,7 @@ void LaserCtrl::Update()
   //   Serial.print(", ");
   //   Serial.println(destination.y);
   // }
+
   
    // Have we reached our destination?
    if( (currentPosition.x == destination.x) && (currentPosition.y == destination.y))
@@ -204,6 +200,7 @@ void LaserCtrl::Update()
 
    xServo.writeMicroseconds(currentPosition.x);
    yServo.writeMicroseconds(currentPosition.y);
+
 }
 
 
@@ -248,9 +245,21 @@ void LaserCtrl::Move(Vertex& dest)
    CoordType diffX = (destination.x - currentPosition.x);
    CoordType diffY = (destination.y - currentPosition.y);
 
+   // if(name == "Ball"){
+   //   Serial.print("Ball Moving position, ");
+   //   Serial.print(currentPosition.x);
+   //   Serial.print(", ");
+   //   Serial.print(destination.x);
+   //   Serial.print(", ");
+   //   Serial.print(currentPosition.y);
+   //   Serial.print(", ");
+   //   Serial.println(destination.y);
+   // }
+
    // if diff is nonzero, step must be nonzero
    // previous bug had diff of 1 but step of 0, so never reached destination
 
+   // Why divide by the scale? Aren't we moving the center point?
    step.x = diffX / shape.scale;
    step.y = diffY / shape.scale;
 

@@ -107,6 +107,7 @@ void setup() {
 
 
 void loop() {
+  /*
   digitalWrite(A2, HIGH);
   digitalWrite(A3, HIGH);
   digitalWrite(A4, HIGH);
@@ -116,6 +117,8 @@ void loop() {
   drawLine();
   
   //testRange();
+  */
+  center();
   
 }
 void center(){

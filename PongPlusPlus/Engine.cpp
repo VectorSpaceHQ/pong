@@ -15,8 +15,8 @@
 #include <EEPROM.h>
 
 // TODO: What should be the scale of the paddles?
-#define PADDLE_SCALE_PERCENT        (8)           // Percent of the height of the paddle
-#define BALL_SCALE_PERCENT          (2)            // Percent of the height of the ball
+#define PADDLE_SCALE_PERCENT        (5)           // Percent of the height of the paddle
+#define BALL_SCALE_PERCENT          (1)            // Percent of the height of the ball
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
 #define  MAX_SCORE               (9)
@@ -41,7 +41,11 @@ void Engine::Update(void)
 {
    // First, update the button status
    CheckButtonState();
-   PrintLeftPaddleCoords();
+   // PrintLeftPaddleCoords();
+   // PrintRightPaddleCoords();
+   // PrintBallCoords();
+   PrintDisplayCoords();
+   
 
    switch(gameStatus.gameState)
    {
@@ -83,16 +87,16 @@ void Engine::LoadSettings()
    int               imgChecksum;
 
    Serial.println("LOADING SETTINGS");
-   settings.leftLaserCal.xOffset = 12;
-   settings.leftLaserCal.yOffset = 141;
-   settings.middleLaserCal.xOffset = -80;
-   settings.middleLaserCal.yOffset = 180;
-   settings.rightLaserCal.xOffset = -9;
-   settings.rightLaserCal.yOffset = 167;
+   settings.leftLaserCal.xOffset = -51;
+   settings.leftLaserCal.yOffset = -157;
+   settings.middleLaserCal.xOffset = -138;
+   settings.middleLaserCal.yOffset = -192;
+   settings.rightLaserCal.xOffset = -33;
+   settings.rightLaserCal.yOffset = -209;
 
-   settings.display.xMin = -143;
-   settings.display.xMax = 150;
-   settings.display.yMin = -64;
+   settings.display.xMin = -122;
+   settings.display.xMax = 93;
+   settings.display.yMin = -75;
    settings.display.yMax = 104;
 
    // // Read the bytes out of EEPROM and calculate the checksum
@@ -488,7 +492,6 @@ void Engine::RunGamePlay()
    gameStatus.rightPaddleShape.Move(CoordsWorld, 0, (rightPaddle.position - gameStatus.rightPaddleShape.position.y));
 
    // Move the ball along it's trajectory
-   // PrintDisplayCoords();
    // Serial.print(gameStatus.ballShape.position.x);
    // Serial.print(", ");
    // Serial.print(gameStatus.ballShape.position.y);
@@ -535,7 +538,6 @@ void Engine::RunGamePlay()
             gameStatus.ballShape.vector.x *= -1;
 
             PlayPaddleSound();
-
             // TODO: take in velocity of the paddle to adjust slope of the ball
          }
       }
@@ -709,7 +711,7 @@ void Engine::PrintDisplayCoords()
   Serial.print("), y = (");
   Serial.print(settings.display.yMin);
   Serial.print(", ");
-  Serial.println(settings.display.yMax);
+  Serial.print(settings.display.yMax);
   Serial.println(")");
 }
 
@@ -725,6 +727,21 @@ void Engine::PrintLeftPaddleCoords()
   Serial.print(gameStatus.leftPaddleShape.lowestVertex.y);
   Serial.print(", ");
   Serial.print(gameStatus.leftPaddleShape.highestVertex.y);
+  Serial.println(")");
+}
+
+void Engine::PrintRightPaddleCoords()
+{
+  Serial.print("RightPaddle x, xmin, xmax, ymin, ymax = (");
+  Serial.print(gameStatus.rightPaddleShape.position.x);
+  Serial.print(", ");
+  Serial.print(gameStatus.rightPaddleShape.leftMostVertex.x);
+  Serial.print(", ");
+  Serial.print(gameStatus.rightPaddleShape.rightMostVertex.x);
+  Serial.print(", ");
+  Serial.print(gameStatus.rightPaddleShape.lowestVertex.y);
+  Serial.print(", ");
+  Serial.print(gameStatus.rightPaddleShape.highestVertex.y);
   Serial.println(")");
 }
 
