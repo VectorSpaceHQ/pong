@@ -92,6 +92,19 @@ void LaserCtrl::UpdateShape(uint32_t scale, bool restart, bool needToCopy)
 }
 
 
+// void LaserCtrl::translateGameToServoCoords(CoordType x, CoordType y)
+// {
+//   // Go from game x,y coords to servo u,v coords
+//   // by apply homography matrix
+
+//   a = matrix(x,
+// 	     y,
+// 	     1);
+
+//   solution = dot(H, a);
+// }
+
+
 void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
 {
    // Update our X/Y coordinates mapping from engine coordinates to servo values
