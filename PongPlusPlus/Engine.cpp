@@ -401,8 +401,8 @@ void Engine::SetupGameReady()
    gameStatus.rightPaddleShape.Scale(CoordsWorld, paddleScale);
 
    // Paddles are at a fixed horizontal location
-   gameStatus.leftPaddleShape.position.x  =  settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4;
-   gameStatus.rightPaddleShape.position.x = settings.display.xMin + (3 * (settings.display.xMax - settings.display.xMin) / 4);
+   gameStatus.leftPaddleShape.position.x  =  settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 9;
+   gameStatus.rightPaddleShape.position.x = settings.display.xMin + (8 * (settings.display.xMax - settings.display.xMin) / 9);
    gameStatus.leftPaddleShape.position.y  = 0;
    gameStatus.rightPaddleShape.position.y = 0;
 
@@ -432,8 +432,8 @@ void Engine::SetupGamePlay()
    randomSeed(micros());
 
    // Paddles are at a fixed horizontal location
-   gameStatus.leftPaddleShape.position.x  =  settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4;
-   gameStatus.rightPaddleShape.position.x = settings.display.xMin + (3 * (settings.display.xMax - settings.display.xMin) / 4);
+   gameStatus.leftPaddleShape.position.x  =  settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 9;
+   gameStatus.rightPaddleShape.position.x = settings.display.xMin + (8 * (settings.display.xMax - settings.display.xMin) / 9);
 
    // Randomly select top third or bottom third
    if(random(1) == 1)
