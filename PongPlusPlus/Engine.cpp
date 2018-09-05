@@ -15,7 +15,7 @@
 #include <EEPROM.h>
 
 // TODO: What should be the scale of the paddles?
-#define PADDLE_SCALE_PERCENT        (10)           // Percent of the height of the paddle
+#define PADDLE_SCALE_PERCENT        (8)           // Percent of the height of the paddle
 #define BALL_SCALE_PERCENT          (2)            // Percent of the height of the ball
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
@@ -41,6 +41,7 @@ void Engine::Update(void)
 {
    // First, update the button status
    CheckButtonState();
+   PrintLeftPaddleCoords();
 
    switch(gameStatus.gameState)
    {

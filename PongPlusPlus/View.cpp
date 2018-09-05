@@ -284,8 +284,8 @@ void View::SetupGameOver(void)
 
    // Set up the ball shape to be a hyphen
    gameStatus.ballShape.Reset();
-   gameStatus.ballShape.AddVertex(-1, 0, true);
-   gameStatus.ballShape.AddVertex( 1, 0, true);
+   gameStatus.ballShape.AddVertex(-25, 0, true);
+   gameStatus.ballShape.AddVertex( 25, 0, true);
    ballLaser.UpdateShape(1, true, true);
    ballLaser.SetPosition((settings.display.xMin + settings.display.xMax) / 2,
                          (settings.display.yMin + settings.display.yMax) / 2);

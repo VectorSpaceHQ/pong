@@ -76,7 +76,6 @@ void LaserCtrl::UpdateShape(uint32_t scale, bool restart, bool needToCopy)
      Serial.print(x);
      Serial.print(", ");
      Serial.println(y);
-     delay(1000);
    }
   
   // shape.Log();
