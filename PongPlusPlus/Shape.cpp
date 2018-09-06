@@ -380,6 +380,10 @@ void Shape::CreateShape(int numeral)
          AddVertex(  2,  1, true );    //
          break;
 
+       case ShapeTypeDot:     
+         AddVertex(  0,  0, true );   
+         break;
+
       default:
          break;
    }

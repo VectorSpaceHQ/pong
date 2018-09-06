@@ -42,7 +42,8 @@ enum ShapeType
    ShapeTypeCenterViewCal,
 
    ShapeTypePaddle,
-   ShapeTypeBall
+   ShapeTypeBall,
+   ShapeTypeDot
 };
 
 
