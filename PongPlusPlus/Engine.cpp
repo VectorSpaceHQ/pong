@@ -455,12 +455,12 @@ void Engine::SetupGamePlay()
    if(gameStatus.whoseServe == Model::LeftPlayerServes)
    {
       // If the left player is serving, set the vector to a positive (right) direction
-      gameStatus.ballShape.vector.x = 2;
+      gameStatus.ballShape.vector.x = 4;
    }
    else
    {
       // If the left player is serving, set the vector to a negative (left) direction
-      gameStatus.ballShape.vector.x = -2;
+      gameStatus.ballShape.vector.x = -4;
    }
 
    // Randomize up/down
