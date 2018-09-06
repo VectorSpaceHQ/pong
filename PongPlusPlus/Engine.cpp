@@ -522,6 +522,9 @@ void Engine::RunGamePlay()
    
    gameStatus.ballShape.Move(CoordsWorld, gameStatus.ballShape.vector.x, gameStatus.ballShape.vector.y);
 
+   Serial.println("\n\n");
+   PrintBallCoords();
+   
    // Check collision of the ball with the top or bottom
    if( (gameStatus.ballShape.CheckTop(-(gameHeight / 2), foundVertex)    ) ||
        (gameStatus.ballShape.CheckBottom( (gameHeight / 2), foundVertex) )    )
@@ -542,8 +545,8 @@ void Engine::RunGamePlay()
       {
          Serial.println("Checking for left side collision");
          Serial.println("paddle is at right elevation for bounce");
-         PrintBallCoords();
-         PrintLeftPaddleCoords();
+         // PrintBallCoords();
+         // PrintLeftPaddleCoords();
 
          // And the it's beyond the paddle edge
          if((gameStatus.ballShape.leftMostVertex.x  <= gameStatus.leftPaddleShape.position.x) &&

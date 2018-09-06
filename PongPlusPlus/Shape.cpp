@@ -225,10 +225,10 @@ void Shape::Reset()
    }
 
    highestVertex.x =  0;
-   highestVertex.y = -1000000;
+   highestVertex.y = 1000000;
 
    lowestVertex.x =  0;
-   lowestVertex.y = 1000000;
+   lowestVertex.y = -1000000;
 
    leftMostVertex.x = 1000000;
    leftMostVertex.y =  0;
@@ -381,13 +381,14 @@ void Shape::SetExtremeVertices(void)
   
    for(uint32_t cntr = 0; cntr < numVertices; cntr++)
    {
-      if(vertices[cntr].y > highestVertex.y)
+     // y-axis is always inverted in game coords and view coords
+      if(vertices[cntr].y < highestVertex.y)
       {
          highestVertex.x = vertices[cntr].x;
          highestVertex.y = vertices[cntr].y;
       }
 
-      if(vertices[cntr].y < lowestVertex.y)
+      if(vertices[cntr].y > lowestVertex.y)
       {
          lowestVertex.x = vertices[cntr].x;
          lowestVertex.y = vertices[cntr].y;
@@ -419,7 +420,8 @@ bool Shape::CheckTop(CoordType top, Vertex& foundVertex)
    delay(1000);
      
 
-   if(highestVertex.y >= top)
+   // y-axis is upside down. Highest point is negative
+   if(highestVertex.y <= top)
    {
       foundVertex.x = highestVertex.x;
       foundVertex.y = highestVertex.y;
@@ -435,7 +437,7 @@ bool Shape::CheckBottom(CoordType bottom, Vertex& foundVertex)
 {
    bool isBeyond = false;
 
-   if(lowestVertex.y <= bottom)
+   if(lowestVertex.y >= bottom)
    {
       foundVertex.x = lowestVertex.x;
       foundVertex.y = lowestVertex.y;
