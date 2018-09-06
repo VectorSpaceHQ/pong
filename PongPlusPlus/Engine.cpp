@@ -85,16 +85,16 @@ void Engine::LoadSettings()
 
    Serial.println("LOADING SETTINGS");
 
-   settings.leftLaserCal.xOffset = 12;
-   settings.leftLaserCal.yOffset = 141;
-   settings.middleLaserCal.xOffset = -80;
-   settings.middleLaserCal.yOffset = 180;
-   settings.rightLaserCal.xOffset = -9;
-   settings.rightLaserCal.yOffset = 167;
+   settings.leftLaserCal.xOffset = -57;
+   settings.leftLaserCal.yOffset = -157;
+   settings.middleLaserCal.xOffset = -138;
+   settings.middleLaserCal.yOffset = -196;
+   settings.rightLaserCal.xOffset = -25;
+   settings.rightLaserCal.yOffset = -209;
 
-   settings.display.xMin = -143;
-   settings.display.xMax = 150;
-   settings.display.yMin = -64;
+   settings.display.xMin = -122;
+   settings.display.xMax = 93;
+   settings.display.yMin = -75;
    settings.display.yMax = 104;
 
    // // Read the bytes out of EEPROM and calculate the checksum
@@ -280,8 +280,10 @@ void Engine::ViewCalibrationButtonChange()
 
 void Engine::RunViewCalibration()
 {
+  
+  
    ViewCalibrationButtonChange();
-
+     
    switch(buttonState)
    {
       // Update X/Y position of the display if no buttons pressed
@@ -392,8 +394,8 @@ void Engine::ReadyButtonChange()
 void Engine::SetupGameReady()
 {
    // We'll setup the shapes for both Game Ready and Game Play states here.
-   uint32_t paddleScale = PADDLE_SCALE_PERCENT * gameHeight / 100;
-   uint32_t ballScale   = BALL_SCALE_PERCENT   * gameHeight / 100;
+  uint32_t paddleScale = max(PADDLE_SCALE_PERCENT * gameHeight / 100, 1);
+  uint32_t ballScale   = max(BALL_SCALE_PERCENT   * gameHeight / 100, 1);
 
    // Create the paddle and ball shapes
    gameStatus.ballShape.CreateShape(ShapeTypeBall);
