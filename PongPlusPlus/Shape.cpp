@@ -84,8 +84,8 @@ void Shape::Scale(CoordSet set, CoordType _scale)
 
       for(uint32_t cntr = 0; cntr < numVertices; cntr++)
       {
-         viewVertices[cntr].x *= scale;
-         viewVertices[cntr].y *= scale;
+         viewVertices[cntr].x *= viewScale;
+         viewVertices[cntr].y *= viewScale;
       }
    }
 }
@@ -411,6 +411,13 @@ void Shape::SetExtremeVertices(void)
 bool Shape::CheckTop(CoordType top, Vertex& foundVertex)
 {
    bool isBeyond = false;
+
+   Serial.print("Checking Top: top, highest y: ");
+   Serial.print(top);
+   Serial.print(", ");
+   Serial.println(highestVertex.y);
+   delay(1000);
+     
 
    if(highestVertex.y >= top)
    {
