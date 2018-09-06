@@ -1,7 +1,8 @@
 
 #include <Arduino.h>
-#include <Servo.h>
 #include <stdlib.h>
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
 
 #include "Configs.h"
 #include "LaserCtrl.h"
@@ -45,18 +46,22 @@ LaserCtrl::LaserCtrl(LaserConf&                conf,
    laserPin = conf.laserPin;
    pinMode(laserPin, OUTPUT);
 
-   displayMin.x = 1000;
-   displayMax.x = 2000;
-   displayMin.y = 1000;
-   displayMax.y = 2000;
+   displayMin.x = SERVO_MIN_X;
+   displayMax.x = SERVO_MAX_X;
+   displayMin.y = SERVO_MIN_Y;
+   displayMax.y = SERVO_MAX_Y;
 
    // Turn off and center the laser
    currentPosition.x = x;
    currentPosition.y = y;
    currentPosition.draw = laserOn;
    SetLaser(currentPosition.draw);
-   xServo.writeMicroseconds(x);
-   yServo.writeMicroseconds(y);
+
+   Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+   pwm.begin();
+   pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
+   pwm.setPWM(conf.xPin, 0, 300); // center
+   pwm.setPWM(conf.yPin, 0, 300);
 }
 
 
@@ -144,8 +149,12 @@ void LaserCtrl::Move(CoordType atX, CoordType atY)
 {
    SetPosition(atX, atY);
 
-   xServo.writeMicroseconds(x);
-   yServo.writeMicroseconds(y);
+   // interpolate into new pca9685 coords
+   float u = 200 + (x - 1000) * ((400-200) / (2000 - 1000));
+   float v = 200 + (y - 1000) * ((400-200) / (2000 - 1000));
+
+   pwm.setPWM(conf.xPin, 0, u);
+   pwm.setPWM(conf.yPin, 0, v);
 }
 
 
@@ -215,8 +224,12 @@ void LaserCtrl::Update()
    currentPosition.x += stepX;
    currentPosition.y += stepY;
 
-   xServo.writeMicroseconds(currentPosition.x);
-   yServo.writeMicroseconds(currentPosition.y);
+   // interpolate into new pca9685 coords
+   float u = 200 + (x - 1000) * ((400-200) / (2000 - 1000));
+   float v = 200 + (y - 1000) * ((400-200) / (2000 - 1000));
+   
+   pwm.setPWM(conf.xPin, 0, u);
+   pwm.setPWM(conf.yPin, 0, v);
 }
 
 
