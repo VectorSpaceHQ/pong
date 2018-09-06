@@ -102,18 +102,17 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
    CoordType newX = 3000 - (SERVO_MID_X + atX + (cal.xOffset * cal.xOrientation));
    CoordType newY = SERVO_MID_Y + atY + (cal.yOffset * cal.yOrientation);
 
-/*
-   Serial.print(name);
-   Serial.print(" Position( ");
-   Serial.print(cal.xOffset);
-   Serial.print(", ");
-   Serial.print(cal.yOffset);
-   Serial.print(", ");
-   Serial.print(newX);
-   Serial.print(", ");
-   Serial.print(newY);
-   Serial.println(")");
-*/
+
+   // Serial.print(name);
+   // Serial.print(" Position( ");
+   // Serial.print(cal.xOffset);
+   // Serial.print(", ");
+   // Serial.print(cal.yOffset);
+   // Serial.print(", ");
+   // Serial.print(newX);
+   // Serial.print(", ");
+   // Serial.print(newY);
+   // Serial.println(")");
 
    // Move our vertex coordinates the difference
    if(running)
@@ -138,10 +137,26 @@ void LaserCtrl::Move(CoordType atX, CoordType atY)
 
 void LaserCtrl::SetLimits(CoordType xMin, CoordType yMin, CoordType xMax, CoordType yMax)
 {
+   xMin = 3000 - (SERVO_MID_X + xMin + (cal.xOffset * cal.xOrientation));
+   xMax = 3000 - (SERVO_MID_X + xMax + (cal.xOffset * cal.xOrientation));
+   yMin = SERVO_MID_Y + yMin + (cal.yOffset * cal.yOrientation);
+   yMax = SERVO_MID_Y + yMax + (cal.yOffset * cal.yOrientation);
+  
    displayMin.x = xMin;
    displayMin.y = yMin;
    displayMax.x = xMax;
    displayMax.y = yMax;
+
+   // bounds check against physical servo limit
+   if(displayMin.x < SERVO_MIN_X) { displayMin.x = SERVO_MIN_X; }
+   if(displayMin.x > SERVO_MAX_X) { displayMin.x = SERVO_MAX_X; }
+   if(displayMax.x < SERVO_MIN_X) { displayMax.x = SERVO_MIN_X; }
+   if(displayMax.x > SERVO_MAX_X) { displayMax.x = SERVO_MAX_X; }
+   if(displayMin.y < SERVO_MIN_Y) { displayMin.y = SERVO_MIN_Y; }
+   if(displayMin.y > SERVO_MAX_Y) { displayMin.y = SERVO_MAX_Y; }
+   if(displayMax.y < SERVO_MIN_Y) { displayMax.y = SERVO_MIN_Y; }
+   if(displayMax.y > SERVO_MAX_Y) { displayMax.y = SERVO_MAX_Y; }
+   
 }
 
 
@@ -202,8 +217,27 @@ void LaserCtrl::Update()
    currentPosition.x += stepX;
    currentPosition.y += stepY;
 
+   // Check for out of bounds
+   if(currentPosition.x < displayMin.x) { currentPosition.x = displayMin.x; }
+   if(currentPosition.x > displayMax.x) { currentPosition.x = displayMax.x; }
+   if(currentPosition.y < displayMin.y) { currentPosition.y = displayMin.y; }
+   if(currentPosition.y > displayMax.y) { currentPosition.y = displayMax.y; }
+   
    xServo.writeMicroseconds(currentPosition.x);
    yServo.writeMicroseconds(currentPosition.y);
+
+   Serial.print("Writing servo microseconds, ");
+   Serial.print(currentPosition.x);
+   Serial.print(", ");
+   Serial.println(currentPosition.y);
+   Serial.print(", ");
+   Serial.print(displayMin.x);
+   Serial.print(", ");
+   Serial.print(displayMax.x);
+   Serial.print(", ");
+   Serial.print(displayMin.y);
+   Serial.print(", ");
+   Serial.println(displayMax.y);
 }
 
 
@@ -274,6 +308,11 @@ void LaserCtrl::Move(Vertex& dest)
      {
        step.y = min(step.y, -1);
      }
+
+   // Serial.print("Moving steps, ");
+   // Serial.print(step.x);
+   // Serial.print(", ");
+   // Serial.println(step.y);
    
    step.draw = destination.draw;
 
