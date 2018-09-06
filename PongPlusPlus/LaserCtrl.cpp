@@ -256,6 +256,25 @@ void LaserCtrl::Move(Vertex& dest)
 
    step.x = diffX / shape.scale;
    step.y = diffY / shape.scale;
+   
+   if (diffX > 0)
+     {
+       step.x = max(step.x, 1);
+     }
+   else if (diffX < 0)
+     {
+       step.x = min(step.x, -1);
+     }
+
+   if (diffY > 0)
+     {
+       step.y = max(step.y, 1);
+     }
+   else if (diffY < 0)
+     {
+       step.y = min(step.y, -1);
+     }
+   
    step.draw = destination.draw;
 
    SetWaitTime(step.x, step.y);

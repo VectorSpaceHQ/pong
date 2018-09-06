@@ -432,12 +432,22 @@ void Engine::SetupGameReady()
    // Now, ensure the status is in the vertical middle, since we moved our paddle shapes to the middle a few lines above
    leftPaddle.position = 0;
    rightPaddle.position = 0;
+
+   Serial.println("Done setting up game ready");
+   Serial.print("min and max limits: ");
+   Serial.print(minLimit);
+   Serial.print(", ");
+   Serial.println(maxLimit);
+   PrintLeftPaddleCoords();
+   PrintDisplayCoords();
 }
 
 
 void Engine::SetupGamePlay()
 {
    int16_t twoThirdsHeight = 2 * gameHeight / 6;
+   
+   // delay(4000);
 
    randomSeed(micros());
 
@@ -704,11 +714,11 @@ void Engine::PrintButtonState()
 
 void Engine::PrintDisplayCoords()
 {
-   Serial.print("x = (");
+   Serial.print("Display Coords xmin, xmax, ymin, ymax: ");
    Serial.print(settings.display.xMin);
    Serial.print(", ");
    Serial.print(settings.display.xMax);
-   Serial.print("), y = (");
+   Serial.print(", ");
    Serial.print(settings.display.yMin);
    Serial.print(", ");
    Serial.println(settings.display.yMax);
