@@ -16,7 +16,7 @@
 
 // TODO: What should be the scale of the paddles?
 #define PADDLE_SCALE_PERCENT        (10)           // Percent of the height of the paddle
-#define BALL_SCALE_PERCENT          (2)            // Percent of the height of the ball
+#define BALL_SCALE_PERCENT          (1)            // Percent of the height of the ball
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
 #define  MAX_SCORE               (9)
@@ -87,11 +87,11 @@ void Engine::LoadSettings()
    int               imgChecksum;
 
    Serial.println("LOADING SETTINGS");
-   settings.leftLaserCal.xOffset = -51;
+   settings.leftLaserCal.xOffset = -57;
    settings.leftLaserCal.yOffset = -157;
    settings.middleLaserCal.xOffset = -138;
-   settings.middleLaserCal.yOffset = -192;
-   settings.rightLaserCal.xOffset = -33;
+   settings.middleLaserCal.yOffset = -196;
+   settings.rightLaserCal.xOffset = -25;
    settings.rightLaserCal.yOffset = -209;
 
    settings.display.xMin = -122;
@@ -386,8 +386,8 @@ void Engine::SetupGameReady()
 {
   Serial.println("SetupGameReady");
    // We'll setup the shapes for both Game Ready and Game Play states here.
-   uint32_t paddleScale = PADDLE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100;
-   uint32_t ballScale   = BALL_SCALE_PERCENT   * (settings.display.yMax - settings.display.yMin)  / 100;
+  uint32_t paddleScale = max(1, PADDLE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100);
+   uint32_t ballScale   = max(1, BALL_SCALE_PERCENT   * (settings.display.yMax - settings.display.yMin)  / 100);
 
    // Create the paddle and ball shapes
    gameStatus.ballShape.CreateShape(ShapeTypeBall);
@@ -485,7 +485,7 @@ void Engine::RunGamePlay()
 {
    Vertex      foundVertex;
    
-   int ballXoffset = 10;
+   int ballXoffset = 25;
 
    // Move the paddles
    // TODO: We probably need to convert the position into an actual location
@@ -536,7 +536,7 @@ void Engine::RunGamePlay()
            Serial.println("BOUNCE left paddle");
            PrintLeftPaddleCoords();
            PrintBallCoords();
-           delay(10000);
+           // delay(10000);
            
             // Ball hit the left paddle so invert the x-component of the slope
             gameStatus.ballShape.vector.x *= -1;
@@ -564,13 +564,14 @@ void Engine::RunGamePlay()
          (gameStatus.ballShape.highestVertex.y >= gameStatus.rightPaddleShape.lowestVertex.y )    )
       {
          // And the it's beyond the paddle edge
-        if((gameStatus.ballShape.leftMostVertex.x - ballXoffset <= gameStatus.rightPaddleShape.position.x) &&
-           (gameStatus.ballShape.rightMostVertex.x -ballXoffset >= gameStatus.rightPaddleShape.position.x) )
+        if((gameStatus.ballShape.leftMostVertex.x  <= gameStatus.rightPaddleShape.position.x) &&
+           (gameStatus.ballShape.rightMostVertex.x  >= gameStatus.rightPaddleShape.position.x) )
           {
             Serial.println("BOUNCE right paddle");
             PrintRightPaddleCoords();
             PrintBallCoords();
-            delay(200);
+            // delay(200);
+            
             // Ball hit the left paddle so invert the x-component of the slope
             gameStatus.ballShape.vector.x *= -1;
 

@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#define PADDLE_SENSITIVITY   (0.1)
+#define PADDLE_SENSITIVITY   (0.4)
 
 // For now, we'll make the paddle status a structure.
 // In the future we may need something more complex

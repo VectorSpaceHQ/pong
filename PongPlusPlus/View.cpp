@@ -230,7 +230,7 @@ void View::SetupGameReady(void)
    // Serial.println(gameStatus.ballShape.position.y);
    // delay(10000);
 
-   gameStatus.ballShape.position.x = 0;
+   gameStatus.ballShape.position.x = -20;
    gameStatus.ballShape.position.y = 0;
 
    // Stop the ball laser from running its shape and turn it off
@@ -287,8 +287,8 @@ void View::DisplayGamePlay(void)
 void View::SetupGameOver(void)
 {
    uint32_t    paddleScale    = SCORE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100;
-   CoordType   leftScoreLoc   = settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4;
-   CoordType   rightScoreLoc  = settings.display.xMin + 3 * (settings.display.xMax - settings.display.xMin) / 4;
+   CoordType   leftScoreLoc   = settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 5;
+   CoordType   rightScoreLoc  = settings.display.xMin + 4 * (settings.display.xMax - settings.display.xMin) / 5;
 
    // Set up the ball shape to be a hyphen
    gameStatus.ballShape.Reset();
