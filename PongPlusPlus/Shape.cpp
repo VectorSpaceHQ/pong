@@ -372,6 +372,30 @@ void Shape::CreateShape(int numeral)
    SetExtremeVertices();
 }
 
+void Shape::Reposition(void)
+{
+  int32_t radius = Height() / 2;
+
+  leftMostVertex.x = position.x - radius;
+  rightMostVertex.x = position.x + radius;
+  lowestVertex.x = position.x - radius;
+  highestVertex.x = position.x + radius;
+
+  leftMostVertex.y = position.y - radius;
+  rightMostVertex.y = position.y + radius;
+  lowestVertex.y = position.y + radius;
+  highestVertex.y = position.y - radius;
+
+  // Serial.print("Repositioning: ");
+  // Serial.print(position.x);
+  // Serial.print(", ");
+  // Serial.print(position.y);
+  // Serial.print(", ");
+  // Serial.print(lowestVertex.y);
+  // Serial.print(", ");
+  // Serial.println(highestVertex.y);
+  // delay(3000);
+}
 
 /******************************************************************************
  * Collision detection - Helper algorithms
@@ -413,11 +437,11 @@ bool Shape::CheckTop(CoordType top, Vertex& foundVertex)
 {
    bool isBeyond = false;
 
-   Serial.print("Checking Top: top, highest y: ");
-   Serial.print(top);
-   Serial.print(", ");
-   Serial.println(highestVertex.y);
-   delay(1000);
+   // Serial.print("Checking Top: top, highest y: ");
+   // Serial.print(top);
+   // Serial.print(", ");
+   // Serial.println(highestVertex.y);
+   // delay(1000);
      
 
    // y-axis is upside down. Highest point is negative
@@ -493,11 +517,11 @@ bool Shape::CheckRight(CoordType right, Vertex& foundVertex)
 
 int16_t Shape::Height()
 {
-   return(highestVertex.y - lowestVertex.y);
+  return(abs(highestVertex.y - lowestVertex.y));
 }
 
 
 int16_t Shape::Width()
 {
-   return(rightMostVertex.x - leftMostVertex.x);
+  return(abs(rightMostVertex.x - leftMostVertex.x));
 }

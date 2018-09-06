@@ -42,6 +42,8 @@ Engine::Engine(Model::Settings&           _settings,
 
 void Engine::Update(void)
 {
+  PrintLeftPaddleCoords();
+  PrintRightPaddleCoords();
   
    // First, update the button status
    CheckButtonState();
@@ -401,7 +403,7 @@ void Engine::SetupGameReady()
   uint32_t paddleScale = max(PADDLE_SCALE_PERCENT * gameHeight / 100, 1);
   uint32_t ballScale   = max(BALL_SCALE_PERCENT   * gameHeight / 100, 1);
   // paddleScale = 1;
-  // ballScale = 1;
+  ballScale = 1;
 
    // Create the paddle and ball shapes
    gameStatus.ballShape.CreateShape(ShapeTypeBall);
@@ -425,8 +427,8 @@ void Engine::SetupGameReady()
    gameStatus.leftPaddleShape.position.y  =  0;
    gameStatus.rightPaddleShape.position.y =  0;
 
-   Serial.print("paddlePos, ");
-   Serial.println(paddlePos);
+   // debug
+   // gameStatus.ballShape.position.y = 0;
 
    // Set the limits on the paddleStatus, so we can't overdrive the paddles
    // The paddles should be the same size, so just use the left one as the benchmark
@@ -499,6 +501,11 @@ void Engine::SetupGamePlay()
       gameStatus.ballShape.vector.y =  -random(2, 5);
    }
 
+
+   // need to recalculate extreme vertices for the ball after moving its position
+   Serial.println("Setting extreme vertices for ball");
+   gameStatus.ballShape.Reposition();
+
 }
 
 
@@ -510,6 +517,17 @@ void Engine::RunGamePlay()
    gameStatus.leftPaddleShape.Move(CoordsWorld, 0, (leftPaddle.position - gameStatus.leftPaddleShape.position.y));
    gameStatus.rightPaddleShape.Move(CoordsWorld, 0, (rightPaddle.position - gameStatus.rightPaddleShape.position.y));
 
+
+   // Serial.println("\n\nBallshape position, ");
+   // Serial.print(gameStatus.ballShape.position.x);
+   // Serial.print(", ");
+   // Serial.println(gameStatus.ballShape.position.y);
+   PrintBallCoords();
+   
+   
+   gameStatus.ballShape.Move(CoordsWorld, gameStatus.ballShape.vector.x, gameStatus.ballShape.vector.y);
+  
+
    // Move the ball along it's trajectory
    // PrintDisplayCoords();
    // Serial.print(gameStatus.ballShape.position.x);
@@ -519,11 +537,21 @@ void Engine::RunGamePlay()
    // Serial.print(gameStatus.ballShape.vector.x);
    // Serial.print(", ");
    // Serial.println(gameStatus.ballShape.vector.y);
-   
-   gameStatus.ballShape.Move(CoordsWorld, gameStatus.ballShape.vector.x, gameStatus.ballShape.vector.y);
 
    Serial.println("\n\n");
-   PrintBallCoords();
+   
+   Serial.print("shape positions ");
+   Serial.print(gameStatus.ballShape.position.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.ballShape.position.y);
+   Serial.print(", ");
+   Serial.print(gameStatus.leftPaddleShape.position.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.leftPaddleShape.position.y);
+   Serial.print(", ");
+   Serial.print(gameStatus.rightPaddleShape.position.x);
+   Serial.print(", ");
+   Serial.println(gameStatus.rightPaddleShape.position.y);
    
    // Check collision of the ball with the top or bottom
    if( (gameStatus.ballShape.CheckTop(-(gameHeight / 2), foundVertex)    ) ||
