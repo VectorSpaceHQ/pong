@@ -18,7 +18,6 @@
 #define  SERVO_MID_X    ((SERVO_MAX_X + SERVO_MIN_X) / 2)
 #define  SERVO_MID_Y    ((SERVO_MAX_Y + SERVO_MIN_Y) / 2)
 
-#define  US_PER_STEP    (1000)
 
 
 LaserCtrl::LaserCtrl(LaserConf&                conf,
@@ -33,6 +32,7 @@ LaserCtrl::LaserCtrl(LaserConf&                conf,
    hskew(0),
    vskew(0),
    laserOn(false),
+   stepRateUs(US_PER_STEP),
    shape(_shape),
    currentVertex(0),
    currentPosition(),
@@ -60,14 +60,16 @@ LaserCtrl::LaserCtrl(LaserConf&                conf,
 }
 
 
-void LaserCtrl::UpdateShape(uint32_t scale, bool restart, bool needToCopy)
+void LaserCtrl::UpdateShape(uint32_t scale, bool restart, bool needToCopy, uint32_t newInterval)
 {
    // Lasers work on the View set of coordinates
-
    if(needToCopy)
    {
       shape.CopyVerticesToView();
    }
+
+   // Set the draw speed
+   stepRateUs = newInterval;
 
    shape.SetOrientation(CoordsView, cal.xOrientation, cal.yOrientation);   // Invert the shape if necessary
    shape.Scale(CoordsView, scale);     // Scale the shape
@@ -186,11 +188,11 @@ void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
 
    if(waitX >= waitY)
    {
-      interval = (waitX * US_PER_STEP);
+      interval = (waitX * stepRateUs);
    }
    else
    {
-      interval = (waitY * US_PER_STEP);
+      interval = (waitY * stepRateUs);
    }
 
 //   Serial.println(interval);
@@ -302,30 +304,30 @@ void LaserCtrl::Move(Vertex& dest)
 
    step.x = diffX / shape.scale;
    step.y = diffY / shape.scale;
-   
+
    if (diffX > 0)
-     {
-       step.x = max(step.x, 1);
-     }
+   {
+      step.x = max(step.x, 1);
+   }
    else if (diffX < 0)
-     {
-       step.x = min(step.x, -1);
-     }
+   {
+      step.x = min(step.x, -1);
+   }
 
    if (diffY > 0)
-     {
-       step.y = max(step.y, 1);
-     }
+   {
+      step.y = max(step.y, 1);
+   }
    else if (diffY < 0)
-     {
-       step.y = min(step.y, -1);
-     }
+   {
+      step.y = min(step.y, -1);
+   }
 
    // Serial.print("Moving steps, ");
    // Serial.print(step.x);
    // Serial.print(", ");
    // Serial.println(step.y);
-   
+
    step.draw = destination.draw;
 
    SetWaitTime(step.x, step.y);

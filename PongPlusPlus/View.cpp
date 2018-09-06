@@ -314,20 +314,20 @@ void View::SetupGameOver(void)
    gameStatus.ballShape.Reset();
    gameStatus.ballShape.AddVertex(-25, 0, true);
    gameStatus.ballShape.AddVertex( 25, 0, true);
-   ballLaser.UpdateShape(1, true, true);
+   ballLaser.UpdateShape(1, true, true, US_PER_STEP * 2);
    ballLaser.SetPosition((settings.display.xMin + settings.display.xMax) / 2,
                          (settings.display.yMin + settings.display.yMax) / 2);
    ballLaser.Start();
 
    // Use the left paddle to display left player score
    gameStatus.leftPaddleShape.CreateShape(gameStatus.leftPaddleScore);
-   leftPaddleLaser.UpdateShape(paddleScale, true, true);
+   leftPaddleLaser.UpdateShape(paddleScale, true, true, US_PER_STEP * 2);
    leftPaddleLaser.SetPosition(leftScoreLoc, (settings.display.yMin + settings.display.yMax) / 2);
    leftPaddleLaser.Start();
 
    // Use the left paddle to display right player score
    gameStatus.rightPaddleShape.CreateShape(gameStatus.rightPaddleScore);
-   rightPaddleLaser.UpdateShape(paddleScale, true, true);
+   rightPaddleLaser.UpdateShape(paddleScale, true, true, US_PER_STEP * 2);
    rightPaddleLaser.SetPosition(rightScoreLoc, (settings.display.yMin + settings.display.yMax) / 2);
    rightPaddleLaser.Start();
 }

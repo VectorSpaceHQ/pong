@@ -10,6 +10,8 @@
 #include "Shape.h"
 #include "TimedInterval.h"
 
+#define  US_PER_STEP    (1000)
+
 
 class LaserCtrl: public TimedInterval
 {
@@ -25,7 +27,7 @@ public:
    /***
     * This method is called afer the shape given to the laser changes
     */
-   void UpdateShape(uint32_t scale, bool restart, bool needToCopy);
+   void UpdateShape(uint32_t scale, bool restart, bool needToCopy, uint32_t newInterval = US_PER_STEP);
 
     /***
     * Control the laser and the gimble to draw the shape
@@ -66,6 +68,7 @@ private:
    uint32_t                   hskew;
    uint32_t                   vskew;
    bool                       laserOn;
+   uint32_t                   stepRateUs;
    Servo                      xServo;
    Servo                      yServo;
    uint8_t                    laserPin;
