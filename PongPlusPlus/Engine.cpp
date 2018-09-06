@@ -34,6 +34,7 @@ Engine::Engine(Model::Settings&           _settings,
    buttonState(ButtonStateReset)
 {
    Serial.println("Engine Up");
+   randomSeed(micros());
 }
 
 
@@ -433,7 +434,7 @@ void Engine::SetupGameReady()
 void Engine::SetupGamePlay()
 {
   Serial.println("SetupGamePlay");
-   randomSeed(micros());
+   
 
    // Paddles are at a fixed horizontal location
    gameStatus.leftPaddleShape.position.x  =  settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 9;
