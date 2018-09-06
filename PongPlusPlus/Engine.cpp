@@ -15,8 +15,8 @@
 #include "Timing.h"
 
 // TODO: What should be the scale of the paddles?
-#define PADDLE_SCALE_PERCENT        (2)            // Percent of the height of the paddle
-#define BALL_SCALE_PERCENT          (5)            // Percent of the height of the ball
+#define PADDLE_SCALE_PERCENT        (10)            // Percent of the height of the paddle
+#define BALL_SCALE_PERCENT          (2)            // Percent of the height of the ball
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
 #define  MAX_SCORE               (9)
@@ -41,6 +41,9 @@ Engine::Engine(Model::Settings&           _settings,
 
 void Engine::Update(void)
 {
+  PrintLeftPaddleCoords();
+  PrintRightPaddleCoords();
+  
    // First, update the button status
    CheckButtonState();
 
@@ -87,10 +90,10 @@ void Engine::LoadSettings()
 
    settings.leftLaserCal.xOffset = -57;
    settings.leftLaserCal.yOffset = -157;
-   settings.middleLaserCal.xOffset = -138;
-   settings.middleLaserCal.yOffset = -196;
-   settings.rightLaserCal.xOffset = -25;
-   settings.rightLaserCal.yOffset = -209;
+   settings.middleLaserCal.xOffset = -131;
+   settings.middleLaserCal.yOffset = -194;
+   settings.rightLaserCal.xOffset = -15;
+   settings.rightLaserCal.yOffset = -196;
 
    settings.display.xMin = -122;
    settings.display.xMax = 93;
@@ -161,6 +164,8 @@ void Engine::LaserCalibrationButtonChange()
    if((leftPaddle.buttonStateChanged) || (rightPaddle.buttonStateChanged))
    {
       PrintButtonState();
+      
+      delay(300); // debounce
 
       switch(buttonState)
       {
@@ -396,6 +401,8 @@ void Engine::SetupGameReady()
    // We'll setup the shapes for both Game Ready and Game Play states here.
   uint32_t paddleScale = max(PADDLE_SCALE_PERCENT * gameHeight / 100, 1);
   uint32_t ballScale   = max(BALL_SCALE_PERCENT   * gameHeight / 100, 1);
+  // paddleScale = 1;
+  // ballScale = 1;
 
    // Create the paddle and ball shapes
    gameStatus.ballShape.CreateShape(ShapeTypeBall);
@@ -412,14 +419,15 @@ void Engine::SetupGameReady()
    gameStatus.leftPaddleShape.Scale(CoordsWorld, paddleScale);
    gameStatus.rightPaddleShape.Scale(CoordsWorld, paddleScale);
 
-   PrintDisplayCoords();
-
    // Paddles are at a fixed horizontal location
    int16_t  oneQuarter = gameWidth / 4;
    gameStatus.leftPaddleShape.position.x  = -oneQuarter;
    gameStatus.rightPaddleShape.position.x =  oneQuarter;
    gameStatus.leftPaddleShape.position.y  =  0;
    gameStatus.rightPaddleShape.position.y =  0;
+
+   Serial.print("oneQuarter, ");
+   Serial.println(oneQuarter);
 
    // Set the limits on the paddleStatus, so we can't overdrive the paddles
    // The paddles should be the same size, so just use the left one as the benchmark
@@ -428,18 +436,18 @@ void Engine::SetupGameReady()
 
    leftPaddle.SetLimits(minLimit, maxLimit);
    rightPaddle.SetLimits(minLimit, maxLimit);
-
+   
    // Now, ensure the status is in the vertical middle, since we moved our paddle shapes to the middle a few lines above
    leftPaddle.position = 0;
    rightPaddle.position = 0;
 
-   Serial.println("Done setting up game ready");
-   Serial.print("min and max limits: ");
-   Serial.print(minLimit);
-   Serial.print(", ");
-   Serial.println(maxLimit);
-   PrintLeftPaddleCoords();
-   PrintDisplayCoords();
+   // Serial.println("Done setting up game ready");
+   // Serial.print("min and max limits: ");
+   // Serial.print(minLimit);
+   // Serial.print(", ");
+   // Serial.println(maxLimit);
+   // PrintLeftPaddleCoords();
+   // PrintDisplayCoords();
 }
 
 
@@ -655,6 +663,8 @@ void Engine::CheckButtonState()
 
 void Engine::ChangeGameState(Model::GameState newState)
 {
+  delay(500); // debounce
+  
    // Notify the View of the new game state
    gameStatus.gameState = newState;
    gameStatus.gameStateChanged = true;
@@ -737,6 +747,21 @@ void Engine::PrintLeftPaddleCoords()
    Serial.print(", ");
    Serial.print(gameStatus.leftPaddleShape.highestVertex.y);
    Serial.println(")");
+}
+
+void Engine::PrintRightPaddleCoords()
+{
+  Serial.print("RightPaddle x, xmin, xmax, ymin, ymax = (");
+  Serial.print(gameStatus.rightPaddleShape.position.x);
+  Serial.print(", ");
+  Serial.print(gameStatus.rightPaddleShape.leftMostVertex.x);
+  Serial.print(", ");
+  Serial.print(gameStatus.rightPaddleShape.rightMostVertex.x);
+  Serial.print(", ");
+  Serial.print(gameStatus.rightPaddleShape.lowestVertex.y);
+  Serial.print(", ");
+  Serial.print(gameStatus.rightPaddleShape.highestVertex.y);
+  Serial.println(")");
 }
 
 void Engine::PrintBallCoords()

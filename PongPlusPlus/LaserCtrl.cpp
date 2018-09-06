@@ -137,15 +137,29 @@ void LaserCtrl::Move(CoordType atX, CoordType atY)
 
 void LaserCtrl::SetLimits(CoordType xMin, CoordType yMin, CoordType xMax, CoordType yMax)
 {
+  Serial.print("Setting limits for ");
+  Serial.print(name);
+  Serial.print(" @ ");
+  Serial.print(xMin);
+  Serial.print(", ");
+  Serial.print(xMax);
+  Serial.print(", ");
+  Serial.print(yMin);
+  Serial.print(", ");
+  Serial.print(yMax);
+  Serial.print(",   ");
+  
    xMin = 3000 - (SERVO_MID_X + xMin + (cal.xOffset * cal.xOrientation));
    xMax = 3000 - (SERVO_MID_X + xMax + (cal.xOffset * cal.xOrientation));
    yMin = SERVO_MID_Y + yMin + (cal.yOffset * cal.yOrientation);
    yMax = SERVO_MID_Y + yMax + (cal.yOffset * cal.yOrientation);
-  
-   displayMin.x = xMin;
+
+   // servo x-axis is reversed 
+   displayMin.x = xMax;
+   displayMax.x = xMin;
    displayMin.y = yMin;
-   displayMax.x = xMax;
    displayMax.y = yMax;
+
 
    // bounds check against physical servo limit
    if(displayMin.x < SERVO_MIN_X) { displayMin.x = SERVO_MIN_X; }
@@ -156,6 +170,15 @@ void LaserCtrl::SetLimits(CoordType xMin, CoordType yMin, CoordType xMax, CoordT
    if(displayMin.y > SERVO_MAX_Y) { displayMin.y = SERVO_MAX_Y; }
    if(displayMax.y < SERVO_MIN_Y) { displayMax.y = SERVO_MIN_Y; }
    if(displayMax.y > SERVO_MAX_Y) { displayMax.y = SERVO_MAX_Y; }
+
+   
+   Serial.print(displayMin.x);
+   Serial.print(", ");
+   Serial.print(displayMax.x);
+   Serial.print(", ");
+   Serial.print(displayMin.y);
+   Serial.print(", ");
+   Serial.println(displayMax.y);
    
 }
 
@@ -226,18 +249,18 @@ void LaserCtrl::Update()
    xServo.writeMicroseconds(currentPosition.x);
    yServo.writeMicroseconds(currentPosition.y);
 
-   Serial.print("Writing servo microseconds, ");
-   Serial.print(currentPosition.x);
-   Serial.print(", ");
-   Serial.println(currentPosition.y);
-   Serial.print(", ");
-   Serial.print(displayMin.x);
-   Serial.print(", ");
-   Serial.print(displayMax.x);
-   Serial.print(", ");
-   Serial.print(displayMin.y);
-   Serial.print(", ");
-   Serial.println(displayMax.y);
+   // Serial.print("Writing servo microseconds, ");
+   // Serial.print(currentPosition.x);
+   // Serial.print(", ");
+   // Serial.println(currentPosition.y);
+   // Serial.print(", ");
+   // Serial.print(displayMin.x);
+   // Serial.print(", ");
+   // Serial.print(displayMax.x);
+   // Serial.print(", ");
+   // Serial.print(displayMin.y);
+   // Serial.print(", ");
+   // Serial.println(displayMax.y);
 }
 
 

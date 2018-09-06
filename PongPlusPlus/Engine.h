@@ -58,6 +58,7 @@ private:
    void PrintButtonState();
    void PrintDisplayCoords();
    void PrintLeftPaddleCoords();
+   void PrintRightPaddleCoords();
    void PrintBallCoords();
     
    void LoadSettings();

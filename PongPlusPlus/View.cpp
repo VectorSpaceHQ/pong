@@ -234,6 +234,12 @@ void View::SetupGameReady(void)
                               settings.display.xMax,
                               settings.display.yMax);
 
+   Serial.println(settings.display.xMin);
+   Serial.println(settings.display.xMax);
+   Serial.println(settings.display.yMin);
+   Serial.println(settings.display.yMax);
+   delay(5000);
+
    // For now, set the Lasers to the same scale as the game
    uint32_t paddleScale = gameStatus.leftPaddleShape.scale;
    uint32_t ballScale = gameStatus.ballShape.scale;
