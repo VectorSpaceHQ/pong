@@ -103,17 +103,6 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
    CoordType newY = SERVO_MID_Y + atY + (cal.yOffset * cal.yOrientation);
 
 
-   // Serial.print(name);
-   // Serial.print(" Position( ");
-   // Serial.print(cal.xOffset);
-   // Serial.print(", ");
-   // Serial.print(cal.yOffset);
-   // Serial.print(", ");
-   // Serial.print(newX);
-   // Serial.print(", ");
-   // Serial.print(newY);
-   // Serial.println(")");
-
    // Move our vertex coordinates the difference
    if(running)
    {

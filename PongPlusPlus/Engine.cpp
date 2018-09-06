@@ -36,13 +36,12 @@ Engine::Engine(Model::Settings&           _settings,
    gameWidth(0)
 {
    Serial.println("Engine Up");
+   randomSeed(micros());
 }
 
 
 void Engine::Update(void)
 {
-  PrintLeftPaddleCoords();
-  PrintRightPaddleCoords();
   
    // First, update the button status
    CheckButtonState();
@@ -453,11 +452,12 @@ void Engine::SetupGameReady()
 
 void Engine::SetupGamePlay()
 {
+  Serial.println("Setup gameplay");
+  delay(1000);
+  
    int16_t twoThirdsHeight = 2 * gameHeight / 6;
    
-   // delay(4000);
-
-   randomSeed(micros());
+   // randomSeed(millis());
 
    // Randomly select top third or bottom third
    if(random(1) == 1)
@@ -498,6 +498,7 @@ void Engine::SetupGamePlay()
       // Up, y is negative
       gameStatus.ballShape.vector.y =  -random(2, 5);
    }
+
 }
 
 
@@ -700,7 +701,6 @@ void Engine::ChangeGameState(Model::GameState newState)
          break;
    }
 
-   delay(200); // button debounce
 }
 
 
