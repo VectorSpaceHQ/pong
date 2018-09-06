@@ -988,6 +988,12 @@ void Engine::CalcHomographyMatrix(){
   Matrix.Multiply((mtx_type*)p_T, (mtx_type*)q, 9, 9, 1, (mtx_type*)D);
 
 
+  Matrix.Print((mtx_type*)p, 9, 9, "p");
+  Matrix.Print((mtx_type*)p_T, 9, 9, "p_T");
+  Matrix.Print((mtx_type*)q, 9, 1, "q");
+  Matrix.Print((mtx_type*)C, 9, 9, "C");
+
+  
   Matrix.Invert((mtx_type*)C, 9); // wow this library is bad
 
 
@@ -996,10 +1002,8 @@ void Engine::CalcHomographyMatrix(){
   Matrix.Multiply((mtx_type*)C, (mtx_type*)D, 9, 9, 1, (mtx_type*)E);
 
   // Serial.print(p);
-  Matrix.Print((mtx_type*)p, 9, 9, "p");
-  Matrix.Print((mtx_type*)p_T, 9, 9, "p_T");
-  Matrix.Print((mtx_type*)q, 9, 1, "q");
-  Matrix.Print((mtx_type*)C, 9, 9, "C");
+
+  Matrix.Print((mtx_type*)C, 9, 1, "inverted C");
   Matrix.Print((mtx_type*)D, 9, 1, "D");
   Matrix.Print((mtx_type*)E, 9, 1, "E");
 
