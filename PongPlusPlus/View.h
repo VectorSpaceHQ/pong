@@ -39,6 +39,7 @@ private:
 
    void DisplayLaserCalibration(void);
    void DisplayViewCalibration(void);
+   void DisplayHomographyCalibration(void);
    void DisplayGamePlay(void);
    void DisplayScore(void);
 };

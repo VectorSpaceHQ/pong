@@ -66,6 +66,10 @@ void View::Update(void)
          DisplayViewCalibration();
          break;
 
+      case Model::GameStateCalibrateHomography:
+         DisplayHomographyCalibration();
+         break;
+
       // Game Ready and Play are almost the same for the view
       // Only, in ready state, the ball is not in play and is not shown
       case Model::GameStateReady:
@@ -101,6 +105,10 @@ void View::CheckGameStateChange(void)
 
          case Model::GameStateCalibrateView:
             SetupViewCalibration();
+            break;
+
+         case Model::GameStateCalibrateHomography:
+            SetupLaserCalibration();
             break;
 
          case Model::GameStateReady:
@@ -208,6 +216,14 @@ void View::DisplayViewCalibration(void)
    ballLaser.Run();
    leftPaddleLaser.Run();
    rightPaddleLaser.Run();
+}
+
+
+void View::DisplayHomographyCalibration(void)
+{
+  leftPaddleLaser.Move(settings.leftLaserCal.topLeftX, settings.leftLaserCal.topLeftY);
+  ballLaser.Move(settings.middleLaserCal.topLeftX, settings.middleLaserCal.topLeftY);
+  rightPaddleLaser.Move(settings.rightLaserCal.topLeftX, settings.rightLaserCal.topLeftY);
 }
 
 

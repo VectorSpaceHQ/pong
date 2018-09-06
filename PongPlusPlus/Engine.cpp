@@ -60,11 +60,41 @@ void Engine::Update(void)
       case Model::GameStateCalibrateView:
          RunViewCalibration();
          
-         CalcHomographyMatrix(settings.leftLaserCal);
+         settings.leftLaserCal.topLeftX = settings.display.xMin;
+         settings.leftLaserCal.topLeftY = settings.display.yMax;
+         settings.leftLaserCal.topRightX = settings.display.xMax;
+         settings.leftLaserCal.topRightY = settings.display.yMax;
+         settings.leftLaserCal.botRightX = settings.display.xMax;
+         settings.leftLaserCal.botRightY = settings.display.yMin;
+         settings.leftLaserCal.botLeftX = settings.display.xMin;
+         settings.leftLaserCal.botLeftY = settings.display.yMin;
+         
+         settings.rightLaserCal.topLeftX = settings.display.xMin;
+         settings.rightLaserCal.topLeftY = settings.display.yMax;
+         settings.rightLaserCal.topRightX = settings.display.xMax;
+         settings.rightLaserCal.topRightY = settings.display.yMax;
+         settings.rightLaserCal.botRightX = settings.display.xMax;
+         settings.rightLaserCal.botRightY = settings.display.yMin;
+         settings.rightLaserCal.botLeftX = settings.display.xMin;
+         settings.rightLaserCal.botLeftY = settings.display.yMin;
+
+         settings.middleLaserCal.topLeftX = settings.display.xMin;
+         settings.middleLaserCal.topLeftY = settings.display.yMax;
+         settings.middleLaserCal.topRightX = settings.display.xMax;
+         settings.middleLaserCal.topRightY = settings.display.yMax;
+         settings.middleLaserCal.botRightX = settings.display.xMax;
+         settings.middleLaserCal.botRightY = settings.display.yMin;
+         settings.middleLaserCal.botLeftX = settings.display.xMin;
+         settings.middleLaserCal.botLeftY = settings.display.yMin;
+         
          break;
 
       case Model::GameStateCalibrateHomography:
          RunHomographyCalibration();
+                  
+         CalcHomographyMatrix(settings.leftLaserCal);
+         CalcHomographyMatrix(settings.middleLaserCal);
+         CalcHomographyMatrix(settings.rightLaserCal);
          break;
 
       case Model::GameStateReady:
@@ -286,54 +316,72 @@ void Engine::ViewCalibrationButtonChange()
 }
 
 
+
 void Engine::RunHomographyCalibration()
 {
-  // ViewCalibrationButtonChange();
-  
+  // Treat middle laser's coordinates as targets
+  if (cornerCounter == 0)
+    {
+      leftPaddle.position = settings.display.xMin;
+      rightPaddle.position = settings.display.yMax;
+    }
+
   switch(buttonState)
     {
-    case ButtonStateNone: 
-      {
-	if (cornerCounter == 0) // top left
-	  {
-	    settings.middleLaserCal.topLeftX = leftPaddle.position;
-	    settings.middleLaserCal.topLeftY = rightPaddle.position;
-	  }
-	else if (cornerCounter == 1) // top right
-	  {
-	    settings.middleLaserCal.topRightX = leftPaddle.position;
-	    settings.middleLaserCal.topRightY = rightPaddle.position;
-	  }
-	else if (cornerCounter == 2) // bottom right
-	  {
-	    settings.middleLaserCal.botRightX = leftPaddle.position;
-	    settings.middleLaserCal.botRightY = rightPaddle.position;
-	  }
-	else if (cornerCounter == 3)
-	  {
-	    settings.middleLaserCal.botLeftX = leftPaddle.position;
-	    settings.middleLaserCal.botLeftY = rightPaddle.position;
-	  }
-      }
+    // case ButtonStateNone: 
+    //   {
+    //     if (cornerCounter == 0) // top left
+    //       {
+    //         settings.middleLaserCal.topLeftX = leftPaddle.position;
+    //         settings.middleLaserCal.topLeftY = rightPaddle.position;
+    //       }
+    //     else if (cornerCounter == 1) // top right
+    //       {
+    //         settings.middleLaserCal.topRightX = leftPaddle.position;
+    //         settings.middleLaserCal.topRightY = rightPaddle.position;
+    //       }
+    //     else if (cornerCounter == 2) // bottom right
+    //       {
+    //         settings.middleLaserCal.botRightX = leftPaddle.position;
+    //         settings.middleLaserCal.botRightY = rightPaddle.position;
+    //       }
+    //     else if (cornerCounter == 3)
+    //       {
+    //         settings.middleLaserCal.botLeftX = leftPaddle.position;
+    //         settings.middleLaserCal.botLeftY = rightPaddle.position;
+    //       }
+    //   }
     case ButtonStateLeft:
       {
 	if (cornerCounter == 0) // top left
 	  {
+            leftPaddle.position = settings.leftLaserCal.topLeftX;
+	    rightPaddle.position = settings.leftLaserCal.topLeftY;
+            
 	    settings.leftLaserCal.topLeftX = leftPaddle.position;
 	    settings.leftLaserCal.topLeftY = rightPaddle.position;
 	  }
 	else if (cornerCounter == 1) // top right
 	  {
+            leftPaddle.position = settings.leftLaserCal.topRightX;
+	    rightPaddle.position = settings.leftLaserCal.topRightY;
+            
 	    settings.leftLaserCal.topRightX = leftPaddle.position;
 	    settings.leftLaserCal.topRightY = rightPaddle.position;
 	  }
 	else if (cornerCounter == 2) // bot right
 	  {
+            leftPaddle.position = settings.leftLaserCal.botRightX;
+	    rightPaddle.position = settings.leftLaserCal.botRightY;
+            
 	    settings.leftLaserCal.botRightX = leftPaddle.position;
 	    settings.leftLaserCal.botRightY = rightPaddle.position;
 	  }
 	else if (cornerCounter == 3)
 	  {
+            leftPaddle.position = settings.leftLaserCal.botRightX;
+	    rightPaddle.position = settings.leftLaserCal.botRightY;
+            
 	    settings.leftLaserCal.botLeftX = leftPaddle.position;
 	    settings.leftLaserCal.botLeftY = rightPaddle.position;
 	  }
@@ -365,7 +413,6 @@ void Engine::RunHomographyCalibration()
       {
 	cornerCounter++;
       }
-    
     }
 }
 
@@ -422,6 +469,7 @@ void Engine::RunViewCalibration()
          }
          break;
    }
+
 }
 
 
