@@ -65,7 +65,7 @@ private:
    void LoadSettings();
    void StoreSettings();
 
-   void CalcHomographyMatrix();
+   void CalcHomographyMatrix(Model::LaserCalibration laserCal);
 };
 
 #endif  // __engine_h__

@@ -60,7 +60,7 @@ void Engine::Update(void)
       case Model::GameStateCalibrateView:
          RunViewCalibration();
          
-         CalcHomographyMatrix();
+         CalcHomographyMatrix(settings.leftLaserCal);
          break;
 
       case Model::GameStateCalibrateHomography:
@@ -832,7 +832,7 @@ void Engine::PrintBallCoords()
    Serial.println(")");
 }
 
-void Engine::CalcHomographyMatrix(){
+void Engine::CalcHomographyMatrix(Model::LaserCalibration laserCal){
   // game coords, starting bottom left, go clockwise
   int32_t x1 = settings.display.xMin;
   int32_t x2 = x1;
@@ -844,14 +844,14 @@ void Engine::CalcHomographyMatrix(){
   int32_t y4 = settings.display.yMin;
 
   // servo coords
-  int32_t u1 = settings.middleLaserCal.botLeftX; 
-  int32_t u2 = settings.middleLaserCal.topLeftX;
-  int32_t u3 = settings.middleLaserCal.topRightX;
-  int32_t u4 = settings.middleLaserCal.botRightX;
-  int32_t v1 = settings.middleLaserCal.botLeftY;
-  int32_t v2 = settings.middleLaserCal.topLeftY;
-  int32_t v3 = settings.middleLaserCal.topRightY;
-  int32_t v4 = settings.middleLaserCal.botRightY;
+  int32_t u1 = laserCal.botLeftX; 
+  int32_t u2 = laserCal.topLeftX;
+  int32_t u3 = laserCal.topRightX;
+  int32_t u4 = laserCal.botRightX;
+  int32_t v1 = laserCal.botLeftY;
+  int32_t v2 = laserCal.topLeftY;
+  int32_t v3 = laserCal.topRightY;
+  int32_t v4 = laserCal.botRightY;
 
   Serial.println(x1);
   Serial.println(x2);
@@ -869,8 +869,6 @@ void Engine::CalcHomographyMatrix(){
   Serial.println(v2);
   Serial.println(v3);
   Serial.println(v4);
-  
-
   
 
   mtx_type p[9][9];
@@ -978,7 +976,6 @@ void Engine::CalcHomographyMatrix(){
   p[8][7] = 0;
   p[8][8] = 1;
 
-
   Matrix.Transpose((mtx_type*)p, 9, 9, (mtx_type*) p_T);
 
   mtx_type C[9][9];
@@ -992,12 +989,9 @@ void Engine::CalcHomographyMatrix(){
   Matrix.Print((mtx_type*)p_T, 9, 9, "p_T");
   Matrix.Print((mtx_type*)q, 9, 1, "q");
   Matrix.Print((mtx_type*)C, 9, 9, "C");
-
   
   Matrix.Invert((mtx_type*)C, 9); // wow this library is bad
 
-
-  
   mtx_type E[9][1];
   Matrix.Multiply((mtx_type*)C, (mtx_type*)D, 9, 9, 1, (mtx_type*)E);
 
@@ -1007,17 +1001,17 @@ void Engine::CalcHomographyMatrix(){
   Matrix.Print((mtx_type*)D, 9, 1, "D");
   Matrix.Print((mtx_type*)E, 9, 1, "E");
 
-
   mtx_type H[3][3];
-  H[0][0] = E[0][0];
-  H[0][1] = E[1][0];
-  H[0][2] = E[2][0];
-  H[1][0] = E[3][0];
-  H[1][1] = E[4][0];
-  H[1][2] = E[5][0];
-  H[2][0] = E[6][0];
-  H[2][1] = E[7][0];
-  H[2][2] = E[8][0];
+  
+  laserCal.H[0][0] = E[0][0];
+  laserCal.H[0][1] = E[1][0];
+  laserCal.H[0][2] = E[2][0];
+  laserCal.H[1][0] = E[3][0];
+  laserCal.H[1][1] = E[4][0];
+  laserCal.H[1][2] = E[5][0];
+  laserCal.H[2][0] = E[6][0];
+  laserCal.H[2][1] = E[7][0];
+  laserCal.H[2][2] = E[8][0];
 
   Matrix.Print((mtx_type*)H, 3, 3, "H");
 

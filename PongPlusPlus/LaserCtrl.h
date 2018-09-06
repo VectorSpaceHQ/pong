@@ -91,6 +91,9 @@ private:
     * Sets the wait time according to the largest step
     */
    void SetWaitTime(int32_t x, int32_t y);
+
+   // applies the homography matrix to the incoming game coordinates
+   void ApplyHomography(int32_t x, int32_t y);
 };
 
 #endif    // __laser_ctrl_h__

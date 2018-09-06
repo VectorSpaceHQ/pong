@@ -9,6 +9,7 @@
 #define __model_h__
 
 #include <stdint.h>
+#include <MatrixMath.h>
 
 #include "Shape.h"
 
@@ -53,6 +54,7 @@ namespace Model
       int32_t botLeftY;
       int32_t botRightX;
       int32_t botRightY;
+      mtx_type H[3][3]; // homography matrix
 
       LaserCalibration():
          xOffset(0),

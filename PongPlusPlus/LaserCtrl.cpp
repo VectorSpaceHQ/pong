@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <Servo.h>
 #include <stdlib.h>
+#include <MatrixMath.h>
 
 #include "Configs.h"
 #include "LaserCtrl.h"
@@ -273,4 +274,28 @@ void LaserCtrl::Move(Vertex& dest)
 
    SetWaitTime(step.x, step.y);
    SetLaser(destination.draw);
+}
+
+void LaserCtrl::ApplyHomography(int32_t x, int32_t y)
+{
+  mtx_type a[3][1];
+  a[0][0] = x;
+  a[1][0] = y;
+  a[2][0] = 1;
+
+  mtx_type solution[3][1];
+  Matrix.Multiply((mtx_type*)cal.H, (mtx_type*)a, 3, 3, 1, (mtx_type*)solution);
+  Matrix.Print((mtx_type*)solution, 3, 1, "solution");
+
+  int u = solution[0][0];
+  int v = solution[1][0];
+
+  Serial.print("Homography from x,y: ");
+  Serial.print(x);
+  Serial.print(", ");
+  Serial.print(y);
+  Serial.print(" to: ");
+  Serial.print(u);
+  Serial.print(", ");
+  Serial.println(v);
 }
