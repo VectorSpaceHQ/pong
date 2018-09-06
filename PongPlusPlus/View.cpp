@@ -234,15 +234,14 @@ void View::SetupGameReady(void)
                               settings.display.xMax,
                               settings.display.yMax);
 
-   Serial.println(settings.display.xMin);
-   Serial.println(settings.display.xMax);
-   Serial.println(settings.display.yMin);
-   Serial.println(settings.display.yMax);
-   delay(5000);
 
    // For now, set the Lasers to the same scale as the game
    uint32_t paddleScale = gameStatus.leftPaddleShape.scale;
    uint32_t ballScale = gameStatus.ballShape.scale;
+
+   // Reset ball's position to center
+   gameStatus.ballShape.position.x = 0;
+   gameStatus.ballShape.position.y = 0;
 
    // Stop the ball laser from running its shape and turn it off
    // Since it's not shown in the ready state
@@ -303,13 +302,16 @@ void View::DisplayGamePlay(void)
 void View::SetupGameOver(void)
 {
    uint32_t    paddleScale    = SCORE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100;
-   CoordType   leftScoreLoc   = settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 4;
-   CoordType   rightScoreLoc  = settings.display.xMin + 3 * (settings.display.xMax - settings.display.xMin) / 4;
+   CoordType   leftScoreLoc   = settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 6;
+   CoordType   rightScoreLoc  = settings.display.xMin + 5 * (settings.display.xMax - settings.display.xMin) / 6;
+   Serial.println(paddleScale);
+   paddleScale = 4;
+   delay(1000);
 
    // Set up the ball shape to be a hyphen
    gameStatus.ballShape.Reset();
-   gameStatus.ballShape.AddVertex(-1, 0, true);
-   gameStatus.ballShape.AddVertex( 1, 0, true);
+   gameStatus.ballShape.AddVertex(-25, 0, true);
+   gameStatus.ballShape.AddVertex( 25, 0, true);
    ballLaser.UpdateShape(1, true, true);
    ballLaser.SetPosition((settings.display.xMin + settings.display.xMax) / 2,
                          (settings.display.yMin + settings.display.yMax) / 2);

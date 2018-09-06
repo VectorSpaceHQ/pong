@@ -420,14 +420,14 @@ void Engine::SetupGameReady()
    gameStatus.rightPaddleShape.Scale(CoordsWorld, paddleScale);
 
    // Paddles are at a fixed horizontal location
-   int16_t  oneQuarter = gameWidth / 4;
-   gameStatus.leftPaddleShape.position.x  = -oneQuarter;
-   gameStatus.rightPaddleShape.position.x =  oneQuarter;
+   int16_t  paddlePos = 8 * gameWidth / 9;
+   gameStatus.leftPaddleShape.position.x  = -paddlePos;
+   gameStatus.rightPaddleShape.position.x =  paddlePos;
    gameStatus.leftPaddleShape.position.y  =  0;
    gameStatus.rightPaddleShape.position.y =  0;
 
-   Serial.print("oneQuarter, ");
-   Serial.println(oneQuarter);
+   Serial.print("paddlePos, ");
+   Serial.println(paddlePos);
 
    // Set the limits on the paddleStatus, so we can't overdrive the paddles
    // The paddles should be the same size, so just use the left one as the benchmark
