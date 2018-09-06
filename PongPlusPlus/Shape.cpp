@@ -372,30 +372,6 @@ void Shape::CreateShape(int numeral)
    SetExtremeVertices();
 }
 
-void Shape::Reposition(void)
-{
-  int32_t radius = Height() / 2;
-
-  leftMostVertex.x = position.x - radius;
-  rightMostVertex.x = position.x + radius;
-  lowestVertex.x = position.x - radius;
-  highestVertex.x = position.x + radius;
-
-  leftMostVertex.y = position.y - radius;
-  rightMostVertex.y = position.y + radius;
-  lowestVertex.y = position.y + radius;
-  highestVertex.y = position.y - radius;
-
-  // Serial.print("Repositioning: ");
-  // Serial.print(position.x);
-  // Serial.print(", ");
-  // Serial.print(position.y);
-  // Serial.print(", ");
-  // Serial.print(lowestVertex.y);
-  // Serial.print(", ");
-  // Serial.println(highestVertex.y);
-  // delay(3000);
-}
 
 /******************************************************************************
  * Collision detection - Helper algorithms

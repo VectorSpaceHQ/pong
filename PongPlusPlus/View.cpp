@@ -243,6 +243,7 @@ void View::SetupGameReady(void)
    // Not sure why this is needed since Engine::SetupGamePlay attempts
    // to do the same thing, but apparently this makes a difference
    gameStatus.ballShape.position.x = 0;
+   gameStatus.ballShape.position.y = 0;
 
    // Stop the ball laser from running its shape and turn it off
    // Since it's not shown in the ready state

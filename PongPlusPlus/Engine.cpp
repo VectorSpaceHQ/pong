@@ -458,6 +458,7 @@ void Engine::SetupGamePlay()
   delay(1000);
   
    int16_t twoThirdsHeight = 2 * gameHeight / 6;
+   twoThirdsHeight = 0;
    
    // randomSeed(millis());
 
@@ -465,12 +466,14 @@ void Engine::SetupGamePlay()
    if(random(1) == 1)
    {
       // Select top 1/3 (0 + 2/3)
-      gameStatus.ballShape.position.y = twoThirdsHeight;
+      // gameStatus.ballShape.position.y = twoThirdsHeight;
+      gameStatus.ballShape.Move(CoordsWorld, 0, twoThirdsHeight);
    }
    else
    {
       // Select bottom 1/3 (0 - 2/3)
-      gameStatus.ballShape.position.y = -twoThirdsHeight;
+      // gameStatus.ballShape.position.y = -twoThirdsHeight;
+      gameStatus.ballShape.Move(CoordsWorld, 0, -twoThirdsHeight);
    }
 
    // Start the ball in the horizontal center
@@ -500,11 +503,6 @@ void Engine::SetupGamePlay()
       // Up, y is negative
       gameStatus.ballShape.vector.y =  -random(2, 5);
    }
-
-
-   // need to recalculate extreme vertices for the ball after moving its position
-   Serial.println("Setting extreme vertices for ball");
-   gameStatus.ballShape.Reposition();
 
 }
 

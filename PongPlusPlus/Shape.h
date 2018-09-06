@@ -100,8 +100,6 @@ public:
 
    void Log(CoordSet set);
 
-   void Shape::Reposition(void);
-  
 
 private:
    void CopyVertices(const Shape& other);
