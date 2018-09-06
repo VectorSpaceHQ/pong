@@ -8,6 +8,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <stdio.h>
+#include <MatrixMath.h>
 
 #include "Engine.h"
 #include "Model.h"
@@ -58,6 +59,8 @@ void Engine::Update(void)
 
       case Model::GameStateCalibrateView:
          RunViewCalibration();
+         
+         CalcHomographyMatrix();
          break;
 
       case Model::GameStateCalibrateHomography:
@@ -827,4 +830,210 @@ void Engine::PrintBallCoords()
    Serial.print(", ");
    Serial.print(gameStatus.ballShape.highestVertex.y);
    Serial.println(")");
+}
+
+void Engine::CalcHomographyMatrix(){
+  // game coords, starting bottom left, go clockwise
+  int32_t x1 = settings.display.xMin;
+  int32_t x2 = x1;
+  int32_t x3 = settings.display.xMax;
+  int32_t x4 = x3;
+  int32_t y1 = settings.display.yMin;
+  int32_t y2 = settings.display.yMax;
+  int32_t y3 = y2;
+  int32_t y4 = settings.display.yMin;
+
+  // servo coords
+  int32_t u1 = settings.middleLaserCal.botLeftX; 
+  int32_t u2 = settings.middleLaserCal.topLeftX;
+  int32_t u3 = settings.middleLaserCal.topRightX;
+  int32_t u4 = settings.middleLaserCal.botRightX;
+  int32_t v1 = settings.middleLaserCal.botLeftY;
+  int32_t v2 = settings.middleLaserCal.topLeftY;
+  int32_t v3 = settings.middleLaserCal.topRightY;
+  int32_t v4 = settings.middleLaserCal.botRightY;
+
+  Serial.println(x1);
+  Serial.println(x2);
+  Serial.println(x3);
+  Serial.println(x4);  
+  Serial.println(y1);
+  Serial.println(y2);
+  Serial.println(y3);
+  Serial.println(y4);
+  Serial.println(u1);
+  Serial.println(u2);
+  Serial.println(u3);
+  Serial.println(u4);
+  Serial.println(v1);
+  Serial.println(v2);
+  Serial.println(v3);
+  Serial.println(v4);
+  
+
+  
+
+  mtx_type p[9][9];
+  mtx_type q[9];
+  mtx_type h[9];
+  mtx_type p_T[9][9];
+
+  q[0] = 0;
+  q[1] = 0;
+  q[2] = 0;
+  q[3] = 0;
+  q[4] = 0;
+  q[5] = 0;
+  q[6] = 0;
+  q[7] = 0;
+  q[8] = 1;
+
+  p[0][0] = -x1;
+  p[0][1] = -y1;
+  p[0][2] = -1;
+  p[0][3] = 0;
+  p[0][4] = 0;
+  p[0][5] = 0;
+  p[0][6] = x1*u1;
+  p[0][7] = y1*u1;
+  p[0][8] = u1;
+
+  p[1][0] = 0;
+  p[1][1] = 0;
+  p[1][2] = 0;
+  p[1][3] = -x1;
+  p[1][4] = -y1;
+  p[1][5] = -1;
+  p[1][6] = x1*v1;
+  p[1][7] = y1*v1;
+  p[1][8] = v1;
+
+  p[2][0] = -x2;
+  p[2][1] = -y2;
+  p[2][2] = -1;
+  p[2][3] = 0;
+  p[2][4] = 0;
+  p[2][5] = 0;
+  p[2][6] = x2*u2;
+  p[2][7] = y2*u2;
+  p[2][8] = u2;
+
+  p[3][0] = 0;
+  p[3][1] = 0;
+  p[3][2] = 0;
+  p[3][3] = -x2;
+  p[3][4] = -y2;
+  p[3][5] = -1;
+  p[3][6] = x2*v2;
+  p[3][7] = y2*v2;
+  p[3][8] = v2;
+
+  p[4][0] = -x3;
+  p[4][1] = -y3;
+  p[4][2] = -1;
+  p[4][3] = 0;
+  p[4][4] = 0;
+  p[4][5] = 0;
+  p[4][6] = x3*u3;
+  p[4][7] = y3*u3;
+  p[4][8] = u3;
+
+  p[5][0] = 0;
+  p[5][1] = 0;
+  p[5][2] = 0;
+  p[5][3] = -x3;
+  p[5][4] = -y3;
+  p[5][5] = -1;
+  p[5][6] = x3*v3;
+  p[5][7] = y3*v3;
+  p[5][8] = v3;
+
+  p[6][0] = -x4;
+  p[6][1] = -y4;
+  p[6][2] = -1;
+  p[6][3] = 0;
+  p[6][4] = 0;
+  p[6][5] = 0;
+  p[6][6] = x4*u4;
+  p[6][7] = y4*u4;
+  p[6][8] = u4;
+
+  p[7][0] = 0;
+  p[7][1] = 0;
+  p[7][2] = 0;
+  p[7][3] = -x4;
+  p[7][4] = -y4;
+  p[7][5] = -1;
+  p[7][6] = x4*v4;
+  p[7][7] = y4*v4;
+  p[7][8] = v4;
+
+  p[8][0] = 0;
+  p[8][1] = 0;
+  p[8][2] = 0;
+  p[8][3] = 0;
+  p[8][4] = 0;
+  p[8][5] = 0;
+  p[8][6] = 0;
+  p[8][7] = 0;
+  p[8][8] = 1;
+
+
+  Matrix.Transpose((mtx_type*)p, 9, 9, (mtx_type*) p_T);
+
+  mtx_type C[9][9];
+  Matrix.Multiply((mtx_type*)p_T, (mtx_type*)p, 9, 9, 9, (mtx_type*)C);
+
+  mtx_type D[9][9];
+  Matrix.Multiply((mtx_type*)p_T, (mtx_type*)q, 9, 9, 1, (mtx_type*)D);
+
+
+  Matrix.Invert((mtx_type*)C, 9); // wow this library is bad
+
+
+  
+  mtx_type E[9][1];
+  Matrix.Multiply((mtx_type*)C, (mtx_type*)D, 9, 9, 1, (mtx_type*)E);
+
+  // Serial.print(p);
+  Matrix.Print((mtx_type*)p, 9, 9, "p");
+  Matrix.Print((mtx_type*)p_T, 9, 9, "p_T");
+  Matrix.Print((mtx_type*)q, 9, 1, "q");
+  Matrix.Print((mtx_type*)C, 9, 9, "C");
+  Matrix.Print((mtx_type*)D, 9, 1, "D");
+  Matrix.Print((mtx_type*)E, 9, 1, "E");
+
+
+  mtx_type H[3][3];
+  H[0][0] = E[0][0];
+  H[0][1] = E[1][0];
+  H[0][2] = E[2][0];
+  H[1][0] = E[3][0];
+  H[1][1] = E[4][0];
+  H[1][2] = E[5][0];
+  H[2][0] = E[6][0];
+  H[2][1] = E[7][0];
+  H[2][2] = E[8][0];
+
+  Matrix.Print((mtx_type*)H, 3, 3, "H");
+
+
+  int x = 30;
+  int y = 40;
+  
+  mtx_type a[3][1];
+  a[0][0] = x;
+  a[1][0] = y;
+  a[2][0] = 1;
+
+  mtx_type solution[3][1];
+  Matrix.Multiply((mtx_type*)H, (mtx_type*)a, 3, 3, 1, (mtx_type*)solution);
+  Matrix.Print((mtx_type*)solution, 3, 1, "solution");
+  delay(10000);
+
+  // Matrix.Multiply(p_T, p);
+  // Matrix.Print((mtx_type*)w, N, 1, "w");
+
+
+  // h = Matrix.invert(Matrix.transpose(p,9,9) * p) * (Matrix.transpose(p,9,9) * q);
 }

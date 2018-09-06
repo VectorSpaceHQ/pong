@@ -64,6 +64,8 @@ private:
     
    void LoadSettings();
    void StoreSettings();
+
+   void CalcHomographyMatrix();
 };
 
 #endif  // __engine_h__
