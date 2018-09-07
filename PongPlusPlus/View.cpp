@@ -170,6 +170,8 @@ void View::SetupViewCalibration(void)
    gameStatus.ballShape.Reset();
    gameStatus.ballShape.AddVertex(settings.display.xMin, settings.display.yMin, true);
    gameStatus.ballShape.AddVertex(settings.display.xMax, settings.display.yMin, true);
+   gameStatus.ballShape.AddVertex(settings.display.xMax, settings.display.yMax, true);
+   gameStatus.ballShape.AddVertex(settings.display.xMin, settings.display.yMax, true);
    ballLaser.UpdateShape(1, true, true);
    ballLaser.SetPosition(0, 0);
    ballLaser.Start();
@@ -271,6 +273,31 @@ void View::SetupGamePlay(void)
 
 void View::DisplayGamePlay(void)
 {
+  // if(millis()%100==0){
+  //   Serial.print("LeftPaddle x, xmin, xmax, ymin, ymax = (");
+  // Serial.print(gameStatus.leftPaddleShape.position.x);
+  // Serial.print(", ");
+  // Serial.print(gameStatus.leftPaddleShape.leftMostVertex.x);
+  // Serial.print(", ");
+  // Serial.print(gameStatus.leftPaddleShape.rightMostVertex.x);
+  // Serial.print(", ");
+  // Serial.print(gameStatus.leftPaddleShape.lowestVertex.y);
+  // Serial.print(", ");
+  // Serial.print(gameStatus.leftPaddleShape.highestVertex.y);
+  // Serial.println(")");
+  //   Serial.print("RightPaddle x, xmin, xmax, ymin, ymax = (");
+  // Serial.print(gameStatus.rightPaddleShape.position.x);
+  // Serial.print(", ");
+  // Serial.print(gameStatus.rightPaddleShape.leftMostVertex.x);
+  // Serial.print(", ");
+  // Serial.print(gameStatus.rightPaddleShape.rightMostVertex.x);
+  // Serial.print(", ");
+  // Serial.print(gameStatus.rightPaddleShape.lowestVertex.y);
+  // Serial.print(", ");
+  // Serial.print(gameStatus.rightPaddleShape.highestVertex.y);
+  // Serial.println(")");
+  // }
+  
     
    // Move the lasers
    leftPaddleLaser.SetPosition(gameStatus.leftPaddleShape.position.x,

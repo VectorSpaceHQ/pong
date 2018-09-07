@@ -32,6 +32,8 @@ LaserCtrl::LaserCtrl(LaserConf&                conf,
    y(SERVO_MID_Y),
    oldX(SERVO_MID_X),
    oldY(SERVO_MID_Y),
+   xPin(conf.xPin),
+   yPin(conf.yPin),
    hskew(0),
    vskew(0),
    laserOn(false),
@@ -131,12 +133,18 @@ void LaserCtrl::Move(CoordType atX, CoordType atY)
   
    SetPosition(atX, atY);
 
+
+   
    if (x != oldX){
      xServo.writeMicroseconds(x);
      oldX = x;
    }
+   if (y != oldY){
+     yServo.writeMicroseconds(y);
+     oldY = y;
+   }
    
-   yServo.writeMicroseconds(y);
+   
 }
 
 
@@ -204,8 +212,23 @@ void LaserCtrl::Update()
    currentPosition.x += stepX;
    currentPosition.y += stepY;
 
-   xServo.writeMicroseconds(currentPosition.x);
-   yServo.writeMicroseconds(currentPosition.y);
+   if (currentPosition.x != oldX){
+     xServo.writeMicroseconds(currentPosition.x);
+     oldX = x;
+   }
+   if (currentPosition.y != oldY){
+     yServo.writeMicroseconds(currentPosition.y);
+     oldY = currentPosition.y;
+
+     // if(millis()%10==0){
+     //   Serial.print("writing to servo, ");
+     //   Serial.print(name);
+     //   Serial.print(", ");
+     //   Serial.println(currentPosition.y);
+     // }
+     
+   }
+   
 
 }
 

@@ -412,8 +412,9 @@ void Engine::SetupGameReady()
    int16_t  minLimit = settings.display.yMin + (gameStatus.leftPaddleShape.Height() / 2);
    int16_t  maxLimit = settings.display.yMax - (gameStatus.leftPaddleShape.Height() / 2);
 
-   leftPaddle.SetLimits(minLimit+1, maxLimit-1);
-   rightPaddle.SetLimits(minLimit+1, maxLimit-1);
+   int offset = 0; // fudge factor, shouldn't be necessary
+   leftPaddle.SetLimits(minLimit-offset, maxLimit+offset);
+   rightPaddle.SetLimits(minLimit-offset, maxLimit+offset);
 
    Serial.print("Paddle Limits: ");
    Serial.print(minLimit);
@@ -500,10 +501,8 @@ void Engine::RunGamePlay()
    
    int ballXoffset = 25;
 
-   Serial.print("Engine Game Play, ball coords,  ");
-   Serial.print(gameStatus.ballShape.position.x);
-   Serial.print(", ");
-   Serial.println(gameStatus.ballShape.position.y);
+   PrintBallCoords();
+   PrintLeftPaddleCoords();
    
 
    // Move the paddles
@@ -675,7 +674,7 @@ void Engine::ChangeGameState(Model::GameState newState)
          Serial.println(gameStatus.rightPaddleScore);
          break;
    }
-   delay(400); // button debounce
+   // delay(400); // button debounce
 }
 
 

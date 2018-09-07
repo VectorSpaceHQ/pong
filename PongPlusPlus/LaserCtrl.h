@@ -63,6 +63,8 @@ private:
    uint32_t                   y;
    uint32_t                   oldX;
    uint32_t                   oldY;
+  uint8_t                    xPin;
+  uint8_t                    yPin;
    uint32_t                   hskew;
    uint32_t                   vskew;
    bool                       laserOn;
