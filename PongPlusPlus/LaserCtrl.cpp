@@ -30,6 +30,8 @@ LaserCtrl::LaserCtrl(LaserConf&                conf,
    cal(_cal),
    x(SERVO_MID_X),
    y(SERVO_MID_Y),
+   oldX(SERVO_MID_X),
+   oldY(SERVO_MID_Y),
    hskew(0),
    vskew(0),
    laserOn(false),
@@ -129,7 +131,11 @@ void LaserCtrl::Move(CoordType atX, CoordType atY)
   
    SetPosition(atX, atY);
 
-   xServo.writeMicroseconds(x);
+   if (x != oldX){
+     xServo.writeMicroseconds(x);
+     oldX = x;
+   }
+   
    yServo.writeMicroseconds(y);
 }
 

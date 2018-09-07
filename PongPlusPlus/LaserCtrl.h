@@ -61,6 +61,8 @@ private:
    Model::LaserCalibration&   cal;
    uint32_t                   x;
    uint32_t                   y;
+   uint32_t                   oldX;
+   uint32_t                   oldY;
    uint32_t                   hskew;
    uint32_t                   vskew;
    bool                       laserOn;

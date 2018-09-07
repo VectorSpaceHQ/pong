@@ -15,7 +15,7 @@
 #include <EEPROM.h>
 
 // TODO: What should be the scale of the paddles?
-#define PADDLE_SCALE_PERCENT        (10)           // Percent of the height of the paddle
+#define PADDLE_SCALE_PERCENT        (8)           // Percent of the height of the paddle
 #define BALL_SCALE_PERCENT          (1)            // Percent of the height of the ball
 
 #define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
@@ -87,7 +87,7 @@ void Engine::LoadSettings()
    settings.leftLaserCal.yOffset = -157;
    settings.middleLaserCal.xOffset = -138;
    settings.middleLaserCal.yOffset = -196;
-   settings.rightLaserCal.xOffset = -25;
+   settings.rightLaserCal.xOffset = -47;
    settings.rightLaserCal.yOffset = -209;
 
    settings.display.xMin = -122;
@@ -429,7 +429,6 @@ void Engine::SetupGameReady()
 void Engine::SetupGamePlay()
 {
   Serial.println("SetupGamePlay");
-   
 
    // Paddles are at a fixed horizontal location
    gameStatus.leftPaddleShape.position.x  =  settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 9;
@@ -474,6 +473,23 @@ void Engine::SetupGamePlay()
       // Up, y is negative
       gameStatus.ballShape.vector.y =  -random(2, 6);
    }
+
+
+
+   // Temporary fix until Alan can address.
+   // Always seems to be a mismatch between the ballshape's position and the laser's position
+   // so I'm forcing them to be the same, predictable value
+   gameStatus.ballShape.position.x = (settings.display.xMin + settings.display.xMax) / 2;
+   gameStatus.ballShape.position.y = (settings.display.yMin + settings.display.yMax) / 2;
+   // Serial.print("Setup GamePlay ball coords,  ");
+   // Serial.print(gameStatus.ballShape.position.x);
+   // Serial.print(", ");
+   // Serial.print(gameStatus.ballShape.position.y);
+   // Serial.print(", ");
+   // Serial.print(gameStatus.ballShape.vector.x);
+   // Serial.print(", ");
+   // Serial.println(gameStatus.ballShape.vector.y);
+   // delay(4000);
    
 }
 
@@ -483,6 +499,12 @@ void Engine::RunGamePlay()
    Vertex      foundVertex;
    
    int ballXoffset = 25;
+
+   Serial.print("Engine Game Play, ball coords,  ");
+   Serial.print(gameStatus.ballShape.position.x);
+   Serial.print(", ");
+   Serial.println(gameStatus.ballShape.position.y);
+   
 
    // Move the paddles
    // TODO: We probably need to convert the position into an actual location
@@ -653,7 +675,7 @@ void Engine::ChangeGameState(Model::GameState newState)
          Serial.println(gameStatus.rightPaddleScore);
          break;
    }
-   delay(800); // button debounce
+   delay(400); // button debounce
 }
 
 

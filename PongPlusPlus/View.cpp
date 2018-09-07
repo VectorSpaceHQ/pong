@@ -216,22 +216,30 @@ void View::DisplayViewCalibration(void)
  ******************************************************************************/
 void View::SetupGameReady(void)
 {
+  Serial.println("View::SetupGameReady");
    // For now, set the Lasers to the same scale as the game
    uint32_t paddleScale = gameStatus.leftPaddleShape.scale;
    uint32_t ballScale = gameStatus.ballShape.scale;
 
-   // Serial.print("SetupGameReady leftpaddle pos,  ");
-   // Serial.print(gameStatus.leftPaddleShape.position.x);
-   // Serial.print(", ");
-   // Serial.print(gameStatus.leftPaddleShape.position.y);
-   // Serial.print(", ");
+
+   // Serial.print("Setup View ball coords,  ");
    // Serial.print(gameStatus.ballShape.position.x);
    // Serial.print(", ");
-   // Serial.println(gameStatus.ballShape.position.y);
-   // delay(10000);
+   // Serial.print(gameStatus.ballShape.position.y);
+   // Serial.print(", ");
+   // Serial.print(gameStatus.ballShape.vector.x);
+   // Serial.print(", ");
+   // Serial.println(gameStatus.ballShape.vector.y);
+   // delay(4000);
 
-   gameStatus.ballShape.position.x = -20;
-   gameStatus.ballShape.position.y = 0;
+   // testing--------------------
+   // gameStatus.ballShape.position.x = -20;
+   // gameStatus.ballShape.position.y = 0;
+   gameStatus.ballShape.position.x = (settings.display.xMin + settings.display.xMax) / 2;
+   gameStatus.ballShape.position.y = (settings.display.yMin + settings.display.yMax) / 2;
+   // ballLaser.SetPosition(gameStatus.ballShape.position.x,
+   //                       gameStatus.ballShape.position.y);
+   //---------------------------------
 
    // Stop the ball laser from running its shape and turn it off
    // Since it's not shown in the ready state
@@ -263,6 +271,7 @@ void View::SetupGamePlay(void)
 
 void View::DisplayGamePlay(void)
 {
+    
    // Move the lasers
    leftPaddleLaser.SetPosition(gameStatus.leftPaddleShape.position.x,
                                gameStatus.leftPaddleShape.position.y);
