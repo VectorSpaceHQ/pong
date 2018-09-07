@@ -34,7 +34,7 @@ Engine::Engine(Model::Settings&           _settings,
    buttonState(ButtonStateReset)
 {
    Serial.println("Engine Up");
-   randomSeed(micros());
+   randomSeed(analogRead(A0));
 }
 
 
@@ -436,7 +436,7 @@ void Engine::SetupGamePlay()
    gameStatus.rightPaddleShape.position.x = settings.display.xMin + (8 * (settings.display.xMax - settings.display.xMin) / 9);
 
    // Randomly select top third or bottom third
-   if(random(1) == 1)
+   if(random(2) == 1)
    {
       // Select top 1/3
       gameStatus.ballShape.position.y = settings.display.yMin + 2 * (settings.display.yMax - settings.display.yMin) / 3;
@@ -464,16 +464,17 @@ void Engine::SetupGamePlay()
    }
 
    // Randomize up/down
-   if(random(1) == 1)
+   if(random(2) == 1)
    {
       // Down, y is positive
-      gameStatus.ballShape.vector.y = random(2, 5);   // Slope is random of 2/2, 3/2, 4/2, or 5/2
+      gameStatus.ballShape.vector.y = random(2, 6);   // Slope is random of 2/2, 3/2, 4/2, or 5/2
    }
    else
    {
       // Up, y is negative
-      gameStatus.ballShape.vector.y =  -random(2, 5);
+      gameStatus.ballShape.vector.y =  -random(2, 6);
    }
+   
 }
 
 
