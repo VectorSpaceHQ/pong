@@ -298,4 +298,5 @@ void LaserCtrl::ApplyHomography(int32_t x, int32_t y)
   Serial.print(u);
   Serial.print(", ");
   Serial.println(v);
+  delay(5000);
 }

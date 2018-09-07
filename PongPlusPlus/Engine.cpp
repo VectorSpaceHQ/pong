@@ -98,6 +98,7 @@ void Engine::Update(void)
          break;
 
       case Model::GameStateReady:
+        delay(20000);
          ReadyButtonChange();
          break;
 
@@ -306,7 +307,7 @@ void Engine::ViewCalibrationButtonChange()
          // If both buttons are pressed, end configuration
          case ButtonStateBoth:
             ViewCalibrationComplete();
-            ChangeGameState(Model::GameStateReady);
+            ChangeGameState(Model::GameStateCalibrateHomography);
             break;
       }
 
@@ -468,6 +469,7 @@ void Engine::RunViewCalibration()
             gameStatus.viewSettingsChanged = true;
          }
          break;
+     
    }
 
 }
