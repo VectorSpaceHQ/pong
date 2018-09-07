@@ -166,6 +166,7 @@ void View::SetupViewCalibration(void)
    Serial.print(settings.display.yMax);
    Serial.println(" )");
 
+   
    // Set up the ball shape to be a horizontal line at the bottom
    gameStatus.ballShape.Reset();
    gameStatus.ballShape.AddVertex(settings.display.xMin, settings.display.yMin, true);
@@ -196,6 +197,7 @@ void View::SetupViewCalibration(void)
 
 void View::DisplayViewCalibration(void)
 {
+  
    // If the view settings have changed, we need to update the size/location of the shapes
    if(gameStatus.viewSettingsChanged)
    {
@@ -236,11 +238,11 @@ void View::SetupGameReady(void)
 
    // testing--------------------
    // gameStatus.ballShape.position.x = -20;
-   // gameStatus.ballShape.position.y = 0;
+   // gameStatus.ballShape.position.y = 10;
    gameStatus.ballShape.position.x = (settings.display.xMin + settings.display.xMax) / 2;
-   gameStatus.ballShape.position.y = (settings.display.yMin + settings.display.yMax) / 2;
-   // ballLaser.SetPosition(gameStatus.ballShape.position.x,
-   //                       gameStatus.ballShape.position.y);
+   gameStatus.ballShape.position.y = (settings.display.yMin + settings.display.yMax) / 2 - 10;
+   ballLaser.SetPosition(gameStatus.ballShape.position.x,
+                         gameStatus.ballShape.position.y);
    //---------------------------------
 
    // Stop the ball laser from running its shape and turn it off
