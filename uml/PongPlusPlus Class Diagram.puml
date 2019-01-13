@@ -10,16 +10,67 @@ skinparam class {
 hide enum methods
 hide circle
 
+skinparam note {
+   backgroundcolor   Ivory/White
+   bordercolor       black
+}
+
 package "Pong Plus Plus Classes" <<Frame>> {
+
+class Pong {
+}
 
 class Engine {
 }
 
 
+package "Controller" <<Frame>> {
+   
+   class Controller {
+   }
+
+
+   class PaddleDriver {
+      - DT: uint8_t
+      - CLK: uint8_t
+      - buttonPin: uint8_t
+      - hwStatus: PaddleStatus
+      
+      - Update(): void
+      - UpdatePaddleStatus(): void
+      - CheckButton(): void
+      - CheckRotaryEncoder(): void
+   }
+
+
+   class PaddleStatus <<struct>> {
+      + buttonPressed: bool
+      + buttonStateChanged: bool
+      + buttonTime: uint32_t
+      + position: int16_t
+      
+      - minPosition: uint16_t
+      - maxPosition: uint16_t
+     
+      + Increment(value: int16_t): void 
+      + SetLimits(min: int16_t, max: int16_t): void
+   }
+}
+
 package "Model" <<Frame>> {
    class GameStatus <<struct>> {
+      + gameState: GameState
+      + gameStateChanged: bool
+      + viewSettingsChanged: bool
+      + leftPaddleScore: Score
+      + rightPaddleScore: Score
+      + whoseServe: WhoServes
+      
+      + leftPaddleShape: Shape
+      + rightPaddleShape: Shape
+      + ballPaddleShape: Shape
    }
-   
+
    enum GameState <<enum>> {
       GameStateInit,
       GameStateCalibrateLasers,
@@ -28,14 +79,99 @@ package "Model" <<Frame>> {
       GameStatePlay,
       GameStateGameOver
    }
-   
-   class Shape {
+
+   enum WhoServes <<enum>> {
+      LeftPlayerServes,
+      RightPlayerServes,
+      EitherPlayerServes
    }
-  
+
+
+   class Vertex {
+      + x: CoordType
+      + y: CoordType
+      + draw: bool
+
+      + Log(): void
+   }
+
+   enum CoordSet <<enum>> {
+      CoordsWorld
+      CoordsView
+   }
+
+   class Shape {
+      + scale: uint16_t
+      + viewScale: uint16_t
+      + numVertices: uint32_t
+      + vertices: Vertex[MAX_VERTICES]
+      + viewVertices: Vertex[MAX_VERTICES]
+
+      + position: Vertex
+      + vector: Vertex
+      + acceleration: uint32_t
+
+      + highestVertex: Vertex
+      + lowestVertex: Vertex
+      + leftMostVertex: Vertex
+      + rightMostVertex: Vertex
+
+      + Reset(): void
+      + CreateShape(numeral int): void
+      + AddVertex(x: CoordType, y: CoordType, draw: bool): void
+      + CopyVerticesToView(): void
+
+      + Move(set: CoordSet, diffX: CoordType, diffY: CoordType): void
+      + Scale(set: CoordSet, scale: CoorType): void
+      + SetOrientation(set: CoordSet, scaleX: CoordType, scaleY: CoordType): void
+      + Add(set: CoordSet, x: CoordType, y: CoordType)
+
+      + CheckTop(top: CoorType, foundVertex: Vertex&): bool
+      + CheckBottom(bottom: CoorType, foundVertex: Vertex&): bool
+      + CheckLeft(left: CoorType, foundVertex: Vertex&): bool
+      + CheckRight(right: CoorType, foundVertex: Vertex&): bool
+      
+      + Height(): int16_t
+      + Width(): int16_t
+   }
+
+   class Settings <<struct>> {
+      + checksum: uint8_t
+      + leftLaserCal: LaserCalibration
+      + middleLaserCal: LaserCalibration
+      + rightLaserCal: LaserCalibration
+      + display: DisplaySettings
+   }
+
+   class LaserCalibration <<struct>> {
+      + xOffset: int32_t
+      + yOffset: int32_t
+      + xOrientation: int32_t
+      + yOrientation: int32_t
+   }
+
+   class DisplaySettings <<struct>> {
+      + xMin: int32_t
+      + yMin: int32_t
+      + xMax: int32_t
+      + yMax: int32_t
+      + hSkew: uint32_t
+      + vSkew: uint32_t
+   }
+
+   Settings *-- "3" LaserCalibration
+   Settings *-- DisplaySettings
+
    GameStatus *-- "3" Shape
    GameStatus *-- GameState
-}
+   GameStatus *-- WhoServes
 
+   note bottom of Shape
+      To save code space, Shape maintains two sets
+      of vertices: 1) World (for the game engine)
+      and 2) View (for the view).
+   end note
+}
 
 package "View" <<Frame>> {
    class View {
@@ -45,26 +181,23 @@ package "View" <<Frame>> {
    }
    
    View *-- "3" LaserDriver
-   LaserDriver -- Shape
+   LaserDriver --> Shape
 }
 
-
-class Controller {
-}
-
-
-class PaddleDriver {
-}
-
-
-class PaddleStatus <<struct>> {
-}
-
+Pong *-- View
+Pong *-- Engine
+Pong *-- Controller
 Controller *-- "2" PaddleDriver
+Controller *-- "2" PaddleStatus
 PaddleDriver -- "Updates" PaddleStatus
 Engine -down-> "Reads" PaddleStatus
 Engine -down-> "Updates" GameStatus 
 View -left-> "Reads" GameStatus 
+
+note right of Pong
+   The Pong class contains a
+   Controller, Engine, and View
+end note
 
 }
 
