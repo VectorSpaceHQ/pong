@@ -303,25 +303,24 @@ void LaserCtrl::Move(Vertex& dest)
    step.y = diffY / shape.scale;
 
    if (diffX > 0)
-     {
-       step.x = max(step.x, 1);
-     }
+   {
+      step.x = max(step.x, 1);
+   }
    else if (diffX < 0)
-     {
-       step.x = min(step.x, -1);
-     }
+   {
+      step.x = min(step.x, -1);
+   }
 
    if (diffY > 0)
-     {
-       step.y = max(step.y, 1);
-     }
+   {
+      step.y = max(step.y, 1);
+   }
    else if (diffY < 0)
-     {
-       step.y = min(step.y, -1);
-     }
+   {
+      step.y = min(step.y, -1);
+   }
 
    step.draw = destination.draw;
-
 
    // if(name == "LeftPaddle"){
    //   Serial.print("LaserCTRL::MOVE step.y, ");

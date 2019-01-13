@@ -12,6 +12,10 @@
 #include <stdint.h>
 
 
+/******************************************************************************
+ * The TimedInterval base class calls the Update method on its derived
+ * class whenever the configured amount of time has elapsed
+ ******************************************************************************/
 class TimedInterval
 {
 public:

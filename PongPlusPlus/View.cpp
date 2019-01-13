@@ -38,7 +38,7 @@ View::View(Model::Settings&         _settings,
    // Wait for our lasers to get to their initial position
    delay(100);
 
-   // Set Laser orientation
+   // Set Laser orientation (i.e. Is it inverted?)
    settings.leftLaserCal.xOrientation = -1;
    // settings.leftLaserCal.yOrientation = -1;
 
@@ -197,7 +197,6 @@ void View::SetupViewCalibration(void)
 
 void View::DisplayViewCalibration(void)
 {
-  
    // If the view settings have changed, we need to update the size/location of the shapes
    if(gameStatus.viewSettingsChanged)
    {
@@ -275,31 +274,31 @@ void View::SetupGamePlay(void)
 
 void View::DisplayGamePlay(void)
 {
-  // if(millis()%100==0){
-  //   Serial.print("LeftPaddle x, xmin, xmax, ymin, ymax = (");
-  // Serial.print(gameStatus.leftPaddleShape.position.x);
-  // Serial.print(", ");
-  // Serial.print(gameStatus.leftPaddleShape.leftMostVertex.x);
-  // Serial.print(", ");
-  // Serial.print(gameStatus.leftPaddleShape.rightMostVertex.x);
-  // Serial.print(", ");
-  // Serial.print(gameStatus.leftPaddleShape.lowestVertex.y);
-  // Serial.print(", ");
-  // Serial.print(gameStatus.leftPaddleShape.highestVertex.y);
-  // Serial.println(")");
-  //   Serial.print("RightPaddle x, xmin, xmax, ymin, ymax = (");
-  // Serial.print(gameStatus.rightPaddleShape.position.x);
-  // Serial.print(", ");
-  // Serial.print(gameStatus.rightPaddleShape.leftMostVertex.x);
-  // Serial.print(", ");
-  // Serial.print(gameStatus.rightPaddleShape.rightMostVertex.x);
-  // Serial.print(", ");
-  // Serial.print(gameStatus.rightPaddleShape.lowestVertex.y);
-  // Serial.print(", ");
-  // Serial.print(gameStatus.rightPaddleShape.highestVertex.y);
-  // Serial.println(")");
-  // }
-  
+//   if(millis()%100==0)
+//   {
+//      Serial.print("LeftPaddle x, xmin, xmax, ymin, ymax = (");
+//      Serial.print(gameStatus.leftPaddleShape.position.x);
+//      Serial.print(", ");
+//      Serial.print(gameStatus.leftPaddleShape.leftMostVertex.x);
+//      Serial.print(", ");
+//      Serial.print(gameStatus.leftPaddleShape.rightMostVertex.x);
+//      Serial.print(", ");
+//      Serial.print(gameStatus.leftPaddleShape.lowestVertex.y);
+//      Serial.print(", ");
+//      Serial.print(gameStatus.leftPaddleShape.highestVertex.y);
+//      Serial.println(")");
+//      Serial.print("RightPaddle x, xmin, xmax, ymin, ymax = (");
+//      Serial.print(gameStatus.rightPaddleShape.position.x);
+//      Serial.print(", ");
+//      Serial.print(gameStatus.rightPaddleShape.leftMostVertex.x);
+//      Serial.print(", ");
+//      Serial.print(gameStatus.rightPaddleShape.rightMostVertex.x);
+//      Serial.print(", ");
+//      Serial.print(gameStatus.rightPaddleShape.lowestVertex.y);
+//      Serial.print(", ");
+//      Serial.print(gameStatus.rightPaddleShape.highestVertex.y);
+//      Serial.println(")");
+//   }
     
    // Move the lasers
    leftPaddleLaser.SetPosition(gameStatus.leftPaddleShape.position.x,

@@ -10,7 +10,10 @@
 
 #include <stdint.h>
 
-
+/******************************************************************************
+ * The ScheduledInterval base class calls the Update method on its derived
+ * class every time the interval count gets to the configured value
+ ******************************************************************************/
 class ScheduledInterval
 {
 public:

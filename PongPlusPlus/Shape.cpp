@@ -73,8 +73,8 @@ void Shape::Scale(CoordSet set, CoordType _scale)
 
       for(uint32_t cntr = 0; cntr < numVertices; cntr++)
       {
-	vertices[cntr].x *= scale;
-	vertices[cntr].y *= scale;
+         vertices[cntr].x *= scale;
+         vertices[cntr].y *= scale;
       }
 
       SetExtremeVertices();
@@ -85,8 +85,8 @@ void Shape::Scale(CoordSet set, CoordType _scale)
 
       for(uint32_t cntr = 0; cntr < numVertices; cntr++)
       {
-        viewVertices[cntr].x *= viewScale;
-        viewVertices[cntr].y *= viewScale;
+         viewVertices[cntr].x *= viewScale;
+         viewVertices[cntr].y *= viewScale;
       }
    }
 }
@@ -121,15 +121,15 @@ void Shape::Add(CoordSet set, CoordType x, CoordType y)
    {
       for(uint32_t cntr = 0; cntr < numVertices; cntr++)
       {
-	vertices[cntr].x += x;
-        vertices[cntr].y += y;
+         vertices[cntr].x += x;
+         vertices[cntr].y += y;
       }
 
       // Serial.print("adding vertices: leftMostX, rightMostX ");
       // Serial.print(leftMostVertex.x);
       // Serial.print(", ");
       // Serial.println(rightMostVertex.x);
-      
+
       // Move our extreme vertices too
       highestVertex.x += x;
       highestVertex.y += y;
@@ -147,8 +147,8 @@ void Shape::Add(CoordSet set, CoordType x, CoordType y)
    {
       for(uint32_t cntr = 0; cntr < numVertices; cntr++)
       {
-	viewVertices[cntr].x += x;
-	viewVertices[cntr].y += y;
+         viewVertices[cntr].x += x;
+         viewVertices[cntr].y += y;
       }
    }
 }

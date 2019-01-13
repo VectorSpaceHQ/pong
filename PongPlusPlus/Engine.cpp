@@ -15,13 +15,15 @@
 #include <EEPROM.h>
 
 // TODO: What should be the scale of the paddles?
-#define PADDLE_SCALE_PERCENT        (8)           // Percent of the height of the paddle
+#define PADDLE_SCALE_PERCENT        (8)            // Percent of the height of the paddle
 #define BALL_SCALE_PERCENT          (1)            // Percent of the height of the ball
+#define MIN_BUTTON_CHECK_ITER       (200)          // Number of iterations before re-checking the button state (debounce)
+#define MAX_SCORE                   (9)
 
-#define  MIN_BUTTON_CHECK_ITER   (200)    // Number of iterations before re-checking the button state (debounce)
-#define  MAX_SCORE               (9)
 
-
+/******************************************************************************
+ * Engine Constructor
+ ******************************************************************************/
 Engine::Engine(Model::Settings&           _settings,
                Model::GameStatus&         _gameStatus,
                PaddleStatus&              _leftPaddle,
@@ -38,6 +40,9 @@ Engine::Engine(Model::Settings&           _settings,
 }
 
 
+/******************************************************************************
+ * This method implements the main state machine for the engine.
+ ******************************************************************************/
 void Engine::Update(void)
 {
    // First, update the button status
@@ -74,6 +79,9 @@ void Engine::Update(void)
 }
 
 
+/******************************************************************************
+ * This method loads the settings stored in EEPROM
+ ******************************************************************************/
 void Engine::LoadSettings()
 {
    Model::Settings   localSettings;
@@ -102,19 +110,20 @@ void Engine::LoadSettings()
    //    checksum ^= readPtr[address] & 0xFF;
    // }
 
-   
    // Serial.println(checksum);
-   
+
    // if(checksum == readPtr[0])
    // {
    //    Serial.println("Loading Settings");
    //    memcpy(&settings, &localSettings, sizeof(localSettings));
    //    Serial.println(localSettings.leftLaserCal.xOffset);
    // }
-   
 }
 
 
+/******************************************************************************
+ * This method stores the settings to EEPROM
+ ******************************************************************************/
 // void Engine::StoreSettings()
 // {
 //    Model::Settings   localSettings;
@@ -122,7 +131,6 @@ void Engine::LoadSettings()
 //    int               address        = 0;
 //    int               checksum       = 0;
 //    int               imgChecksum;
-
 
 //    // Read the bytes out of EEPROM and calculate the checksum
 //    for(address = 0; address < sizeof(localSettings); address++)
@@ -141,6 +149,10 @@ void Engine::LoadSettings()
 // }
 
 
+/******************************************************************************
+ * This method is called at the beginning of the laser calibration state.
+ * It defaults the left/right paddle position to control the middle laser
+ ******************************************************************************/
 void Engine::SetupLaserCalibration()
 {
    // use laser position from EEPROM
@@ -154,6 +166,12 @@ void Engine::SetupLaserCalibration()
 }
 
 
+/******************************************************************************
+ * This method handles a button press/release during laser calibration.
+ * No button pressed: the paddles control the middle laser.
+ * Left button pressed: the paddles control the left laser.
+ * Right button pressed: the paddles control the right laser.
+ ******************************************************************************/
 void Engine::LaserCalibrationButtonChange()
 {
    if((leftPaddle.buttonStateChanged) || (rightPaddle.buttonStateChanged))
@@ -189,6 +207,11 @@ void Engine::LaserCalibrationButtonChange()
 }
 
 
+/******************************************************************************
+ * This method implements the laser calibration state.
+ * It updates the corresponding laser calibration x/y offsets according to
+ * the positions of the paddles.
+ ******************************************************************************/
 void Engine::RunLaserCalibration()
 {
    leftPaddle.SetLimits(-500, 500);
@@ -234,6 +257,12 @@ void Engine::RunLaserCalibration()
 }
 
 
+/******************************************************************************
+ * This method handles a button press/release during view calibration.
+ * No buttons pressed: Control the x/y coords of the bottom-left of the display
+ * Left button pressed: Control the x/y coords of the top-right of the display
+ * Right button pressed: Control h/v skew of the display
+ ******************************************************************************/
 void Engine::ViewCalibrationButtonChange()
 {
    if((leftPaddle.buttonStateChanged) || (rightPaddle.buttonStateChanged))
@@ -263,7 +292,7 @@ void Engine::ViewCalibrationButtonChange()
             rightPaddle.position = settings.display.hSkew;
             break;
 
-         // If both buttons are pressed, end configuration
+            // If both buttons are pressed, end configuration
          case ButtonStateBoth:
             ChangeGameState(Model::GameStateReady);
             break;
@@ -275,6 +304,9 @@ void Engine::ViewCalibrationButtonChange()
 }
 
 
+/******************************************************************************
+ * This method implements the view calibration state
+ ******************************************************************************/
 void Engine::RunViewCalibration()
 {
    ViewCalibrationButtonChange();
@@ -330,6 +362,9 @@ void Engine::RunViewCalibration()
 }
 
 
+/******************************************************************************
+ * This method handles changes in button state while in the Ready state
+ ******************************************************************************/
 void Engine::ReadyButtonChange()
 {
    // Users can move paddles in the ready state
@@ -349,7 +384,6 @@ void Engine::ReadyButtonChange()
             else if(gameStatus.whoseServe == Model::EitherPlayerServes)
             {
                gameStatus.whoseServe = Model::LeftPlayerServes;
-
                ChangeGameState(Model::GameStatePlay);
             }
             break;
@@ -362,7 +396,6 @@ void Engine::ReadyButtonChange()
             else if(gameStatus.whoseServe == Model::EitherPlayerServes)
             {
                gameStatus.whoseServe = Model::RightPlayerServes;
-
                ChangeGameState(Model::GameStatePlay);
             }
             break;
@@ -378,11 +411,14 @@ void Engine::ReadyButtonChange()
 }
 
 
+/******************************************************************************
+ * This method configures the game status at the beginning of the Game Ready state
+ ******************************************************************************/
 void Engine::SetupGameReady()
 {
-  Serial.println("SetupGameReady");
+   Serial.println("SetupGameReady");
    // We'll setup the shapes for both Game Ready and Game Play states here.
-  uint32_t paddleScale = max(1, PADDLE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100);
+   uint32_t paddleScale = max(1, PADDLE_SCALE_PERCENT * (settings.display.yMax - settings.display.yMin)  / 100);
    uint32_t ballScale   = max(1, BALL_SCALE_PERCENT   * (settings.display.yMax - settings.display.yMin)  / 100);
 
    // Create the paddle and ball shapes
@@ -406,7 +442,6 @@ void Engine::SetupGameReady()
    gameStatus.leftPaddleShape.position.y  = 0;
    gameStatus.rightPaddleShape.position.y = 0;
 
-
    // Set the limits on the paddleStatus, so we can't overdrive the paddles
    // The paddles should be the same size, so just use the left one as the benchmark
    int16_t  minLimit = settings.display.yMin + (gameStatus.leftPaddleShape.Height() / 2);
@@ -427,9 +462,12 @@ void Engine::SetupGameReady()
 }
 
 
+/******************************************************************************
+ * This method setups of the game status for game play
+ ******************************************************************************/
 void Engine::SetupGamePlay()
 {
-  Serial.println("SetupGamePlay");
+   Serial.println("SetupGamePlay");
 
    // Paddles are at a fixed horizontal location
    gameStatus.leftPaddleShape.position.x  =  settings.display.xMin + (settings.display.xMax - settings.display.xMin) / 9;
@@ -475,8 +513,6 @@ void Engine::SetupGamePlay()
       gameStatus.ballShape.vector.y =  -random(2, 6);
    }
 
-
-
    // Temporary fix until Alan can address.
    // Always seems to be a mismatch between the ballshape's position and the laser's position
    // so I'm forcing them to be the same, predictable value
@@ -491,19 +527,20 @@ void Engine::SetupGamePlay()
    // Serial.print(", ");
    // Serial.println(gameStatus.ballShape.vector.y);
    // delay(4000);
-   
 }
 
 
+/******************************************************************************
+ * This method implements the game play state
+ ******************************************************************************/
 void Engine::RunGamePlay()
 {
    Vertex      foundVertex;
-   
+
    int ballXoffset = 25;
 
    PrintBallCoords();
    PrintLeftPaddleCoords();
-   
 
    // Move the paddles
    // TODO: We probably need to convert the position into an actual location
@@ -518,27 +555,24 @@ void Engine::RunGamePlay()
    {
       // Ball hit the top or bottom, so invert the y-component of the slope
       gameStatus.ballShape.vector.y *= -1;
-
       PlayWallSound();
    }
 
    // If the ball is traveling left, then check it for collision with the left paddle
    if(gameStatus.ballShape.vector.x < 0)
    {
-
       // If the ball's left-most vertex is between the highest and lowest paddle vertices...
-     // Check if ball is at the right elevation
-      if((gameStatus.ballShape.lowestVertex.y <= gameStatus.leftPaddleShape.highestVertex.y) &&
-         (gameStatus.ballShape.highestVertex.y >= gameStatus.leftPaddleShape.lowestVertex.y ) )
+      // Check if ball is at the right elevation
+      if((gameStatus.ballShape.lowestVertex.y  <= gameStatus.leftPaddleShape.highestVertex.y) &&
+         (gameStatus.ballShape.highestVertex.y >= gameStatus.leftPaddleShape.lowestVertex.y )    )
       {
-        
+
          // And the it's beyond the paddle edge
-        if((gameStatus.ballShape.leftMostVertex.x - ballXoffset <= gameStatus.leftPaddleShape.position.x) &&
-           (gameStatus.ballShape.rightMostVertex.x - ballXoffset >= gameStatus.leftPaddleShape.position.x) )
+         if((gameStatus.ballShape.leftMostVertex.x - ballXoffset  <= gameStatus.leftPaddleShape.position.x) &&
+            (gameStatus.ballShape.rightMostVertex.x - ballXoffset >= gameStatus.leftPaddleShape.position.x)    )
          {
             // Ball hit the left paddle so invert the x-component of the slope
             gameStatus.ballShape.vector.x *= -1;
-
             PlayPaddleSound();
             // TODO: take in velocity of the paddle to adjust slope of the ball
          }
@@ -558,18 +592,16 @@ void Engine::RunGamePlay()
    if(gameStatus.ballShape.vector.x > 0)
    {
       // If the ball's left-most vertex is between the highest and lowest paddle vertices...
-      if((gameStatus.ballShape.lowestVertex.y <= gameStatus.rightPaddleShape.highestVertex.y) &&
+      if((gameStatus.ballShape.lowestVertex.y  <= gameStatus.rightPaddleShape.highestVertex.y) &&
          (gameStatus.ballShape.highestVertex.y >= gameStatus.rightPaddleShape.lowestVertex.y )    )
       {
          // And the it's beyond the paddle edge
-        if((gameStatus.ballShape.leftMostVertex.x  <= gameStatus.rightPaddleShape.position.x) &&
-           (gameStatus.ballShape.rightMostVertex.x  >= gameStatus.rightPaddleShape.position.x) )
-          {
+         if((gameStatus.ballShape.leftMostVertex.x   <= gameStatus.rightPaddleShape.position.x) &&
+            (gameStatus.ballShape.rightMostVertex.x  >= gameStatus.rightPaddleShape.position.x)    )
+         {
             // Ball hit the left paddle so invert the x-component of the slope
             gameStatus.ballShape.vector.x *= -1;
-
             PlayPaddleSound();
-
             // TODO: take in velocity of the paddle to adjust slope of the ball
          }
       }
@@ -577,7 +609,7 @@ void Engine::RunGamePlay()
       // Check to see if the ball has reached the right edge
       if(gameStatus.ballShape.CheckRight(settings.display.xMax, foundVertex))
       {
-        Serial.println("Ball reached right edge");
+         Serial.println("Ball reached right edge");
          gameStatus.leftPaddleScore++;
          gameStatus.whoseServe = Model::LeftPlayerServes;
          PlayPointSound();
@@ -587,6 +619,9 @@ void Engine::RunGamePlay()
 }
 
 
+/******************************************************************************
+ * This method handles button events during the Game Over state
+ ******************************************************************************/
 void Engine::GameOverButtonChange()
 {
    // Either button will take us back to the ready state
@@ -598,8 +633,8 @@ void Engine::GameOverButtonChange()
          case ButtonStateRight:
             ChangeGameState(Model::GameStateReady);
 
-            if( (gameStatus.leftPaddleScore >= MAX_SCORE) ||
-                (gameStatus.rightPaddleScore >= MAX_SCORE)   )
+            if( (gameStatus.leftPaddleScore  >= MAX_SCORE) ||
+                (gameStatus.rightPaddleScore >= MAX_SCORE)    )
             {
                gameStatus.leftPaddleScore = 0;
                gameStatus.rightPaddleScore = 0;
@@ -614,6 +649,10 @@ void Engine::GameOverButtonChange()
 }
 
 
+/******************************************************************************
+ * This method checks the stuts of the paddle buttons and sets the button
+ * state accordingly
+ ******************************************************************************/
 void Engine::CheckButtonState()
 {
    if(leftPaddle.buttonPressed && rightPaddle.buttonPressed)
@@ -632,11 +671,12 @@ void Engine::CheckButtonState()
    {
       buttonState = ButtonStateNone;
    }
-
-   // PrintButtonState();
 }
 
 
+/******************************************************************************
+ * This method handles engine state changes
+ ******************************************************************************/
 void Engine::ChangeGameState(Model::GameState newState)
 {
    // Notify the View of the new game state
@@ -667,7 +707,6 @@ void Engine::ChangeGameState(Model::GameState newState)
 
       case Model::GameStateGameOver:
          Serial.println("New Game State: Game Over");
-
          Serial.print("Score: ");
          Serial.print(gameStatus.leftPaddleScore);
          Serial.print(" - ");
@@ -678,6 +717,9 @@ void Engine::ChangeGameState(Model::GameState newState)
 }
 
 
+/******************************************************************************
+ * Various debug methods
+ ******************************************************************************/
 void Engine::PrintButtonState()
 {
    Serial.print("Left( ");
@@ -698,56 +740,56 @@ void Engine::PrintButtonState()
 
 void Engine::PrintDisplayCoords()
 {
-  Serial.print("Display Coords x = (");
-  Serial.print(settings.display.xMin);
-  Serial.print(", ");
-  Serial.print(settings.display.xMax);
-  Serial.print("), y = (");
-  Serial.print(settings.display.yMin);
-  Serial.print(", ");
-  Serial.print(settings.display.yMax);
-  Serial.println(")");
+   Serial.print("Display Coords x = (");
+   Serial.print(settings.display.xMin);
+   Serial.print(", ");
+   Serial.print(settings.display.xMax);
+   Serial.print("), y = (");
+   Serial.print(settings.display.yMin);
+   Serial.print(", ");
+   Serial.print(settings.display.yMax);
+   Serial.println(")");
 }
 
 void Engine::PrintLeftPaddleCoords()
 {
-  Serial.print("LeftPaddle x, xmin, xmax, ymin, ymax = (");
-  Serial.print(gameStatus.leftPaddleShape.position.x);
-  Serial.print(", ");
-  Serial.print(gameStatus.leftPaddleShape.leftMostVertex.x);
-  Serial.print(", ");
-  Serial.print(gameStatus.leftPaddleShape.rightMostVertex.x);
-  Serial.print(", ");
-  Serial.print(gameStatus.leftPaddleShape.lowestVertex.y);
-  Serial.print(", ");
-  Serial.print(gameStatus.leftPaddleShape.highestVertex.y);
-  Serial.println(")");
+   Serial.print("LeftPaddle x, xmin, xmax, ymin, ymax = (");
+   Serial.print(gameStatus.leftPaddleShape.position.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.leftPaddleShape.leftMostVertex.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.leftPaddleShape.rightMostVertex.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.leftPaddleShape.lowestVertex.y);
+   Serial.print(", ");
+   Serial.print(gameStatus.leftPaddleShape.highestVertex.y);
+   Serial.println(")");
 }
 
 void Engine::PrintRightPaddleCoords()
 {
-  Serial.print("RightPaddle x, xmin, xmax, ymin, ymax = (");
-  Serial.print(gameStatus.rightPaddleShape.position.x);
-  Serial.print(", ");
-  Serial.print(gameStatus.rightPaddleShape.leftMostVertex.x);
-  Serial.print(", ");
-  Serial.print(gameStatus.rightPaddleShape.rightMostVertex.x);
-  Serial.print(", ");
-  Serial.print(gameStatus.rightPaddleShape.lowestVertex.y);
-  Serial.print(", ");
-  Serial.print(gameStatus.rightPaddleShape.highestVertex.y);
-  Serial.println(")");
+   Serial.print("RightPaddle x, xmin, xmax, ymin, ymax = (");
+   Serial.print(gameStatus.rightPaddleShape.position.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.rightPaddleShape.leftMostVertex.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.rightPaddleShape.rightMostVertex.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.rightPaddleShape.lowestVertex.y);
+   Serial.print(", ");
+   Serial.print(gameStatus.rightPaddleShape.highestVertex.y);
+   Serial.println(")");
 }
 
 void Engine::PrintBallCoords()
 {
-  Serial.print("Ball xmin, xmax, ymin, ymax = (");
-  Serial.print(gameStatus.ballShape.leftMostVertex.x);
-  Serial.print(", ");
-  Serial.print(gameStatus.ballShape.rightMostVertex.x);
-  Serial.print(", ");
-  Serial.print(gameStatus.ballShape.lowestVertex.y);
-  Serial.print(", ");
-  Serial.print(gameStatus.ballShape.highestVertex.y);
-  Serial.println(")");
+   Serial.print("Ball xmin, xmax, ymin, ymax = (");
+   Serial.print(gameStatus.ballShape.leftMostVertex.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.ballShape.rightMostVertex.x);
+   Serial.print(", ");
+   Serial.print(gameStatus.ballShape.lowestVertex.y);
+   Serial.print(", ");
+   Serial.print(gameStatus.ballShape.highestVertex.y);
+   Serial.println(")");
 }

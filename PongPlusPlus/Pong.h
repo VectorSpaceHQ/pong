@@ -18,13 +18,13 @@ public:
    void Run();
 
 private:
-   HwConfig                hardware;
-   Model::Settings         settings;
-   Model::GameStatus       gameStatus;
+   HwConfig                hardware;         // Hardware Configuration (i.e. which pins do what)
+   Model::Settings         settings;         // Game settings
+   Model::GameStatus       gameStatus;       // The current status of the game (set by the engine, read by the view)
 
-   Controller              controller;
-   Engine                  engine;
-   View                    view;
+   Controller              controller;       // The Controller runs the paddle drivers
+   Engine                  engine;           // The Engine is the primary game engine
+   View                    view;             // The View drives the lasers according to the current game status
 };
 
 
