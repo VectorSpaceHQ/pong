@@ -20,9 +20,43 @@ package "Pong Plus Plus Classes" <<Frame>> {
 class Pong {
 }
 
+
 class Engine {
+   - settings: Settings&
+   - gameStatus: GameStatus&
+   - leftPaddle: PaddleStatus&
+   - rightPaddle: PaddleStatus&
+   - buttonState: ButtonState
+
+   + Update(): void
+
+   - SetupLaserCalibration(): void
+   - SetupGameReady(): void
+   - SetupGamePlay(): void
+
+   - LaserCalibrationButtonChange(): void
+   - ViewCalibrationButtonChange(): void
+   - ReadyButtonChange(): void
+   - GameOverButtonChange(): void
+
+   - RunLaserCalibration(): void
+   - RunViewCalibration(): void
+   - RunGamePlay(): void
+
+   - CheckButtonState(): void
+   - ChangeGameState(newState: GameState): void
+
+   - LoadSettings(): void
+   - StoreSettings(): void
 }
 
+enum ButtonState <<enum>> {
+   ButtonStateNone
+   ButtonStateLeft
+   ButtonStateRight
+   ButtonStateBoth
+   ButtonStateReset
+}
 
 package "Controller" <<Frame>> {
    
@@ -58,6 +92,7 @@ package "Controller" <<Frame>> {
 }
 
 package "Model" <<Frame>> {
+
    class GameStatus <<struct>> {
       + gameState: GameState
       + gameStateChanged: bool
@@ -85,7 +120,6 @@ package "Model" <<Frame>> {
       RightPlayerServes,
       EitherPlayerServes
    }
-
 
    class Vertex {
       + x: CoordType
@@ -175,13 +209,64 @@ package "Model" <<Frame>> {
 
 package "View" <<Frame>> {
    class View {
+      - settings: Settings&
+      - gameStatus: gameStatus&
+      - leftPaddleLaser: LaserDriver
+      - rightPaddleLaser: LaserDriver
+      - ballLaser: LaserDriver
+      
+      - CheckGameStateChange(): void
+      
+      - SetupLaserCalibration(): void
+      - SetupViewCalibration(): void
+      - SetupGamePlay(): void
+      - SetupGameReady(): void
+      - SetupGameOver(): void
+      
+      - DisplayLaserCalibration(): void
+      - DisplayViewCalibration(): void
+      - DisplayGamePlay(): void
+      - DisplayScore(): void
    }
    
    class LaserDriver {
+      - name: const char*
+      - cal: LaserCalibration&
+      - shape: Shape&
+      - x: uint32_t
+      - y: uint32_t
+      - oldX: uint32_t
+      - oldY: uint32_t
+      - xPin: uint8_t
+      - yPin: uint8_t
+      - laserPin: uint8_t
+      - hSkew: uint32_t
+      - vSkew: uint32_t
+      - laserOn: bool
+      - xServo: Servo
+      - yServo: Servo
+      - currentVertex: uint32_t
+      - currentPosition: Vertex
+      - destination: Vertex
+      - step: Vertex
+      
+      + UpdateShape(scale: uint32_t, restart: boot, needToCopy: bool): void
+      + SetPosition(atX: CoordType, atY: CoordType): void
+      + Move(atX: CoordType, atY: CoordType): void
+      + On(): void
+      + Off(): void
+      + Toggle(): void
+      + Update(): void
+      
+      - SetLaser(): void
+      - SetLaser(onOff: bool)
+      - Move(dest: Vertex&)
+      - SetWaitTime(x: int32_t, y: int32_t)
    }
    
    View *-- "3" LaserDriver
    LaserDriver --> Shape
+   View --> Settings
 }
 
 Pong *-- View
@@ -192,11 +277,18 @@ Controller *-- "2" PaddleStatus
 PaddleDriver -- "Updates" PaddleStatus
 Engine -down-> "Reads" PaddleStatus
 Engine -down-> "Updates" GameStatus 
+Engine *-left- ButtonState
 View -left-> "Reads" GameStatus 
 
 note right of Pong
    The Pong class contains a
    Controller, Engine, and View
+end note
+
+note top of Model
+   <b>Type Definitions:</b>
+      - CoordType: int32_t
+      - Score: uint8_t
 end note
 
 }
