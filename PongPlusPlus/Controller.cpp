@@ -9,8 +9,9 @@
 
 #include "Configs.h"
 #include "Controller.h"
+
+#include "PaddleDriver.h"
 #include "PaddleStatus.h"
-#include "PaddleCtrl.h"
 #include "ScheduledInterval.h"
 #include "Timing.h"
 

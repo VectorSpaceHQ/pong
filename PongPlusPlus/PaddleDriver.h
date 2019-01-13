@@ -1,12 +1,12 @@
 /*
- * PaddleCtrl.h
+ * PaddleDriver.h
  *
  *  Created on: Aug 16, 2018
  *      Author: athiessen
  */
 
-#ifndef __paddle_ctrl_h__
-#define __paddle_ctrl_h__
+#ifndef __paddle_driver_h__
+#define __paddle_driver_h__
 
 #include <stdint.h>
 
@@ -16,11 +16,11 @@
 #include "ScheduledInterval.h"
 
 
-class PaddleCtrl: public ScheduledInterval
+class PaddleDriver: public ScheduledInterval
 {
 public:
-   PaddleCtrl(PaddleConf&     config,
-              PaddleStatus&   _status);
+   PaddleDriver(PaddleConf&     config,
+               PaddleStatus&   _status);
 
 private:
    uint8_t              DT;          // Rotary Encoder DT Pin
@@ -40,5 +40,4 @@ private:
 };
 
 
-
-#endif   // __paddle_ctrl_h__
+#endif   // __paddle_driver_h__

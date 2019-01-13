@@ -10,7 +10,7 @@
 
 
 #include "Configs.h"
-#include "PaddleCtrl.h"
+#include "PaddleDriver.h"
 #include "PaddleStatus.h"
 #include "ScheduledInterval.h"
 
@@ -37,8 +37,8 @@ public:
    PaddleStatus   rightPaddleStatus;
 
 private:
-   PaddleCtrl     leftPaddle;
-   PaddleCtrl     rightPaddle;
+   PaddleDriver     leftPaddle;
+   PaddleDriver     rightPaddle;
 };
 
 

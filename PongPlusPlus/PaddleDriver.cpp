@@ -1,9 +1,10 @@
 /*
- * PaddleCtrl.cpp
+ * PaddleDriver.cpp
  *
  *  Created on: Aug 16, 2018
  *      Author: athiessen
  */
+
 // Whether or not to use interrupts or poll mechanism
 // Do not use interrupts
 #undef PADDLE_CONTROL_USE_INTERRUPTS
@@ -17,13 +18,10 @@
 // #endif
 
 #include "Configs.h"
-
-#include "PaddleCtrl.h"
+#include "PaddleDriver.h"
 #include "PaddleStatus.h"
 #include "ScheduledInterval.h"
 #include "Timing.h"
-
-
 
 
 #define  UP_MASK     (0x66)
@@ -32,8 +30,8 @@
 #define BUTTON_DEBOUNCE_TIME_MS     (50)
 
 
-PaddleCtrl::PaddleCtrl(PaddleConf&      config,
-                       PaddleStatus&   _status):
+PaddleDriver::PaddleDriver(PaddleConf&      config,
+                           PaddleStatus&   _status):
    ScheduledInterval(PADDLE_CHECK_INTERVAL),
    DT(config.DT),
    CLK(config.CLK),
@@ -53,7 +51,7 @@ PaddleCtrl::PaddleCtrl(PaddleConf&      config,
 }
 
 
-void PaddleCtrl::Update()
+void PaddleDriver::Update()
 {
    // Check the button every time we're called
    CheckButton();
@@ -72,7 +70,7 @@ void PaddleCtrl::Update()
 }
 
 
-void PaddleCtrl::UpdatePaddleStatus()
+void PaddleDriver::UpdatePaddleStatus()
 {
    // If the value has changed, then increment the status accordingly
    // and reset value
@@ -92,7 +90,7 @@ void PaddleCtrl::UpdatePaddleStatus()
 }
 
 
-void PaddleCtrl::CheckButton()
+void PaddleDriver::CheckButton()
 {
    // Increment the amount of time in ms the button has been in its current state
    if(++msCount >= PADDLE_BUTTON_INCR_INTERVAL)
@@ -119,7 +117,7 @@ void PaddleCtrl::CheckButton()
 }
 
 
-void PaddleCtrl::CheckRotaryEncoder()
+void PaddleDriver::CheckRotaryEncoder()
 {
    uint8_t newState  = ((digitalRead(DT) << 1) | digitalRead(CLK));
    uint8_t criterion = newState ^ oldState;
