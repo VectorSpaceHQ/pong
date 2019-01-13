@@ -1,6 +1,6 @@
 
-#ifndef __laser_ctrl_h__
-#define __laser_ctrl_h__
+#ifndef __laser_driver_h__
+#define __laser_driver_h__
 
 #include <Servo.h>
 #include <stdint.h>
@@ -11,16 +11,16 @@
 #include "TimedInterval.h"
 
 
-class LaserCtrl: public TimedInterval
+class LaserDriver: public TimedInterval
 {
 public:
    /***
     * Constructor
     */
-   LaserCtrl(LaserConf&                conf,
-             Model::LaserCalibration&  _cal,
-             Shape&                    _shape,
-             const char*               _name);
+   LaserDriver(LaserConf&                conf,
+               Model::LaserCalibration&  _cal,
+               Shape&                    _shape,
+               const char*               _name);
 
    /***
     * This method is called afer the shape given to the laser changes
@@ -63,8 +63,8 @@ private:
    uint32_t                   y;
    uint32_t                   oldX;
    uint32_t                   oldY;
-  uint8_t                    xPin;
-  uint8_t                    yPin;
+   uint8_t                    xPin;
+   uint8_t                    yPin;
    uint32_t                   hskew;
    uint32_t                   vskew;
    bool                       laserOn;
@@ -92,6 +92,6 @@ private:
    void SetWaitTime(int32_t x, int32_t y);
 };
 
-#endif    // __laser_ctrl_h__
+#endif    // __laser_driver_h__
 
 

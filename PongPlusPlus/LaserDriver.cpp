@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include "Configs.h"
-#include "LaserCtrl.h"
+#include "LaserDriver.h"
 #include "Model.h"
 #include "ScheduledInterval.h"
 #include "Shape.h"
@@ -21,10 +21,10 @@
 #define  US_PER_STEP    (1000)
 
 
-LaserCtrl::LaserCtrl(LaserConf&                conf,
-                     Model::LaserCalibration&  _cal,
-                     Shape&                    _shape,
-                     const char*               _name):
+LaserDriver::LaserDriver(LaserConf&                conf,
+                         Model::LaserCalibration&  _cal,
+                         Shape&                    _shape,
+                         const char*               _name):
    TimedInterval(400),     // This will change based on laser movement
    name(_name),
    cal(_cal),
@@ -59,10 +59,9 @@ LaserCtrl::LaserCtrl(LaserConf&                conf,
 }
 
 
-void LaserCtrl::UpdateShape(uint32_t scale, bool restart, bool needToCopy)
+void LaserDriver::UpdateShape(uint32_t scale, bool restart, bool needToCopy)
 {
    // Lasers work on the View set of coordinates
-
    if(needToCopy)
    {
       shape.CopyVerticesToView();
@@ -72,48 +71,46 @@ void LaserCtrl::UpdateShape(uint32_t scale, bool restart, bool needToCopy)
    shape.Scale(CoordsView, scale);     // Scale the shape
    shape.Add(CoordsView, x, y);        // Center the shape
 
-   
-   if(name == "Ball"){
-     Serial.print("New Shape for ");
-     Serial.println(name);
-     Serial.print(" @ x,y = ");
-     Serial.print(x);
-     Serial.print(", ");
-     Serial.println(y);
+   if(name == "Ball")
+   {
+      Serial.print("New Shape for ");
+      Serial.println(name);
+      Serial.print(" @ x,y = ");
+      Serial.print(x);
+      Serial.print(", ");
+      Serial.println(y);
    }
-  
-  // shape.Log();
-  // delay(200);
+   
+//   shape.Log();
+//   delay(200);
 
    // Reset the shape
    if(restart)
    {
-     // reset center position
-     Serial.print("Resetting ");
-     Serial.println(name);
-     delay(100);
-     currentPosition.x = SERVO_MID_X;
-     currentPosition.y = SERVO_MID_Y;
-     destination.x = SERVO_MID_X;
-     destination.y = SERVO_MID_Y;
-     // ------- End Debug ------
-     
+      // reset center position
+      Serial.print("Resetting ");
+      Serial.println(name);
+      delay(100);
+      currentPosition.x = SERVO_MID_X;
+      currentPosition.y = SERVO_MID_Y;
+      destination.x = SERVO_MID_X;
+      destination.y = SERVO_MID_Y;
+      // ------- End Debug ------
+
       currentVertex = 0;
       Move(shape.viewVertices[currentVertex]);
    }
 }
 
 
-void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
+void LaserDriver::SetPosition(CoordType atX, CoordType atY)
 {
    // Update our X/Y coordinates mapping from engine coordinates to servo values
    // TODO:: Need a percentage scale
 
    // Shift to Laser coordinates
-
    CoordType newX = 3000 - (SERVO_MID_X + atX + (cal.xOffset * cal.xOrientation));
    CoordType newY = SERVO_MID_Y + atY + (cal.yOffset * cal.yOrientation);
-
 
    // Move our vertex coordinates the difference
    if(running)
@@ -124,39 +121,37 @@ void LaserCtrl::SetPosition(CoordType atX, CoordType atY)
    // Update our new coordinates with the new ones
    x = newX;
    y = newY;
-
 }
 
 
-void LaserCtrl::Move(CoordType atX, CoordType atY)
+void LaserDriver::Move(CoordType atX, CoordType atY)
 {
-  
    SetPosition(atX, atY);
 
-   if (x != oldX){
+   if (x != oldX)
+   {
      xServo.writeMicroseconds(x);
      oldX = x;
    }
-   if (y != oldY){
+   if (y != oldY)
+   {
      yServo.writeMicroseconds(y);
      oldY = y;
    }
 
-   // if (millis()%10==0){
-   //   Serial.print("move1 servo, ");
-   //   Serial.print(name);
-   //   Serial.print(", ");
-   //   Serial.print(x);
-   //   Serial.print(", ");
-   //   Serial.println(y);
-   // }
-   
-   
-   
+//   if (millis()%10==0)
+//   {
+//      Serial.print("move1 servo, ");
+//      Serial.print(name);
+//      Serial.print(", ");
+//      Serial.print(x);
+//      Serial.print(", ");
+//      Serial.println(y);
+//   }
 }
 
 
-void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
+void LaserDriver::SetWaitTime(int32_t x, int32_t y)
 {
    // TODO: Need to handle wrap (every 70 minutes)
 
@@ -171,24 +166,22 @@ void LaserCtrl::SetWaitTime(int32_t x, int32_t y)
    {
       interval = (waitY * US_PER_STEP);
    }
-
 }
 
 
-void LaserCtrl::Update()
+void LaserDriver::Update()
 {
-
-  // if(name == "Ball"){
-  //   Serial.print("Ball updating position, ");
-  //   Serial.print(currentPosition.x);
-  //   Serial.print(", ");
-  //   Serial.print(destination.x);
-  //   Serial.print(", ");
-  //   Serial.print(currentPosition.y);
-  //   Serial.print(", ");
-  //   Serial.println(destination.y);
-  // }
-
+//   if(name == "Ball")
+//   {
+//      Serial.print("Ball updating position, ");
+//      Serial.print(currentPosition.x);
+//      Serial.print(", ");
+//      Serial.print(destination.x);
+//      Serial.print(", ");
+//      Serial.print(currentPosition.y);
+//      Serial.print(", ");
+//      Serial.println(destination.y);
+//   }
   
    // Have we reached our destination?
    if( (currentPosition.x == destination.x) && (currentPosition.y == destination.y))
@@ -220,80 +213,80 @@ void LaserCtrl::Update()
    currentPosition.x += stepX;
    currentPosition.y += stepY;
 
-   if (currentPosition.x != oldX){
-     xServo.writeMicroseconds(currentPosition.x);
-     oldX = x;
+   if (currentPosition.x != oldX)
+   {
+      xServo.writeMicroseconds(currentPosition.x);
+      oldX = x;
    }
-   if (currentPosition.y != oldY){
-     yServo.writeMicroseconds(currentPosition.y);
-     oldY = currentPosition.y;
+   if (currentPosition.y != oldY)
+   {
+      yServo.writeMicroseconds(currentPosition.y);
+      oldY = currentPosition.y;
 
-     // if(millis()%10==0){
-     //   Serial.print("move2 writing to servo, ");
-     //   Serial.print(name);
-     //   Serial.print(", ");
-     //   Serial.print(currentPosition.x);
-     //   Serial.print(", ");
-     //   Serial.println(currentPosition.y);
-     // }
-     
+      // if(millis()%10==0){
+      //   Serial.print("move2 writing to servo, ");
+      //   Serial.print(name);
+      //   Serial.print(", ");
+      //   Serial.print(currentPosition.x);
+      //   Serial.print(", ");
+      //   Serial.println(currentPosition.y);
+      // }
    }
-   
-
 }
 
 
-void LaserCtrl::On(void)
+void LaserDriver::On(void)
 {
    laserOn = true;
    SetLaser();
 }
 
 
-void LaserCtrl::Off(void)
+void LaserDriver::Off(void)
 {
    laserOn = false;
    SetLaser();
 }
 
 
-void LaserCtrl::Toggle(void)
+void LaserDriver::Toggle(void)
 {
    laserOn = !laserOn;
    SetLaser();
 }
 
 
-void LaserCtrl::SetLaser()
+void LaserDriver::SetLaser()
 {
    digitalWrite(laserPin, (laserOn ? HIGH : LOW));
 }
 
 
-void LaserCtrl::SetLaser(bool onOff)
+void LaserDriver::SetLaser(bool onOff)
 {
    laserOn = onOff;
    SetLaser();
 }
 
 
-void LaserCtrl::Move(Vertex& dest)
+void LaserDriver::Move(Vertex& dest)
 {
    destination = dest;
 
    CoordType diffX = (destination.x - currentPosition.x);
    CoordType diffY = (destination.y - currentPosition.y);
 
-   // if(name == "Ball"){
-   //   Serial.print("Ball Moving position, ");
-   //   Serial.print(currentPosition.x);
-   //   Serial.print(", ");
-   //   Serial.print(destination.x);
-   //   Serial.print(", ");
-   //   Serial.print(currentPosition.y);
-   //   Serial.print(", ");
-   //   Serial.println(destination.y);
-   // }
+//   if(name == "Ball")
+//   {
+//      Serial.print("Ball Moving position, ");
+//      Serial.print(currentPosition.x);
+//      Serial.print(", ");
+//      Serial.print(destination.x);
+//      Serial.print(", ");
+//      Serial.print(currentPosition.y);
+//      Serial.print(", ");
+//      Serial.println(destination.y);
+//   }
 
    // if diff is nonzero, step must be nonzero
    // previous bug had diff of 1 but step of 0, so never reached destination
@@ -322,14 +315,15 @@ void LaserCtrl::Move(Vertex& dest)
 
    step.draw = destination.draw;
 
-   // if(name == "LeftPaddle"){
-   //   Serial.print("LaserCTRL::MOVE step.y, ");
-   //   Serial.print(step.y);
-   //   Serial.print(", ");
-   //   Serial.print(shape.scale);
-   //   Serial.print(", ");
-   //   Serial.println(diffY);
-   // }
+//   if(name == "LeftPaddle")
+//   {
+//      Serial.print("LaserCTRL::MOVE step.y, ");
+//      Serial.print(step.y);
+//      Serial.print(", ");
+//      Serial.print(shape.scale);
+//      Serial.print(", ");
+//      Serial.println(diffY);
+//   }
 
    SetWaitTime(step.x, step.y);
    SetLaser(destination.draw);

@@ -1,12 +1,12 @@
 
 #include <Arduino.h>
 
-#include "LaserCtrl.h"
 #include "Model.h"
 #include "ScheduledInterval.h"
 #include "Shape.h"
 #include "Timing.h"
 #include "View.h"
+#include "LaserDriver.h"
 
 
 #define SCORE_SCALE_PERCENT         (10)           // Percent of the height of the score

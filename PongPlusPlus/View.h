@@ -4,7 +4,7 @@
 
 
 #include "Configs.h"
-#include "LaserCtrl.h"
+#include "LaserDriver.h"
 #include "Model.h"
 #include "ScheduledInterval.h"
 #include "Shape.h"
@@ -25,9 +25,9 @@ public:
 private:
    Model::Settings&        settings;
    Model::GameStatus&      gameStatus;
-   LaserCtrl               leftPaddleLaser;
-   LaserCtrl               rightPaddleLaser;
-   LaserCtrl               ballLaser;
+   LaserDriver             leftPaddleLaser;
+   LaserDriver             rightPaddleLaser;
+   LaserDriver             ballLaser;
 
    void CheckGameStateChange(void);
 
