@@ -1,0 +1,71 @@
+
+@startuml
+
+skinparam class {
+   backgroundcolor   #b7ddfc/White
+   bordercolor       black
+   ArrowColor        black
+}
+
+hide enum methods
+hide circle
+
+package "Pong Plus Plus Classes" <<Frame>> {
+
+class Engine {
+}
+
+
+package "Model" <<Frame>> {
+   class GameStatus <<struct>> {
+   }
+   
+   enum GameState <<enum>> {
+      GameStateInit,
+      GameStateCalibrateLasers,
+      GameStateCalibrateView,
+      GameStateReady,
+      GameStatePlay,
+      GameStateGameOver
+   }
+   
+   class Shape {
+   }
+  
+   GameStatus *-- "3" Shape
+   GameStatus *-- GameState
+}
+
+
+package "View" <<Frame>> {
+   class View {
+   }
+   
+   class LaserDriver {
+   }
+   
+   View *-- "3" LaserDriver
+   LaserDriver -- Shape
+}
+
+
+class Controller {
+}
+
+
+class PaddleDriver {
+}
+
+
+class PaddleStatus <<struct>> {
+}
+
+Controller *-- "2" PaddleDriver
+PaddleDriver -- "Updates" PaddleStatus
+Engine -down-> "Reads" PaddleStatus
+Engine -down-> "Updates" GameStatus 
+View -left-> "Reads" GameStatus 
+
+}
+
+@enduml
