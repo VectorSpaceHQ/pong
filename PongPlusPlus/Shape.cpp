@@ -29,7 +29,7 @@ Shape::Shape():
    viewScale(1),
    numVertices(0),
    position(),
-   vector(),
+   velocity(),
    highestVertex(),
    lowestVertex(),
    leftMostVertex(),

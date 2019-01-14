@@ -24,8 +24,8 @@ class Pong {
 class Engine {
    - settings: Settings&
    - gameStatus: GameStatus&
-   - leftPaddle: PaddleStatus&
-   - rightPaddle: PaddleStatus&
+   - leftPaddle: GamePadStatus&
+   - rightPaddle: GamePadStatus&
    - buttonState: ButtonState
 
    + Update(): void
@@ -64,20 +64,20 @@ package "Controller" <<Frame>> {
    }
 
 
-   class PaddleDriver {
+   class AtariPaddleDriver {
       - DT: uint8_t
       - CLK: uint8_t
       - buttonPin: uint8_t
-      - hwStatus: PaddleStatus
+      - hwStatus: GamePadStatus
       
       - Update(): void
-      - UpdatePaddleStatus(): void
+      - UpdateGamePadStatus(): void
       - CheckButton(): void
       - CheckRotaryEncoder(): void
    }
 
 
-   class PaddleStatus <<struct>> {
+   class GamePadStatus <<struct>> {
       + buttonPressed: bool
       + buttonStateChanged: bool
       + buttonTime: uint32_t
@@ -142,7 +142,7 @@ package "Model" <<Frame>> {
       + viewVertices: Vertex[MAX_VERTICES]
 
       + position: Vertex
-      + vector: Vertex
+      + velocity: Vertex
       + acceleration: uint32_t
 
       + highestVertex: Vertex
@@ -272,10 +272,10 @@ package "View" <<Frame>> {
 Pong *-- View
 Pong *-- Engine
 Pong *-- Controller
-Controller *-- "2" PaddleDriver
-Controller *-- "2" PaddleStatus
-PaddleDriver -- "Updates" PaddleStatus
-Engine -down-> "Reads" PaddleStatus
+Controller *-- "2" AtariPaddleDriver
+Controller *-- "2" GamePadStatus
+AtariPaddleDriver -- "Updates" GamePadStatus
+Engine -down-> "Reads" GamePadStatus
 Engine -down-> "Updates" GameStatus 
 Engine *-left- ButtonState
 View -left-> "Reads" GameStatus 

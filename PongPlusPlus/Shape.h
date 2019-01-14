@@ -68,7 +68,7 @@ public:
 
    // Vertices for movement
    Vertex      position;         // Where it currently is in normal world space
-   Vertex      vector;           // The direction/scale of the X/Y vector
+   Vertex      velocity;           // The direction/scale of the X/Y vector
    uint32_t    acceleration;     // The current acceleration (future?)
 
    // Vertices for collision detection in world space

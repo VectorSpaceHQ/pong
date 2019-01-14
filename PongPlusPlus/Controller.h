@@ -9,9 +9,9 @@
 #define __controller_h__
 
 
+#include "AtariAtariPaddleDriver.h"
 #include "Configs.h"
-#include "PaddleDriver.h"
-#include "PaddleStatus.h"
+#include "GamePadStatus.h"
 #include "ScheduledInterval.h"
 
 
@@ -33,12 +33,12 @@ public:
 
    void Update(void);
 
-   PaddleStatus   leftPaddleStatus;
-   PaddleStatus   rightPaddleStatus;
+   GamePadStatus     leftPaddleStatus;
+   GamePadStatus     rightPaddleStatus;
 
 private:
-   PaddleDriver     leftPaddle;
-   PaddleDriver     rightPaddle;
+   AtariPaddleDriver leftPaddle;
+   AtariPaddleDriver rightPaddle;
 };
 
 

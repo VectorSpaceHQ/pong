@@ -26,8 +26,8 @@
  ******************************************************************************/
 Engine::Engine(Model::Settings&           _settings,
                Model::GameStatus&         _gameStatus,
-               PaddleStatus&              _leftPaddle,
-               PaddleStatus&              _rightPaddle):
+               GamePadStatus&              _leftPaddle,
+               GamePadStatus&              _rightPaddle):
    ScheduledInterval(ENGINE_LOOP_INTERVAL),
    settings(_settings),
    gameStatus(_gameStatus),
@@ -493,24 +493,24 @@ void Engine::SetupGamePlay()
    if(gameStatus.whoseServe == Model::LeftPlayerServes)
    {
       // If the left player is serving, set the vector to a positive (right) direction
-      gameStatus.ballShape.vector.x = 4;
+      gameStatus.ballShape.velocity.x = 4;
    }
    else
    {
       // If the left player is serving, set the vector to a negative (left) direction
-      gameStatus.ballShape.vector.x = -4;
+      gameStatus.ballShape.velocity.x = -4;
    }
 
    // Randomize up/down
    if(random(2) == 1)
    {
       // Down, y is positive
-      gameStatus.ballShape.vector.y = random(2, 6);   // Slope is random of 2/2, 3/2, 4/2, or 5/2
+      gameStatus.ballShape.velocity.y = random(2, 6);   // Slope is random of 2/2, 3/2, 4/2, or 5/2
    }
    else
    {
       // Up, y is negative
-      gameStatus.ballShape.vector.y =  -random(2, 6);
+      gameStatus.ballShape.velocity.y =  -random(2, 6);
    }
 
    // Temporary fix until Alan can address.
@@ -547,19 +547,19 @@ void Engine::RunGamePlay()
    // TODO: We should probably implement some form of scaling to prevent over-movement
    gameStatus.leftPaddleShape.Move(CoordsWorld, 0, (leftPaddle.position - gameStatus.leftPaddleShape.position.y));
    gameStatus.rightPaddleShape.Move(CoordsWorld, 0, (rightPaddle.position - gameStatus.rightPaddleShape.position.y));
-   gameStatus.ballShape.Move(CoordsWorld, gameStatus.ballShape.vector.x, gameStatus.ballShape.vector.y);
+   gameStatus.ballShape.Move(CoordsWorld, gameStatus.ballShape.velocity.x, gameStatus.ballShape.velocity.y);
 
    // Check collision of the ball with the top or bottom
    if( (gameStatus.ballShape.CheckTop(settings.display.yMax, foundVertex)    ) ||
        (gameStatus.ballShape.CheckBottom(settings.display.yMin, foundVertex) )    )
    {
       // Ball hit the top or bottom, so invert the y-component of the slope
-      gameStatus.ballShape.vector.y *= -1;
+      gameStatus.ballShape.velocity.y *= -1;
       PlayWallSound();
    }
 
    // If the ball is traveling left, then check it for collision with the left paddle
-   if(gameStatus.ballShape.vector.x < 0)
+   if(gameStatus.ballShape.velocity.x < 0)
    {
       // If the ball's left-most vertex is between the highest and lowest paddle vertices...
       // Check if ball is at the right elevation
@@ -572,7 +572,7 @@ void Engine::RunGamePlay()
             (gameStatus.ballShape.rightMostVertex.x - ballXoffset >= gameStatus.leftPaddleShape.position.x)    )
          {
             // Ball hit the left paddle so invert the x-component of the slope
-            gameStatus.ballShape.vector.x *= -1;
+            gameStatus.ballShape.velocity.x *= -1;
             PlayPaddleSound();
             // TODO: take in velocity of the paddle to adjust slope of the ball
          }
@@ -589,7 +589,7 @@ void Engine::RunGamePlay()
    }
 
    // If the ball is traveling right, then check it for collision with the right paddle
-   if(gameStatus.ballShape.vector.x > 0)
+   if(gameStatus.ballShape.velocity.x > 0)
    {
       // If the ball's left-most vertex is between the highest and lowest paddle vertices...
       if((gameStatus.ballShape.lowestVertex.y  <= gameStatus.rightPaddleShape.highestVertex.y) &&
@@ -600,7 +600,7 @@ void Engine::RunGamePlay()
             (gameStatus.ballShape.rightMostVertex.x  >= gameStatus.rightPaddleShape.position.x)    )
          {
             // Ball hit the left paddle so invert the x-component of the slope
-            gameStatus.ballShape.vector.x *= -1;
+            gameStatus.ballShape.velocity.x *= -1;
             PlayPaddleSound();
             // TODO: take in velocity of the paddle to adjust slope of the ball
          }

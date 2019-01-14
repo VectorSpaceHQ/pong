@@ -1,12 +1,12 @@
 /*
- * PaddleStatus.h
+ * GamePadStatus.h
  *
  *  Created on: Aug 18, 2018
  *      Author: athiessen
  */
 
-#ifndef __paddle_status_h__
-#define __paddle_status_h__
+#ifndef __gamepad_status_h__
+#define __gamepad_status_h__
 
 #include <stdint.h>
 
@@ -14,7 +14,7 @@
 
 // For now, we'll make the paddle status a structure.
 // In the future we may need something more complex
-struct PaddleStatus
+struct GamePadStatus
 {
 
 public:
@@ -28,7 +28,7 @@ private:
    int16_t     maxPosition;
 
 public:
-   PaddleStatus():
+   GamePadStatus():
       buttonPressed(false),
       buttonStateChanged(false),
       buttonTime(0),
@@ -70,4 +70,4 @@ public:
    }
 };
 
-#endif   // __paddle_status_h__
+#endif   // __gamepad_status_h__

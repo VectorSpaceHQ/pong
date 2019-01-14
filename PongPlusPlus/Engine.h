@@ -2,8 +2,8 @@
 #ifndef __engine_h__
 #define __engine_h__
 
+#include "GamePadStatus.h"
 #include "Model.h"
-#include "PaddleStatus.h"
 #include "ScheduledInterval.h"
 
 
@@ -21,16 +21,16 @@ class Engine: public ScheduledInterval
 public:
    Engine(Model::Settings&          _settings,
           Model::GameStatus&        _gameStatus,
-          PaddleStatus&             _leftPaddle,
-          PaddleStatus&             _rightPaddle);
+          GamePadStatus&             _leftPaddle,
+          GamePadStatus&             _rightPaddle);
 
    void Update(void);
 
 private:
    Model::Settings&        settings;
    Model::GameStatus&      gameStatus;
-   PaddleStatus&           leftPaddle;
-   PaddleStatus&           rightPaddle;
+   GamePadStatus&           leftPaddle;
+   GamePadStatus&           rightPaddle;
 
    ButtonState             buttonState;
 

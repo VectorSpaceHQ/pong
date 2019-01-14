@@ -1,5 +1,5 @@
 /*
- * PaddleDriver.cpp
+ * AtariPaddleDriver.cpp
  *
  *  Created on: Aug 16, 2018
  *      Author: athiessen
@@ -18,8 +18,8 @@
 // #endif
 
 #include "Configs.h"
-#include "PaddleDriver.h"
-#include "PaddleStatus.h"
+#include "AtariAtariPaddleDriver.h"
+#include "GamePadStatus.h"
 #include "ScheduledInterval.h"
 #include "Timing.h"
 
@@ -30,8 +30,8 @@
 #define BUTTON_DEBOUNCE_TIME_MS     (50)
 
 
-PaddleDriver::PaddleDriver(PaddleConf&      config,
-                           PaddleStatus&   _status):
+AtariPaddleDriver::AtariPaddleDriver(PaddleConf&      config,
+                                     GamePadStatus&   _status):
    ScheduledInterval(PADDLE_CHECK_INTERVAL),
    DT(config.DT),
    CLK(config.CLK),
@@ -51,7 +51,7 @@ PaddleDriver::PaddleDriver(PaddleConf&      config,
 }
 
 
-void PaddleDriver::Update()
+void AtariPaddleDriver::Update()
 {
    // Check the button every time we're called
    CheckButton();
@@ -70,7 +70,7 @@ void PaddleDriver::Update()
 }
 
 
-void PaddleDriver::UpdatePaddleStatus()
+void AtariPaddleDriver::UpdatePaddleStatus()
 {
    // If the value has changed, then increment the status accordingly
    // and reset value
@@ -90,7 +90,7 @@ void PaddleDriver::UpdatePaddleStatus()
 }
 
 
-void PaddleDriver::CheckButton()
+void AtariPaddleDriver::CheckButton()
 {
    // Increment the amount of time in ms the button has been in its current state
    if(++msCount >= PADDLE_BUTTON_INCR_INTERVAL)
@@ -117,7 +117,7 @@ void PaddleDriver::CheckButton()
 }
 
 
-void PaddleDriver::CheckRotaryEncoder()
+void AtariPaddleDriver::CheckRotaryEncoder()
 {
    uint8_t newState  = ((digitalRead(DT) << 1) | digitalRead(CLK));
    uint8_t criterion = newState ^ oldState;
