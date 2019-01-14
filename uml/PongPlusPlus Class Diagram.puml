@@ -274,7 +274,7 @@ Pong *-- Engine
 Pong *-- Controller
 Controller *-- "2" AtariPaddleDriver
 Controller *-- "2" GamePadStatus
-AtariPaddleDriver -- "Updates" GamePadStatus
+AtariPaddleDriver "1" --> "1" GamePadStatus: Updates
 Engine -down-> "Reads" GamePadStatus
 Engine -down-> "Updates" GameStatus 
 Engine *-left- ButtonState
