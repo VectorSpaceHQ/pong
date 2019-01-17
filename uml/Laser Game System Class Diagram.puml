@@ -1,0 +1,184 @@
+
+@startuml
+
+skinparam class {
+   backgroundcolor   #b7ddfc/White
+   bordercolor       black
+   ArrowColor        black
+}
+
+hide enum methods
+hide circle
+
+skinparam note {
+   backgroundcolor   Ivory/White
+   bordercolor       black
+}
+
+package "Laser Game System" as laserGameSystem <<Frame>> {
+
+   package "Platforms" <<Frame>> {
+      note as platformsNote1
+         The various hardware platforms implement 
+         the specific instances of the hardware
+         components.
+      end note
+
+      namespace PC {
+         class "Simple DirectMedia Layer" as sdlLib
+      }
+
+      namespace Arduino {
+         class RotaryEncoder
+         class PushButton
+         class Servo
+      }
+
+      namespace Nucleo {
+         class RotaryEncoder
+         class PushButton
+         class Servo
+      }
+   }
+
+   package "HW Abstraction" as hwAbstraction <<Frame>> {
+      note as hwAbstractNote1
+         The HW Abstraction layer provides
+         abstract classes for common
+         hardware components.
+      end note
+
+      class "<i>RotaryEncoder</i>" as rotaryEncoder {
+         - position: int16_t
+         + GetPosition(): int16_t
+      }
+
+      class "<i>PushButton</i>" as pushButton {
+         - isPressed: bool
+         + GetPressed(): bool
+      }
+      
+      class "<i>Servo</i>" as servo {
+         + SetPosition(pos: int16_t): void
+      }
+   }
+
+   pushButton <|-- Arduino.PushButton
+   pushButton <|-- Nucleo.PushButton
+   rotaryEncoder <|-- Arduino.RotaryEncoder
+   rotaryEncoder <|-- Nucleo.RotaryEncoder
+   servo <|-- Arduino.Servo
+   servo <|-- Nucleo.Servo
+   
+   package "Game System" as gameSystem <<Frame>> {
+      enum ButtonId <<enum>> {
+         BUTTON_ID_A
+         BUTTON_ID_B
+         BUTTON_ID_C
+         BUTTON_ID_D
+         BUTTON_ID_START
+      }
+
+      enum AxisId <<enum>> {
+         AXIS_ID_LEFT_X
+         AXIS_ID_LEFT_Y
+         AXIS_ID_RIGHT_X
+         AXIS_ID_RIGHT_Y
+      }
+
+      class Button <<struct>> {
+         + id: ButtonId
+         + pressed: bool
+      }
+
+      Button -- ButtonId
+
+      class Axis <<struct>> {
+         + id: AxisId
+         + position: int16_t
+      }
+
+      Axis -- AxisId
+
+      namespace Drivers {
+         class "<i>Display</i>" as display {
+            + {abstract} Clear(): void
+            + {abstract} DrawLine(start: Point, stop: Point): void
+            + {abstract} DrawCircle(center: Point, radius: uint16_t): void
+            + {abstract} DrawRect(topLeft: Point, bottomRight: Point): void
+            + {abstract} DrawBezier(???): void
+         }
+
+         class LaserDisplay {
+         }
+
+         class SdlDisplay {
+         }
+
+         display <|-- LaserDisplay
+         display <|-- SdlDisplay
+
+         class "<i>GamePad</i>" as gamePad {
+            + {abstract} GetButton(id: ButtonId): bool
+            + {abstract} GetAxis(id: AxisId): int16_t
+         }
+
+         class GamePadPaddle {
+            - button: Button
+            - wheel: Axis
+         }
+         
+         class GamePadPC {
+         }
+
+         gamePad <|-- GamePadPaddle
+         gamePad <|-- GamePadPC
+      }
+
+      class GameSystem {
+         + GetDisplay(): Display
+         + GetNumGamePads(): uint16_t
+         + GetGamePad(id: uint16_t): GamePad
+      }
+
+      class Game {
+         + Init(gameSystem: GameSystem&): void
+         + Start(): void
+         + Update(): void
+         + HandleEvent(e: Event): void
+         + Stop(): void
+      }
+      
+      class GameSystemLaser
+      class GameSystemPC
+
+      Drivers.GamePadPaddle *-- rotaryEncoder
+      Drivers.GamePadPaddle *-- pushButton
+      Drivers.LaserDisplay *-- "2" servo
+      
+      Drivers.GamePadPC -- PC.sdlLib
+      Drivers.SdlDisplay -- PC.sdlLib
+
+      GameSystem *-- "1..*" Drivers.gamePad
+      GameSystem *-- "1" Drivers.display
+      GameSystem "1" o-- "*" Game
+      Game ..> GameSystem
+      GameSystem <|-right- GameSystemLaser
+      GameSystem <|-left- GameSystemPC
+   }
+
+   package "Games" as games <<Frame>> {
+      class "Giant E.T." as et
+      note bottom of et: "WHAT????!!!"
+      class "Giant Breakout" as breakout
+      class "Giant Asteroids" as asteroids
+      class "Giant Pong" as pong
+   }
+
+   Game <|-- pong
+   Game <|-- breakout
+   Game <|-- asteroids
+   Game <|-- et
+}
+
+@enduml
