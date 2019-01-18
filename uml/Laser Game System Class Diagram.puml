@@ -61,6 +61,12 @@ package "Laser Game System" as laserGameSystem <<Frame>> {
       class "<i>Servo</i>" as servo {
          + SetPosition(pos: int16_t): void
       }
+      
+      class "<i>OnOffSwitch</i>" as onOffSwitch {
+         + On(): void
+         + Off(): void
+         + Toggle(): void
+      }
    }
 
    pushButton <|-- Arduino.PushButton
